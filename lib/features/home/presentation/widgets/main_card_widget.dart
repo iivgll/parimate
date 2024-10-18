@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parimate/common/utils/font_family.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../../../common/utils/colors.dart';
@@ -27,52 +28,51 @@ class MainCardWidget extends StatelessWidget {
             ),
             Center(
               child: CircularPercentIndicator(
-                radius: 100.0,
-                lineWidth: 20.0,
-                percent: 0.5,
-                center: const Text(
-                  '50%',
+                radius: 150.0,
+                lineWidth: 50.0,
+                percent: 0.67,
+                center: Text(
+                  '67%',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
-                  ),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.white,
+                      fontFamily: AppFontFamily.uncage),
                 ),
                 progressColor: AppColors.orange,
                 backgroundColor: AppColors.black,
-                circularStrokeCap: CircularStrokeCap.round,
+                circularStrokeCap: CircularStrokeCap.square,
               ),
             ),
             const SizedBox(height: 20),
             // Список активностей
             ListTile(
-              leading: const Icon(Icons.check, color: AppColors.orange),
-              title: const Text(
+              title: Text(
                 'Ранний подьем',
-                style: TextStyle(color: AppColors.white), // Белый текст
+                style: TextStyle(
+                    color: AppColors.white, fontFamily: AppFontFamily.ubuntu),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios,
-                  color: AppColors.orange, size: 16),
+              trailing: const Icon(Icons.check, color: AppColors.white),
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.check, color: AppColors.orange),
-              title: const Text(
+              title: Text(
                 'Фитнес',
-                style: TextStyle(color: AppColors.white), // Белый текст
+                style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: AppFontFamily.ubuntu), // Белый текст
               ),
-              trailing: const Icon(Icons.arrow_forward_ios,
-                  color: AppColors.orange, size: 16),
+              trailing: const Icon(Icons.check, color: AppColors.white),
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.close, color: AppColors.orange),
-              title: const Text(
+              title: Text(
                 'Чтение книги',
-                style: TextStyle(color: AppColors.white), // Белый текст
+                style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: AppFontFamily.ubuntu), // Белый текст
               ),
-              trailing: const Icon(Icons.arrow_forward_ios,
-                  color: AppColors.orange, size: 16),
+              trailing: const Icon(Icons.close, color: AppColors.orange),
               onTap: () {},
             ),
             const SizedBox(height: 20),
@@ -80,8 +80,14 @@ class MainCardWidget extends StatelessWidget {
               onPressed: () {
                 // Обработка загрузки подтверждений
               },
-              icon: const Icon(Icons.upload, color: AppColors.white),
-              label: const Text('Загрузить подтверждение'),
+              icon: const Icon(Icons.add, color: AppColors.white),
+              label: const Text(
+                'Загрузить подтверждение',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.blackMin,
+              ),
             ),
           ],
         ),

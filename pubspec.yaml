@@ -52,24 +52,24 @@ flutter:
 
     - family: UbuntuSans
       fonts:
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-Thin.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-Thin.ttf
           weight: 100
           style: normal
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-Light.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-Light.ttf
           weight: 300
           style: normal
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-Regular.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-Regular.ttf
           weight: 400
           style: normal
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-Medium.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-Medium.ttf
           weight: 500
           style: normal
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-SemiBold.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-SemiBold.ttf
           weight: 600
           style: normal
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-Bold.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-Bold.ttf
           weight: 700
           style: normal
-        - asset: /Users/ivangladko/dev/parimate/assets/fonts/ununtu/UbuntuSans-Italic.ttf
+        - asset: assets/fonts/ununtu/UbuntuSans-Italic.ttf
           weight: 400
           style: italic
