@@ -25,26 +25,71 @@ final router = GoRouter(
         GoRoute(
           path: '/',
           name: 'home',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HomePage(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const HomePage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: '/challenges',
           name: 'challenges',
-          builder: (BuildContext context, GoRouterState state) =>
-              const ChallengesPage(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const ChallengesPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          },
         ),
+        // Аналогично для остальных маршрутов
         GoRoute(
           path: '/chats',
           name: 'chats',
-          builder: (BuildContext context, GoRouterState state) =>
-              const ChatsPage(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const ChatsPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          },
         ),
         GoRoute(
           path: '/coins',
           name: 'coins',
-          builder: (BuildContext context, GoRouterState state) =>
-              const CoinsPage(),
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const CoinsPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            );
+          },
         ),
       ],
     ),
