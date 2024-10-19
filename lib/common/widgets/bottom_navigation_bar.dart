@@ -1,7 +1,8 @@
-// lib/common/widgets/custom_bottom_navigation_bar.dart
-
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parimate/common/utils/extensions.dart';
+import 'package:parimate/common/utils/icons.dart';
 
 import '../../../common/utils/colors.dart';
 
@@ -55,24 +56,40 @@ class CustomBottomNavigationBar extends StatelessWidget {
             break;
         }
       },
-      selectedItemColor: AppColors.orange,
-      unselectedItemColor: AppColors.grey,
       type: BottomNavigationBarType.fixed,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: SvgPicture.asset(
+            AppIcons.activity,
+            colorFilter: currentIndex == 0
+                ? AppColors.orange.toColorFilter
+                : AppColors.grey.toColorFilter,
+          ),
           label: 'Активность',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.flag),
+          icon: SvgPicture.asset(AppIcons.chellenges,
+              colorFilter: currentIndex == 1
+                  ? AppColors.orange.toColorFilter
+                  : AppColors.grey.toColorFilter),
           label: 'Челленджи',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
+          icon: SvgPicture.asset(
+            AppIcons.chat,
+            colorFilter: currentIndex == 2
+                ? AppColors.orange.toColorFilter
+                : AppColors.grey.toColorFilter,
+          ),
           label: 'Чаты',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.monetization_on),
+          icon: SvgPicture.asset(
+            AppIcons.coin,
+            colorFilter: currentIndex == 3
+                ? AppColors.orange.toColorFilter
+                : AppColors.grey.toColorFilter,
+          ),
           label: 'Монеты',
         ),
       ],

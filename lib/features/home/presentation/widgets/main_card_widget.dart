@@ -50,9 +50,15 @@ class MainCardWidget extends StatelessWidget {
               title: Text(
                 'Ранний подьем',
                 style: TextStyle(
-                    color: AppColors.white, fontFamily: AppFontFamily.ubuntu),
+                    color: AppColors.white,
+                    fontFamily: AppFontFamily.ubuntu,
+                    fontSize: 14),
               ),
-              trailing: const Icon(Icons.check, color: AppColors.white),
+              trailing: const Icon(
+                Icons.check,
+                color: AppColors.white,
+                size: 18,
+              ),
               onTap: () {},
             ),
             ListTile(
@@ -60,9 +66,14 @@ class MainCardWidget extends StatelessWidget {
                 'Фитнес',
                 style: TextStyle(
                     color: AppColors.white,
-                    fontFamily: AppFontFamily.ubuntu), // Белый текст
+                    fontFamily: AppFontFamily.ubuntu,
+                    fontSize: 14), // Белый текст
               ),
-              trailing: const Icon(Icons.check, color: AppColors.white),
+              trailing: const Icon(
+                Icons.check,
+                color: AppColors.white,
+                size: 18,
+              ),
               onTap: () {},
             ),
             ListTile(
@@ -70,9 +81,14 @@ class MainCardWidget extends StatelessWidget {
                 'Чтение книги',
                 style: TextStyle(
                     color: AppColors.white,
-                    fontFamily: AppFontFamily.ubuntu), // Белый текст
+                    fontFamily: AppFontFamily.ubuntu,
+                    fontSize: 14), // Белый текст
               ),
-              trailing: const Icon(Icons.close, color: AppColors.orange),
+              trailing: const Icon(
+                Icons.close,
+                color: AppColors.orange,
+                size: 18,
+              ),
               onTap: () {},
             ),
             const SizedBox(height: 20),

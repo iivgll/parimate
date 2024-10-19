@@ -20,6 +20,7 @@ dependencies:
   talker_flutter: ^4.4.1
   go_router: ^14.3.0
   percent_indicator: ^4.2.3
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -30,11 +31,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Если у вас есть другие ассеты, например изображения, указывайте их здесь
+  # Добавляем путь к папке с иконками
   assets:
-  # - assets/images/
-  # - assets/icons/
-  # - и т.д.
+    - assets/icons/
 
   fonts:
     - family: Uncage

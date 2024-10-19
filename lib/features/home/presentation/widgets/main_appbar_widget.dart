@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:parimate/common/utils/extensions.dart';
+import 'package:parimate/common/utils/icons.dart';
 
 import '../../../../common/utils/colors.dart';
 import '../../../../common/utils/font_family.dart';
@@ -51,12 +54,22 @@ class MainAppbarWidget extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-            // Обработчик нажатия на иконку настроек
-            // Например, навигация на страницу настроек
-          },
+        Row(
+          children: [
+            IconButton(
+              icon: SvgPicture.asset(
+                AppIcons.settings,
+                colorFilter: AppColors.white.toColorFilter,
+              ),
+              onPressed: () {
+                // Обработчик нажатия на иконку настроек
+                // Например, навигация на страницу настроек
+              },
+            ),
+            const SizedBox(
+              width: 10,
+            )
+          ],
         ),
       ],
     );
