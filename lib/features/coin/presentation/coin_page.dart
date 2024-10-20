@@ -1,38 +1,143 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:parimate/features/home/presentation/widgets/main_card_widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../common/utils/colors.dart';
+import '../../../common/utils/extensions.dart';
 import '../../../common/utils/font_family.dart';
+import '../../../common/utils/icons.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
+import 'coin_notifier.dart';
+import 'widgets/coin_card.dart';
 
 class CoinsPage extends ConsumerWidget {
   const CoinsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final coinOptions = [1, 3, 5, 10];
+
+    // Стилевые переменные
+    TextStyle titleTextStyle = TextStyle(
+      fontFamily: AppFontFamily.uncage,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: AppColors.white,
+    );
+
+    TextStyle balanceTextStyle = TextStyle(
+      fontFamily: AppFontFamily.uncage,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: AppColors.white,
+    );
+
+    TextStyle coinOptionTextStyle = TextStyle(
+      fontFamily: AppFontFamily.ubuntu,
+      color: AppColors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    );
+
+    TextStyle buyTextStyle = TextStyle(
+      fontFamily: AppFontFamily.ubuntu,
+      color: AppColors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
+
+    // Получаем текущий баланс пользователя из CoinNotifier
+    final coinNotifier = ref.watch(coinNotifierProvider.notifier);
+    final userBalance = ref.watch(coinNotifierProvider);
+
     return Scaffold(
+      backgroundColor: AppColors.black,
       appBar: const MainAppbarWidget(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Выравнивание по левому краю
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'МОНЕТЫ',
-                  style: TextStyle(
-                    fontFamily: AppFontFamily.uncage,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
+              Text(
+                'МОНЕТЫ',
+                style: titleTextStyle,
+              ),
+              const SizedBox(height: 40),
+              Row(
+                children: [
+                  Text(
+                    'БАЛАНС: $userBalance ${userBalance.coinWordForm()}',
+                    style: balanceTextStyle,
                   ),
-                ),
+                  const SizedBox(width: 5),
+                  Column(
+                    children: [
+                      SvgPicture.asset(
+                        AppIcons.coin,
+                        colorFilter: AppColors.orange.toColorFilter,
+                        width: 24,
+                        height: 24,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      )
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
-              const MainCardWidget(),
+              // Используем ListView.separated вместо Column для лучшей производительности
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: coinOptions.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 20),
+                itemBuilder: (context, index) {
+                  final coinAmount = coinOptions[index];
+                  return CoinCard(
+                    coinAmount: coinAmount,
+                    coinOptionTextStyle: coinOptionTextStyle,
+                    buyTextStyle: buyTextStyle,
+                    onBuy: () {
+                      // Обработка покупки монет через CoinNotifier
+                      coinNotifier.buyCoins(coinAmount);
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Обработка просмотра рекламы для получения монеты
+                  coinNotifier.watchAdForCoin();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Text(
+                      'Посмотри рекламу - получи монету',
+                      style: TextStyle(color: AppColors.white),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.arrow_forward_outlined,
+                      color: AppColors.white,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

@@ -33,7 +33,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     }
 
     return BottomNavigationBar(
-      backgroundColor: AppColors.black,
+      backgroundColor: AppColors.blackMin,
       currentIndex: currentIndex,
       onTap: (index) {
         switch (index) {
