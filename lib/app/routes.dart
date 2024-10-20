@@ -1,7 +1,6 @@
-// lib/app/routes.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parimate/features/settings/presentation/settings_page.dart';
 
 import '../common/widgets/bottom_navigation_bar.dart';
 import '../features/chellenges/presentation/challenge_details_page.dart';
@@ -102,6 +101,22 @@ final router = GoRouter(
           },
         ),
       ],
+    ),
+    GoRoute(
+      path: '/settings',
+      name: 'settings',
+      pageBuilder: (BuildContext context, GoRouterState state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const SettingsPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        );
+      },
     ),
   ],
 );

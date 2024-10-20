@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/utils/icons.dart';
 
@@ -62,8 +63,7 @@ class MainAppbarWidget extends StatelessWidget implements PreferredSizeWidget {
                 colorFilter: AppColors.white.toColorFilter,
               ),
               onPressed: () {
-                // Обработчик нажатия на иконку настроек
-                // Например, навигация на страницу настроек
+                context.push('/settings');
               },
             ),
             const SizedBox(

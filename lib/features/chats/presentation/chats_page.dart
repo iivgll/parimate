@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:parimate/features/home/presentation/widgets/main_appbar_widget.dart';
 import 'package:parimate/features/home/presentation/widgets/main_card_widget.dart';
 
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
+import '../../../common/widgets/main_appbar_widget.dart';
 
 class ChatsPage extends ConsumerWidget {
   const ChatsPage({super.key});

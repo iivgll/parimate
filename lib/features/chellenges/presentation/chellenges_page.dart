@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/icons.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/add_challenge_button.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
-import 'package:parimate/features/home/presentation/widgets/main_appbar_widget.dart';
 
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/custom_button.dart';
+import '../../../common/widgets/main_appbar_widget.dart';
 import '../../../freezed_models/challenge_model.dart';
 import '../../../providers/challenge_provider.dart';
 import '../challenges_notifier.dart';
