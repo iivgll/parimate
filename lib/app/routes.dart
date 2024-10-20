@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../common/widgets/bottom_navigation_bar.dart';
+import '../features/chellenges/presentation/challenge_details_page.dart';
 import '../features/chellenges/presentation/chellenges_page.dart';
 import '../features/coin/presentation/coin_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/chats/presentation/chats_page.dart';
+import '../freezed_models/challenge_model.dart';
 
 final router = GoRouter(
   initialLocation: '/',
@@ -54,6 +56,14 @@ final router = GoRouter(
                 );
               },
             );
+          },
+        ),
+        GoRoute(
+          path: '/challenge-details',
+          name: 'challengeDetails',
+          builder: (BuildContext context, GoRouterState state) {
+            final challenge = state.extra as ChallengeModel;
+            return ChallengeDetailsPage(challenge: challenge);
           },
         ),
         // Аналогично для остальных маршрутов
