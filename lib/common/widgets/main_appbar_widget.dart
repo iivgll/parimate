@@ -1,52 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/utils/icons.dart';
+import 'package:parimate/state/app_state.dart';
 
 import '../../../../common/utils/colors.dart';
 import '../../../../common/utils/font_family.dart';
 
-class MainAppbarWidget extends StatelessWidget implements PreferredSizeWidget {
+class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   const MainAppbarWidget({super.key});
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(kToolbarHeight); // 56.0 пикселей
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+
+    if (user == null) {
+      return AppBar(
+        backgroundColor: AppColors.black,
+      );
+    }
+
     return AppBar(
       backgroundColor: AppColors.black,
       title: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             backgroundColor: AppColors.orange,
-            radius: 20, // Размер аватарки
-            // Если у вас есть изображение аватарки, используйте backgroundImage
-            // backgroundImage: AssetImage('assets/avatar.png'),
+            radius: 20,
+            backgroundImage:
+                user.photo != null ? NetworkImage(user.photo!) : null,
+            child: user.photo == null
+                ? Text(
+                    user.name[0].toUpperCase(),
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 10),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Имя',
+                user.name,
                 style: TextStyle(
                   fontFamily: AppFontFamily.ubuntu,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.white,
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                'Фамилия',
-                style: TextStyle(
-                  fontFamily: AppFontFamily.ubuntu,
-                  fontSize: 14,
                   color: AppColors.white,
                 ),
               ),
@@ -66,9 +73,7 @@ class MainAppbarWidget extends StatelessWidget implements PreferredSizeWidget {
                 context.push('/settings');
               },
             ),
-            const SizedBox(
-              width: 10,
-            )
+            const SizedBox(width: 10),
           ],
         ),
       ],

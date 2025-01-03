@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/providers/repository_providers.dart';
+import 'package:parimate/widgets/app_initializer.dart';
 
 import 'app/routes.dart';
 import 'common/utils/colors.dart';
@@ -16,7 +17,7 @@ import 'repositories/code_word_repository.dart';
 import 'repositories/coins_repository.dart';
 
 void main() {
-  final apiClient = ApiClient(baseUrl: 'https://your-api-base-url.com');
+  final apiClient = ApiClient(baseUrl: 'http://185.112.102.11:8000');
 
   final userRepository = UserRepository(apiClient.dio);
   final chatRepository = ChatRepository(apiClient.dio);
@@ -54,58 +55,60 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'My Flutter Web App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: AppColors.orange,
-        fontFamily:
-            'UbuntuSans', // Устанавливаем UbuntuSans как шрифт по умолчанию
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.black,
-          iconTheme: IconThemeData(color: AppColors.orange),
-          titleTextStyle: TextStyle(
-            color: AppColors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Uncage', // Используем Uncage для AppBar заголовков
+    return AppInitializer(
+      userTgId: '44',
+      child: MaterialApp.router(
+        title: 'Parimate',
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: AppColors.orange,
+          fontFamily: 'UbuntuSans',
+          appBarTheme: const AppBarTheme(
+            backgroundColor: AppColors.black,
+            iconTheme: IconThemeData(color: AppColors.orange),
+            titleTextStyle: TextStyle(
+              color: AppColors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Uncage',
+            ),
           ),
-        ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: AppColors.black,
-          selectedItemColor: AppColors.orange,
-          unselectedItemColor: AppColors.grey,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.orange,
-            foregroundColor: AppColors.white,
-            minimumSize: const Size(double.infinity, 50),
-            textStyle: const TextStyle(
-              fontFamily: 'UbuntuSans', // Используем UbuntuSans для кнопок
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: AppColors.black,
+            selectedItemColor: AppColors.orange,
+            unselectedItemColor: AppColors.grey,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.orange,
+              foregroundColor: AppColors.white,
+              minimumSize: const Size(double.infinity, 50),
+              textStyle: const TextStyle(
+                fontFamily: 'UbuntuSans',
+              ),
+            ),
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(
+              fontFamily: 'UbuntuSans',
+              fontWeight: FontWeight.normal,
+              color: AppColors.white,
+            ),
+            bodyMedium: TextStyle(
+              fontFamily: 'UbuntuSans',
+              fontWeight: FontWeight.normal,
+              color: AppColors.white,
+            ),
+            displayLarge: TextStyle(
+              fontFamily: 'Uncage',
+              fontWeight: FontWeight.bold,
+              color: AppColors.white,
             ),
           ),
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(
-            fontFamily: 'UbuntuSans',
-            fontWeight: FontWeight.normal,
-            color: AppColors.white,
-          ),
-          bodyMedium: TextStyle(
-            fontFamily: 'UbuntuSans',
-            fontWeight: FontWeight.normal,
-            color: AppColors.white,
-          ),
-          displayLarge: TextStyle(
-            fontFamily: 'Uncage', // Используем Uncage для крупных заголовков
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
-          ),
-        ),
       ),
-      routerConfig: router,
     );
   }
 }
