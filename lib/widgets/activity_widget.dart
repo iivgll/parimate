@@ -16,6 +16,66 @@ class ActivityWidget extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    if (challenges.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.black,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Сегодня:',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.white,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: CircularPercentIndicator(
+                radius: 60.0,
+                lineWidth: 10.0,
+                percent: 0,
+                center: const Text(
+                  '0%',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.white,
+                  ),
+                ),
+                progressColor: AppColors.orange,
+                backgroundColor: AppColors.grey.withOpacity(0.2),
+                circularStrokeCap: CircularStrokeCap.round,
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Не участвуешь в челлендже?',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'У тебя два пути — присоединяйся к существующему или создавай свой. Действуй, время расти и побеждать!',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
     // Здесь можно добавить логику подсчета процента выполненных задач
     final completedTasks = 2; // Пример
     final totalTasks = 3; // Пример
@@ -30,34 +90,12 @@ class ActivityWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage:
-                    user.photo != null ? NetworkImage(user.photo!) : null,
-                radius: 20,
-                child: user.photo == null
-                    ? Text(user.name[0].toUpperCase())
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                user.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Uncage',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
           const Text(
-            'АКТИВНОСТЬ',
+            'Сегодня:',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Uncage',
+              color: AppColors.white,
             ),
           ),
           const SizedBox(height: 24),
@@ -71,6 +109,7 @@ class ActivityWidget extends ConsumerWidget {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  color: AppColors.white,
                 ),
               ),
               progressColor: AppColors.orange,
@@ -79,17 +118,9 @@ class ActivityWidget extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Сегодня:',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildTaskItem('Ранний подъём', true),
-          _buildTaskItem('Фитнес', true),
-          _buildTaskItem('Чтение книги', false),
+          ...challenges
+              .map((challenge) => _buildTaskItem(challenge.name, false))
+              .toList(),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {

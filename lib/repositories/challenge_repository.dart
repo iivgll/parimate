@@ -28,7 +28,19 @@ class ChallengeRepository {
     }
   }
 
-  Future<Challenge> createChallenge(ChallengeCreationSchema challenge) async {
+  Future<Challenge> createChallenge(Map<String, dynamic> challengeData) async {
+    try {
+      final response = await _dio.post(
+        '/api/v2/challenge',
+        data: challengeData,
+      );
+      return Challenge.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  Future<Challenge> createChallengeFromSchema(ChallengeCreationSchema challenge) async {
     try {
       final response = await _dio.post(
         '/api/v2/challenge',

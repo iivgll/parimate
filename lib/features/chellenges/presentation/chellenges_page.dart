@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/icons.dart';
-import 'package:parimate/features/chellenges/presentation/widgets/add_challenge_button.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
+import 'package:parimate/features/chellenges/presentation/widgets/create_challenge_sheet.dart';
 
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
@@ -33,17 +33,11 @@ class ChallengesPage extends ConsumerWidget {
               _buildTitle('ЧЕЛЛЕНДЖИ'),
               const SizedBox(height: 16),
               _buildToggleButtons(challengesState, challengesNotifier),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               if (challengesState.view == ChallengeView.mine)
                 _buildChallengesList(challengesState, challengesNotifier)
               else
-                _buildNewChallenges(),
-              if (challengesState.view == ChallengeView.mine) ...[
-                const SizedBox(height: 20),
-                _buildTitle('АРХИВ'),
-                const SizedBox(height: 20),
-                _buildArchiveList(challengesState, challengesNotifier),
-              ],
+                _buildNewChallenges(context),
             ],
           ),
         ),
@@ -51,63 +45,246 @@ class ChallengesPage extends ConsumerWidget {
     );
   }
 
-  // Метод для построения заголовка
   Widget _buildTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: TextStyle(
-          fontFamily: AppFontFamily.uncage,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: AppColors.white,
+    return Text(
+      title,
+      style: TextStyle(
+        fontFamily: AppFontFamily.uncage,
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: AppColors.white,
+      ),
+    );
+  }
+
+  Widget _buildToggleButtons(
+      ChallengesState challengesState, ChallengesNotifier challengesNotifier) {
+    return Row(
+      children: [
+        CustomButton(
+          onPressed: () {
+            challengesNotifier.setView(ChallengeView.mine);
+          },
+          text: 'Мои',
+          backgroundColor: challengesState.view == ChallengeView.mine
+              ? AppColors.blackMin
+              : AppColors.black,
+          textColor: AppColors.white,
+          horizontalPadding: 24.0,
+          verticalPadding: 8.0,
+          borderRadius: 8.0,
+          textStyle: const TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          margin: const EdgeInsets.only(right: 8.0),
+        ),
+        CustomButton(
+          onPressed: () {
+            challengesNotifier.setView(ChallengeView.newChallenges);
+          },
+          text: 'Новый',
+          backgroundColor: challengesState.view == ChallengeView.newChallenges
+              ? AppColors.blackMin
+              : AppColors.black,
+          textColor: AppColors.white,
+          horizontalPadding: 24.0,
+          verticalPadding: 8.0,
+          borderRadius: 8.0,
+          textStyle: const TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNewChallenges(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Логика присоединения по ссылке
+                },
+                icon: const Icon(Icons.link, color: AppColors.white),
+                label: const Text(
+                  'Присоединиться\nпо ссылке',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.blackMin,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const CreateChallengeSheet(),
+                  );
+                },
+                icon: const Icon(Icons.edit, color: AppColors.white),
+                label: const Text(
+                  'Создать\nчеллендж',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.blackMin,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'ДОСТУПНЫЕ',
+          style: TextStyle(
+            fontFamily: AppFontFamily.uncage,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.white,
+          ),
+        ),
+        const SizedBox(height: 16),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _buildCategoryChip('Популярные', true),
+              _buildCategoryChip('Спорт', false),
+              _buildCategoryChip('Саморазвитие', false),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildAvailableChallenge(
+          'Регулярный спорт',
+          '5.000',
+          Icons.sports_basketball,
+          '1',
+        ),
+        const SizedBox(height: 8),
+        _buildAvailableChallenge(
+          'Читательский клуб',
+          '1.000',
+          Icons.book,
+          '1',
+        ),
+        const SizedBox(height: 8),
+        _buildAvailableChallenge(
+          'Отказ от смартфона',
+          '500',
+          Icons.phone_android,
+          '1',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryChip(String label, bool isSelected) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      child: FilterChip(
+        label: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.white : AppColors.grey,
+          ),
+        ),
+        selected: isSelected,
+        onSelected: (bool value) {
+          // Логика выбора категории
+        },
+        backgroundColor: AppColors.black,
+        selectedColor: AppColors.blackMin,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );
   }
 
-  // Метод для построения кнопок переключения "Мои" и "Новый"
-  Widget _buildToggleButtons(
-      ChallengesState challengesState, ChallengesNotifier challengesNotifier) {
-    return Align(
-      alignment: Alignment.centerLeft,
+  Widget _buildAvailableChallenge(
+      String title, String price, IconData icon, String count) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.blackMin,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          CustomButton(
-            onPressed: () {
-              challengesNotifier.setView(ChallengeView.mine);
-            },
-            text: 'Мои',
-            backgroundColor: challengesState.view == ChallengeView.mine
-                ? AppColors.blackMin
-                : AppColors.black,
-            textColor: AppColors.white,
-            horizontalPadding: 10.0,
-            verticalPadding: 8.0,
-            borderRadius: 8.0,
-            textStyle: const TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
+          Icon(icon, color: AppColors.white),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Взнос: $price',
+                  style: const TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
-            margin: const EdgeInsets.only(right: 16.0),
           ),
-          CustomButton(
-            onPressed: () {
-              challengesNotifier.setView(ChallengeView.newChallenges);
-            },
-            text: 'Новый',
-            backgroundColor: challengesState.view == ChallengeView.newChallenges
-                ? AppColors.blackMin
-                : AppColors.black,
-            textColor: AppColors.white,
-            horizontalPadding: 10.0,
-            verticalPadding: 8.0,
-            borderRadius: 8.0,
-            textStyle: const TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.orange.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  count,
+                  style: const TextStyle(
+                    color: AppColors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right,
+                  color: AppColors.orange,
+                  size: 16,
+                ),
+              ],
             ),
           ),
         ],
@@ -115,62 +292,16 @@ class ChallengesPage extends ConsumerWidget {
     );
   }
 
-  // Метод для построения списка челленджей
   Widget _buildChallengesList(
       ChallengesState challengesState, ChallengesNotifier challengesNotifier) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: challengesState.challenges.length + 1,
-      // +1 для кнопки добавления
-      itemBuilder: (context, index) {
-        if (index < challengesState.challenges.length) {
-          final challenge = challengesState.challenges[index];
-          return ChallengeContainer(
-            challenge: challenge,
-            onArchive: () {
-              challengesNotifier.archiveChallenge(index);
-            },
-          );
-        } else {
-          // Кнопка "Добавить новый челлендж"
-          return AddChallengeButton(
-            onPressed: () {
-              _showAddChallengeDialog(context, challengesNotifier);
-            },
-          );
-        }
-      },
-    );
-  }
-
-  // Метод для отображения новых челленджей
-  Widget _buildNewChallenges() {
-    return Column(
-      children: [
-        ChallengeContainer(
-          challenge: ChallengeModel(
-            name: 'Новый челлендж',
-            date: DateTime.now().add(const Duration(days: 2)),
-            imageUrl: AppIcons.balloon,
+    if (challengesState.challenges.isEmpty) {
+      return const Center(
+        child: Text(
+          'У вас пока нет челленджей',
+          style: TextStyle(
+            color: AppColors.grey,
+            fontSize: 16,
           ),
-          onArchive: () {},
-        ),
-      ],
-    );
-  }
-
-  // Метод для построения списка архивных челленджей
-  Widget _buildArchiveList(
-      ChallengesState challengesState, ChallengesNotifier challengesNotifier) {
-    final archivedChallenges = challengesState.archivedChallenges;
-
-    if (archivedChallenges.isEmpty) {
-      return Text(
-        'Архив пуст',
-        style: TextStyle(
-          color: AppColors.grey,
-          fontSize: 16,
         ),
       );
     }
@@ -178,94 +309,17 @@ class ChallengesPage extends ConsumerWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: archivedChallenges.length,
+      itemCount: challengesState.challenges.length,
       itemBuilder: (context, index) {
-        final challenge = archivedChallenges[index];
-        return ChallengeContainer(
-          challenge: challenge,
-          onArchive: () {
-            // Восстановление челленджа из архива
-            challengesNotifier.unarchiveChallenge(index);
-          },
-        );
-      },
-    );
-  }
-
-  // Диалог добавления нового челленджа
-  void _showAddChallengeDialog(
-      BuildContext context, ChallengesNotifier notifier) {
-    final nameController = TextEditingController();
-    final dateController = TextEditingController();
-    final imageUrlController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Добавить новый челлендж"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration:
-                      const InputDecoration(labelText: 'Название челленджа'),
-                ),
-                TextField(
-                  controller: dateController,
-                  decoration: const InputDecoration(
-                      labelText: 'Дата проведения (YYYY-MM-DD)'),
-                  keyboardType: TextInputType.datetime,
-                ),
-                TextField(
-                  controller: imageUrlController,
-                  decoration:
-                      const InputDecoration(labelText: 'URL изображения'),
-                ),
-              ],
-            ),
+        final challenge = challengesState.challenges[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: ChallengeContainer(
+            challenge: challenge,
+            onArchive: () {
+              challengesNotifier.archiveChallenge(index);
+            },
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Отмена"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final name = nameController.text.trim();
-                final dateString = dateController.text.trim();
-                DateTime? date;
-
-                if (dateString.isNotEmpty) {
-                  date = DateTime.tryParse(dateString);
-                  if (date == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Некорректная дата')),
-                    );
-                    return;
-                  }
-                } else {
-                  date = DateTime.now();
-                }
-
-                final imageUrl = imageUrlController.text.trim().isNotEmpty
-                    ? imageUrlController.text.trim()
-                    : 'assets/images/default_challenge.png';
-
-                notifier.addChallenge(
-                  ChallengeModel(
-                    name: name,
-                    date: date,
-                    imageUrl: imageUrl,
-                  ),
-                );
-              },
-              child: const Text("Добавить"),
-            ),
-          ],
         );
       },
     );
