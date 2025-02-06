@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/providers/repository_providers.dart';
 import 'package:parimate/widgets/app_initializer.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/routes.dart';
 import 'common/utils/colors.dart';
@@ -108,6 +109,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ru', 'RU'),
+        ],
+        locale: const Locale('ru', 'RU'),
       ),
     );
   }

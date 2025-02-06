@@ -7,6 +7,8 @@ import 'package:parimate/features/chellenges/domain/challenge_type.dart';
 import 'package:parimate/providers/repository_providers.dart';
 import 'package:intl/intl.dart';
 
+enum RegularityType { daily, weekly, specificDays }
+
 class CreateChallengeSheet extends ConsumerStatefulWidget {
   const CreateChallengeSheet({super.key});
 
@@ -48,6 +50,36 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   final List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
   int selectedBet = 100;
+
+  RegularityType _getRegularityType(String selectedRegularity) {
+    switch (selectedRegularity) {
+      case 'Каждый день':
+        return RegularityType.daily;
+      case 'Раз в неделю':
+      case '2 раза в неделю':
+      case '3 раза в неделю':
+        return RegularityType.weekly;
+      case 'Конкретные дни':
+        return RegularityType.specificDays;
+      default:
+        return RegularityType.daily;
+    }
+  }
+
+  bool _validateChallengeDuration(
+      DateTime? startDate, DateTime? endDate, String selectedRegularity) {
+    if (startDate == null || endDate == null) return false;
+
+    final durationInDays = endDate.difference(startDate).inDays + 1;
+    final regularityType = _getRegularityType(selectedRegularity);
+
+    if (regularityType == RegularityType.weekly) {
+      // Для еженедельных челленджей длительность должна быть кратна 7 дням
+      return durationInDays % 7 == 0;
+    }
+
+    return true;
+  }
 
   void _showRegularityPicker() {
     showModalBottomSheet(
@@ -315,35 +347,78 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => Container(
-        height: 216,
-        padding: const EdgeInsets.only(top: 6.0),
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+        decoration: const BoxDecoration(
+          color: AppColors.blackMin,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
-        color: AppColors.blackMin,
-        child: SafeArea(
-          top: false,
-          child: CupertinoTheme(
-            data: const CupertinoThemeData(
-              textTheme: CupertinoTextThemeData(
-                dateTimePickerTextStyle: TextStyle(
-                  color: AppColors.orange,
-                  fontSize: 22,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.black,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      color: AppColors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'До',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 18,
+                      fontFamily: AppFontFamily.uncage,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 216,
+              padding: const EdgeInsets.only(top: 6.0),
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              color: AppColors.blackMin,
+              child: SafeArea(
+                top: false,
+                child: CupertinoTheme(
+                  data: const CupertinoThemeData(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle: TextStyle(
+                        color: AppColors.orange,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    use24hFormat: false,
+                    initialDateTime: DateTime.now(),
+                    backgroundColor: AppColors.blackMin,
+                    onDateTimeChanged: (DateTime newTime) {
+                      setState(() {
+                        confirmationTime = TimeOfDay.fromDateTime(newTime);
+                      });
+                    },
+                  ),
                 ),
               ),
             ),
-            child: CupertinoDatePicker(
-              mode: CupertinoDatePickerMode.time,
-              use24hFormat: false,
-              initialDateTime: DateTime.now(),
-              backgroundColor: AppColors.blackMin,
-              onDateTimeChanged: (DateTime newTime) {
-                setState(() {
-                  confirmationTime = TimeOfDay.fromDateTime(newTime);
-                });
-              },
-            ),
-          ),
+          ],
         ),
       ),
     );
@@ -358,16 +433,19 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         start: startDate ?? DateTime.now(),
         end: endDate ?? DateTime.now().add(const Duration(days: 7)),
       ),
+      locale: const Locale('ru', 'RU'),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: AppColors.orange,
               onPrimary: AppColors.white,
               surface: AppColors.blackMin,
               onSurface: AppColors.white,
               secondary: AppColors.orange,
               onSecondary: AppColors.white,
+            ).copyWith(
+              secondaryContainer: AppColors.orange.withOpacity(0.3),
             ),
             dialogBackgroundColor: AppColors.blackMin,
           ),
@@ -376,10 +454,71 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       },
     );
     if (dateRange != null) {
-      setState(() {
-        startDate = dateRange.start;
-        endDate = dateRange.end;
-      });
+      final regularityType = _getRegularityType(selectedRegularity);
+      final durationInDays =
+          dateRange.end.difference(dateRange.start).inDays + 1;
+
+      if (regularityType == RegularityType.weekly && durationInDays % 7 != 0) {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: AppColors.blackMin,
+              title: Text(
+                'Предупреждение',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 18,
+                  fontFamily: AppFontFamily.uncage,
+                ),
+              ),
+              content: Text(
+                'Для еженедельного челленджа длительность должна быть кратна 7 дням.\n\nТекущая длительность: $durationInDays дней\nРекомендуемая длительность: ${((durationInDays / 7).round() * 7)} дней',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 16,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Устанавливаем рекомендуемую длительность
+                    final recommendedDays = (durationInDays / 7).round() * 7;
+                    setState(() {
+                      startDate = dateRange.start;
+                      endDate = dateRange.start
+                          .add(Duration(days: recommendedDays - 1));
+                    });
+                  },
+                  child: Text(
+                    'Исправить',
+                    style: TextStyle(
+                      color: AppColors.orange,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Закрыть',
+                    style: TextStyle(
+                      color: AppColors.grey,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          startDate = dateRange.start;
+          endDate = dateRange.end;
+        });
+      }
     }
   }
 
@@ -607,191 +746,19 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      decoration: const BoxDecoration(
-        color: AppColors.black,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'НОВЫЙ ЧЕЛЛЕНДЖ',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: AppFontFamily.uncage,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: ChallengeType.values.map((type) {
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => selectedType = type),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: selectedType == type
-                            ? AppColors.blackMin
-                            : AppColors.black,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        type.title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: selectedType == type
-                              ? AppColors.white
-                              : AppColors.grey,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildInputSection([
-                    _buildTextField(
-                      'Название',
-                      controller: nameController,
-                      hint: 'Введите название челленджа',
-                      isRequired: true,
-                    ),
-                    _buildSelectField('Иконка', 'Выбрать', onTap: () {
-                      // Показать выбор иконки
-                    }),
-                    _buildSelectField('Категория', 'Выбрать', onTap: () {
-                      // Показать выбор категории
-                    }),
-                  ]),
-                  const SizedBox(height: 16),
-                  _buildInputSection([
-                    if (selectedType == ChallengeType.personal)
-                      _buildTextField(
-                        'Я буду',
-                        controller: descriptionController,
-                        hint: 'Что должно быть на фото',
-                        value: selectedConfirmationType,
-                        onTap: _showConfirmationTypePicker,
-                      )
-                    else
-                      _buildTextField(
-                        'Каждый должен',
-                        controller: descriptionController,
-                        hint: 'Что должно быть на фото',
-                        value: selectedConfirmationType,
-                        onTap: _showConfirmationTypePicker,
-                      ),
-                  ]),
-                  const SizedBox(height: 16),
-                  _buildInputSection([
-                    _buildSelectField('Периодичность', selectedRegularity,
-                        onTap: _showRegularityPicker),
-                    _buildSelectField(
-                        'До', confirmationTime?.format(context) ?? '00:00',
-                        onTap: _showTimePicker),
-                    _buildSelectField('Начало/Конец', _formatDateRange(),
-                        onTap: _showDateRangePicker),
-                    _buildSelectField('Или', 'Проиграю $selectedBet ₽',
-                        onTap: _showBetPicker),
-                  ]),
-                  if (selectedType == ChallengeType.group) ...[
-                    const SizedBox(height: 16),
-                    _buildInputSection([
-                      _buildSlider('Количество участников', 36),
-                      _buildSwitch('Доступ по ссылке', isPublic),
-                    ]),
-                  ],
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _createChallenge,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.orange,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Создать челлендж',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            '1',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInputSection(List<Widget> children) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.blackMin,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
-      ),
-    );
+  String _getHintText() {
+    switch (selectedConfirmationType.toLowerCase()) {
+      case 'отправлять фото':
+        return 'Что должно быть на фото';
+      case 'отправлять видео':
+        return 'Что должно быть на видео';
+      case 'отправлять геолокацию':
+        return 'Куда нужно прийти';
+      case 'отправлять текст':
+        return 'Что нужно написать';
+      default:
+        return 'Опишите задание';
+    }
   }
 
   Widget _buildTextField(
@@ -802,8 +769,12 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     bool isRequired = false,
     VoidCallback? onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.blackMin,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -830,31 +801,34 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                 ],
               ),
               if (value != null)
-                Row(
-                  children: [
-                    Text(
-                      value,
-                      style: const TextStyle(
-                        color: AppColors.grey,
+                InkWell(
+                  onTap: onTap,
+                  child: Row(
+                    children: [
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          color: AppColors.grey,
+                        ),
                       ),
-                    ),
-                    if (onTap != null)
-                      const Icon(
-                        Icons.chevron_right,
-                        color: AppColors.grey,
-                        size: 20,
-                      ),
-                  ],
+                      if (onTap != null)
+                        const Icon(
+                          Icons.chevron_right,
+                          color: AppColors.grey,
+                          size: 20,
+                        ),
+                    ],
+                  ),
                 ),
             ],
           ),
-          if (hint != null && onTap == null) ...[
-            const SizedBox(height: 8),
+          if (hint != null) ...[
+            const SizedBox(height: 16),
             TextField(
               controller: controller,
               style: const TextStyle(color: AppColors.white),
               decoration: InputDecoration(
-                hintText: hint,
+                hintText: _getHintText(),
                 hintStyle: TextStyle(color: AppColors.grey.withOpacity(0.5)),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
@@ -866,120 +840,70 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     );
   }
 
-  Widget _buildSelectField(String label, String value,
-      {required VoidCallback onTap}) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.bold,
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.blackMin,
+        title: Text(
+          'Ошибка',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 18,
+            fontFamily: AppFontFamily.uncage,
+          ),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 16,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                color: AppColors.orange,
+                fontSize: 16,
               ),
             ),
-            Row(
-              children: [
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: AppColors.grey,
-                  ),
-                ),
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.grey,
-                  size: 20,
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSlider(String label, double value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            const Text('1', style: TextStyle(color: AppColors.grey)),
-            Expanded(
-              child: Column(
-                children: [
-                  Slider(
-                    value: maxParticipants?.toDouble() ?? value,
-                    min: 1,
-                    max: 100,
-                    activeColor: AppColors.orange,
-                    inactiveColor: AppColors.grey.withOpacity(0.2),
-                    onChanged: (newValue) {
-                      setState(() {
-                        maxParticipants = newValue.toInt();
-                      });
-                    },
-                  ),
-                  Text(
-                    '${maxParticipants ?? value.toInt()}',
-                    style: const TextStyle(
-                      color: AppColors.orange,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Text('100', style: TextStyle(color: AppColors.grey)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSwitch(String label, bool value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Switch(
-          value: value,
-          onChanged: (newValue) {
-            setState(() {
-              isPublic = newValue;
-            });
-          },
-          activeColor: AppColors.orange,
-        ),
-      ],
-    );
-  }
-
-  void _createChallenge() async {
+  Future<void> _createChallenge() async {
     if (nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Введите название челленджа')),
       );
       return;
+    }
+
+    // Проверяем кратность недели для еженедельных челленджей
+    if (selectedRegularity == 'Каждую неделю' ||
+        selectedRegularity == '2 раз(а) в неделю' ||
+        selectedRegularity.contains('раза в неделю')) {
+      if (startDate == null || endDate == null) {
+        _showErrorDialog(
+          context,
+          'Пожалуйста, выберите даты начала и окончания челленджа',
+        );
+        return;
+      }
+
+      final durationInDays = endDate!.difference(startDate!).inDays + 1;
+      if (durationInDays % 7 != 0) {
+        _showErrorDialog(
+          context,
+          'Для еженедельного челленджа длительность должна быть кратна 7 дням.\n\nТекущая длительность: $durationInDays дней\nРекомендуемая длительность: ${((durationInDays / 7).round() * 7)} дней\n\nПожалуйста, измените даты начала и окончания.',
+        );
+        return;
+      }
     }
 
     final now = DateTime.now();
@@ -1070,5 +994,417 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         );
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.9,
+      decoration: const BoxDecoration(
+        color: AppColors.black,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.close, color: AppColors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'НОВЫЙ ЧЕЛЛЕНДЖ',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: AppFontFamily.uncage,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: ChallengeType.values.map((type) {
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => selectedType = type),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: selectedType == type
+                            ? AppColors.blackMin
+                            : AppColors.black,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        type.title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: selectedType == type
+                              ? AppColors.white
+                              : AppColors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildInputSection([
+                    _buildTextField(
+                      'Название',
+                      controller: nameController,
+                      hint: 'Введите название челленджа',
+                      isRequired: true,
+                    ),
+                    _buildSelectField('Иконка', 'Выбрать', onTap: () {
+                      // Показать выбор иконки
+                    }),
+                    _buildSelectField('Категория', 'Выбрать', onTap: () {
+                      // Показать выбор категории
+                    }),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildInputSection([
+                    if (selectedType == ChallengeType.personal)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildTextField(
+                            'Я буду',
+                            controller: descriptionController,
+                            value: selectedConfirmationType,
+                            onTap: _showConfirmationTypePicker,
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextField(
+                              controller: descriptionController,
+                              style: const TextStyle(color: AppColors.white),
+                              decoration: InputDecoration(
+                                hintText: selectedConfirmationType ==
+                                        'Отправлять фото'
+                                    ? 'Что должно быть на фото'
+                                    : selectedConfirmationType ==
+                                            'Отправлять видео'
+                                        ? 'Что должно быть на видео'
+                                        : selectedConfirmationType ==
+                                                'Отправлять геолокацию'
+                                            ? 'Куда нужно прийти'
+                                            : 'Что нужно написать',
+                                hintStyle: TextStyle(
+                                    color: AppColors.grey.withOpacity(0.5)),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildTextField(
+                            'Каждый должен',
+                            controller: descriptionController,
+                            value: selectedConfirmationType,
+                            onTap: _showConfirmationTypePicker,
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextField(
+                              controller: descriptionController,
+                              style: const TextStyle(color: AppColors.white),
+                              decoration: InputDecoration(
+                                hintText: selectedConfirmationType ==
+                                        'Отправлять фото'
+                                    ? 'Что должно быть на фото'
+                                    : selectedConfirmationType ==
+                                            'Отправлять видео'
+                                        ? 'Что должно быть на видео'
+                                        : selectedConfirmationType ==
+                                                'Отправлять геолокацию'
+                                            ? 'Куда нужно прийти'
+                                            : 'Что нужно написать',
+                                hintStyle: TextStyle(
+                                    color: AppColors.grey.withOpacity(0.5)),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildInputSection([
+                    _buildSelectField('Периодичность', selectedRegularity,
+                        onTap: _showRegularityPicker),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildInputSection([
+                    _buildSelectField(
+                        'До', confirmationTime?.format(context) ?? '00:00',
+                        onTap: _showTimePicker),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildInputSection([
+                    _buildSelectField('Начало/Конец', _formatDateRange(),
+                        onTap: _showDateRangePicker),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildInputSection([
+                    _buildSelectField('Или', 'Проиграю $selectedBet ₽',
+                        onTap: _showBetPicker),
+                  ]),
+                  if (selectedType == ChallengeType.group) ...[
+                    const SizedBox(height: 16),
+                    _buildInputSection([
+                      _buildSlider('Количество участников', 36),
+                      _buildSwitch('Доступ по ссылке', isPublic),
+                    ]),
+                  ],
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _createChallenge,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.orange,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Создать челлендж',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputSection(List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.blackMin,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildSelectField(String label, String value,
+      {required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: AppColors.grey,
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right,
+                  color: AppColors.grey,
+                  size: 20,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSlider(String label, double value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Text('1', style: TextStyle(color: AppColors.grey)),
+            Expanded(
+              child: Column(
+                children: [
+                  SliderTheme(
+                    data: SliderThemeData(
+                      overlayShape: SliderComponentShape.noOverlay,
+                    ),
+                    child: Slider(
+                      value: maxParticipants?.toDouble() ?? value,
+                      min: 1,
+                      max: 100,
+                      activeColor: AppColors.orange,
+                      inactiveColor: AppColors.grey.withOpacity(0.2),
+                      onChanged: (newValue) {
+                        setState(() {
+                          maxParticipants = newValue.toInt();
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    '${maxParticipants ?? value.toInt()}',
+                    style: const TextStyle(
+                      color: AppColors.orange,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Text('100', style: TextStyle(color: AppColors.grey)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSwitch(String label, bool value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Switch(
+          value: value,
+          onChanged: (newValue) {
+            setState(() {
+              isPublic = newValue;
+            });
+            if (newValue) {
+              showDialog(
+                context: context,
+                barrierColor: Colors.black.withOpacity(0.8),
+                builder: (context) => Dialog(
+                  backgroundColor: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.blackMin,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Присоединиться к челленджу\nсмогут только люди,\nу которых есть ссылка',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.black,
+                            minimumSize: const Size(double.infinity, 48),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Понятно',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
+          activeColor: AppColors.orange,
+        ),
+      ],
+    );
   }
 }
