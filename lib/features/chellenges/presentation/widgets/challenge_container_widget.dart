@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../common/utils/colors.dart';
-import '../../../../freezed_models/challenge_model.dart';
+import '../../../../models/challenge_model.dart';
 
 class ChallengeContainer extends StatelessWidget {
   final ChallengeModel challenge;
@@ -16,6 +17,17 @@ class ChallengeContainer extends StatelessWidget {
     required this.onArchive,
     this.isArchived = false,
   });
+
+  String _formatDateRange(ChallengeModel challenge) {
+    final DateFormat formatter = DateFormat('dd.MM.yy');
+    final startDate = formatter.format(DateTime.parse(challenge.start_date));
+    final endDate = formatter.format(DateTime.parse(challenge.end_date));
+    final type = challenge.participation_type == 'PERSONAL'
+        ? 'персональный'
+        : 'групповой';
+
+    return '$startDate - $endDate ($type)';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +46,7 @@ class ChallengeContainer extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
             ),
-            child: SvgPicture.asset(challenge.imageUrl),
+            child: SvgPicture.asset('assets/icons/${challenge.icon}.svg'),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -43,7 +55,7 @@ class ChallengeContainer extends StatelessWidget {
               children: [
                 Text(
                   challenge.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -51,8 +63,8 @@ class ChallengeContainer extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Дата: ${challenge.date.toLocal().toString().split(' ')[0]}',
-                  style: TextStyle(
+                  _formatDateRange(challenge),
+                  style: const TextStyle(
                     color: AppColors.grey,
                     fontSize: 14,
                   ),
@@ -60,9 +72,8 @@ class ChallengeContainer extends StatelessWidget {
               ],
             ),
           ),
-          // Кнопка со стрелкой
           IconButton(
-            icon: Icon(Icons.arrow_forward, color: AppColors.white),
+            icon: const Icon(Icons.arrow_forward, color: AppColors.white),
             onPressed: () {
               context.push('/challenge-details', extra: challenge);
             },

@@ -1,5 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 class ReminderSettings {
   final bool isEnabled;
   final Map<int, int> reminderTimes;

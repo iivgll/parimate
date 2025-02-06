@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
-import 'package:parimate/features/chellenges/presentation/widgets/create_challenge_sheet.dart';
+import 'package:parimate/features/chellenges/state/challenges_state.dart';
 
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/custom_button.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
 import '../logic/challenges_notifier.dart';
-import '../state/challenges_state.dart';
 
 class ChallengesPage extends ConsumerWidget {
   const ChallengesPage({super.key});
@@ -31,10 +30,10 @@ class ChallengesPage extends ConsumerWidget {
               const SizedBox(height: 16),
               _buildToggleButtons(challengesState, challengesNotifier),
               const SizedBox(height: 24),
-              if (challengesState.view == ChallengesView.mine)
-                _buildChallengesList(challengesState, challengesNotifier)
+              if (challengesState.value?.view == ChallengesView.mine)
+                _buildChallengesList(challengesState)
               else
-                _buildNewChallenges(context),
+                _buildNewChallenges(challengesState),
             ],
           ),
         ),
@@ -54,8 +53,8 @@ class ChallengesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildToggleButtons(
-      ChallengesState challengesState, ChallengesNotifier challengesNotifier) {
+  Widget _buildToggleButtons(AsyncValue<ChallengesState> challengesState,
+      ChallengesNotifier challengesNotifier) {
     return Row(
       children: [
         CustomButton(
@@ -63,7 +62,7 @@ class ChallengesPage extends ConsumerWidget {
             challengesNotifier.setView(ChallengesView.mine);
           },
           text: 'Мои',
-          backgroundColor: challengesState.view == ChallengesView.mine
+          backgroundColor: challengesState.value?.view == ChallengesView.mine
               ? AppColors.blackMin
               : AppColors.black,
           textColor: AppColors.white,
@@ -81,9 +80,10 @@ class ChallengesPage extends ConsumerWidget {
             challengesNotifier.setView(ChallengesView.newChallenges);
           },
           text: 'Новый',
-          backgroundColor: challengesState.view == ChallengesView.newChallenges
-              ? AppColors.blackMin
-              : AppColors.black,
+          backgroundColor:
+              challengesState.value?.view == ChallengesView.newChallenges
+                  ? AppColors.blackMin
+                  : AppColors.black,
           textColor: AppColors.white,
           horizontalPadding: 24.0,
           verticalPadding: 8.0,
@@ -97,226 +97,73 @@ class ChallengesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildNewChallenges(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Логика присоединения по ссылке
-                },
-                icon: const Icon(Icons.link, color: AppColors.white),
-                label: const Text(
-                  'Присоединиться\nпо ссылке',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 14,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blackMin,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => const CreateChallengeSheet(),
-                  );
-                },
-                icon: const Icon(Icons.edit, color: AppColors.white),
-                label: const Text(
-                  'Создать\nчеллендж',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 14,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blackMin,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'ДОСТУПНЫЕ',
-          style: TextStyle(
-            fontFamily: AppFontFamily.uncage,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _buildCategoryChip('Популярные', true),
-              _buildCategoryChip('Спорт', false),
-              _buildCategoryChip('Саморазвитие', false),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildAvailableChallenge(
-          'Регулярный спорт',
-          '5.000',
-          Icons.sports_basketball,
-          '1',
-        ),
-        const SizedBox(height: 8),
-        _buildAvailableChallenge(
-          'Читательский клуб',
-          '1.000',
-          Icons.book,
-          '1',
-        ),
-        const SizedBox(height: 8),
-        _buildAvailableChallenge(
-          'Отказ от смартфона',
-          '500',
-          Icons.phone_android,
-          '1',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCategoryChip(String label, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: FilterChip(
-        label: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? AppColors.white : AppColors.grey,
-          ),
-        ),
-        selected: isSelected,
-        onSelected: (bool value) {
-          // Логика выбора категории
-        },
-        backgroundColor: AppColors.black,
-        selectedColor: AppColors.blackMin,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAvailableChallenge(
-      String title, String price, IconData icon, String count) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.blackMin,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.white),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Взнос: $price',
-                  style: const TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.orange.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  count,
-                  style: const TextStyle(
-                    color: AppColors.orange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.orange,
-                  size: 16,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChallengesList(
-      ChallengesState challengesState, ChallengesNotifier challengesNotifier) {
-    if (challengesState.challenges.isEmpty) {
-      return const Center(
+  Widget _buildNewChallenges(AsyncValue<ChallengesState> challengesState) {
+    return challengesState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
         child: Text(
-          'У вас пока нет челленджей',
-          style: TextStyle(
-            color: AppColors.grey,
-            fontSize: 16,
-          ),
+          'Ошибка загрузки челленджей: $error',
+          style: const TextStyle(color: AppColors.grey),
         ),
-      );
-    }
+      ),
+      data: (state) {
+        if (state.newChallenges.isEmpty) {
+          return const Center(
+            child: Text(
+              'Нет доступных челленджей',
+              style: TextStyle(color: AppColors.grey),
+            ),
+          );
+        }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: challengesState.challenges.length,
-      itemBuilder: (context, index) {
-        final challenge = challengesState.challenges[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: ChallengeContainer(
-            challenge: challenge,
-            onArchive: () {
-              challengesNotifier.archiveChallenge(index);
-            },
-          ),
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: state.newChallenges.length,
+          itemBuilder: (context, index) {
+            final challenge = state.newChallenges[index];
+            return ChallengeContainer(
+              challenge: challenge,
+              onArchive: () {}, // Для новых челленджей архивация не нужна
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildChallengesList(AsyncValue<ChallengesState> challengesState) {
+    return challengesState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
+        child: Text(
+          'Ошибка загрузки челленджей: $error',
+          style: const TextStyle(color: AppColors.grey),
+        ),
+      ),
+      data: (state) {
+        if (state.challenges.isEmpty) {
+          return const Center(
+            child: Text(
+              'У вас пока нет челленджей',
+              style: TextStyle(color: AppColors.grey),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: state.challenges.length,
+          itemBuilder: (context, index) {
+            final challenge = state.challenges[index];
+            return ChallengeContainer(
+              challenge: challenge,
+              onArchive: () {
+                // Обработка архивации
+              },
+            );
+          },
         );
       },
     );

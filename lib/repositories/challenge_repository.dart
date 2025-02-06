@@ -4,6 +4,7 @@ import '../models/challenge/challenge.dart';
 import '../models/challenge/challenge_creation.dart';
 import '../models/challenge_statistics.dart';
 import '../models/challenge_action_price.dart';
+import '../models/challenge_model.dart';
 
 class ChallengeRepository {
   final Dio _dio;
@@ -102,17 +103,17 @@ class ChallengeRepository {
     }
   }
 
-  Future<List<Challenge>> getNewChallenges({required String userTgId}) async {
+  Future<List<ChallengeModel>> getNewChallenges() async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/new',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': '44'}, // TODO: получать реальный tg_id
       );
       return (response.data as List)
-          .map((json) => Challenge.fromJson(json))
+          .map((json) => ChallengeModel.fromJson(json))
           .toList();
-    } on DioException catch (e) {
-      throw _handleDioError(e);
+    } catch (e) {
+      throw Exception('Failed to load new challenges: $e');
     }
   }
 
@@ -149,6 +150,20 @@ class ChallengeRepository {
   }
 
   // Аналогичные методы для return-price и registration-price...
+
+  Future<List<ChallengeModel>> getMyChallenges() async {
+    try {
+      final response = await _dio.get(
+        '/api/v2/challenge/my',
+        queryParameters: {'user_tg_id': '44'},
+      );
+      return (response.data as List)
+          .map((json) => ChallengeModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to load challenges: $e');
+    }
+  }
 
   Exception _handleDioError(DioException error) {
     if (error.response?.statusCode == 422) {

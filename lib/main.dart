@@ -65,6 +65,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.dark,
           primaryColor: AppColors.orange,
+          canvasColor: AppColors.orange,
+          progressIndicatorTheme: const ProgressIndicatorThemeData(
+            color: AppColors.orange,
+          ),
           fontFamily: 'UbuntuSans',
           appBarTheme: const AppBarTheme(
             backgroundColor: AppColors.black,

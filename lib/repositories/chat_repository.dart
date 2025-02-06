@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 import '../models/chat/chat.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatRepository {
   final Dio _dio;

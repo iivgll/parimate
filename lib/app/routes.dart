@@ -8,7 +8,7 @@ import '../features/chellenges/presentation/chellenges_page.dart';
 import '../features/coin/presentation/coin_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/chats/presentation/chats_page.dart';
-import '../freezed_models/challenge_model.dart';
+import '../models/challenge_model.dart';
 
 final router = GoRouter(
   initialLocation: '/',
