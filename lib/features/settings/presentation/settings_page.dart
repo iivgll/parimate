@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parimate/common/utils/font_family.dart';
-import 'package:parimate/providers/settings_provider.dart';
+import 'package:parimate/features/settings/logic/settings_logic.dart';
 
 import '../../../common/utils/colors.dart';
 
@@ -57,7 +57,7 @@ class SettingsPage extends ConsumerWidget {
             Expanded(
               child: Consumer(
                 builder: (context, ref, _) {
-                  final settings = ref.watch(settingsProvider);
+                  final settings = ref.watch(settingsNotifierProvider);
                   final selectedMinutes =
                       settings.reminderTimes[reminderNumber];
 
@@ -91,7 +91,7 @@ class SettingsPage extends ConsumerWidget {
                               : null,
                           onTap: () {
                             ref
-                                .read(settingsProvider.notifier)
+                                .read(settingsNotifierProvider.notifier)
                                 .setReminderTime(reminderNumber, minutes);
                             Navigator.pop(context);
                           },
@@ -110,7 +110,7 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
+    final settings = ref.watch(settingsNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -161,7 +161,7 @@ class SettingsPage extends ConsumerWidget {
                         value: settings.isEnabled,
                         onChanged: (value) {
                           ref
-                              .read(settingsProvider.notifier)
+                              .read(settingsNotifierProvider.notifier)
                               .toggleReminders(value);
                         },
                         activeColor: AppColors.orange,
@@ -185,8 +185,9 @@ class SettingsPage extends ConsumerWidget {
 
   Widget _buildReminderItem(
       BuildContext context, WidgetRef ref, int reminderNumber, String title) {
-    final value =
-        ref.watch(settingsProvider.notifier).getReminderTime(reminderNumber);
+    final value = ref
+        .watch(settingsNotifierProvider.notifier)
+        .getReminderTime(reminderNumber);
 
     return InkWell(
       onTap: () => _showReminderTimePicker(context, ref, reminderNumber, title),

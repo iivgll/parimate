@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:parimate/common/utils/icons.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/create_challenge_sheet.dart';
 
@@ -8,18 +7,16 @@ import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/custom_button.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
-import '../../../freezed_models/challenge_model.dart';
-import '../../../providers/challenge_provider.dart';
-import '../challenges_notifier.dart';
-import '../challenges_state.dart';
+import '../logic/challenges_notifier.dart';
+import '../state/challenges_state.dart';
 
 class ChallengesPage extends ConsumerWidget {
   const ChallengesPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final challengesState = ref.watch(challengesProvider);
-    final challengesNotifier = ref.read(challengesProvider.notifier);
+    final challengesState = ref.watch(challengesNotifierProvider);
+    final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
 
     return Scaffold(
       backgroundColor: AppColors.black,
@@ -34,7 +31,7 @@ class ChallengesPage extends ConsumerWidget {
               const SizedBox(height: 16),
               _buildToggleButtons(challengesState, challengesNotifier),
               const SizedBox(height: 24),
-              if (challengesState.view == ChallengeView.mine)
+              if (challengesState.view == ChallengesView.mine)
                 _buildChallengesList(challengesState, challengesNotifier)
               else
                 _buildNewChallenges(context),
@@ -63,10 +60,10 @@ class ChallengesPage extends ConsumerWidget {
       children: [
         CustomButton(
           onPressed: () {
-            challengesNotifier.setView(ChallengeView.mine);
+            challengesNotifier.setView(ChallengesView.mine);
           },
           text: 'Мои',
-          backgroundColor: challengesState.view == ChallengeView.mine
+          backgroundColor: challengesState.view == ChallengesView.mine
               ? AppColors.blackMin
               : AppColors.black,
           textColor: AppColors.white,
@@ -81,10 +78,10 @@ class ChallengesPage extends ConsumerWidget {
         ),
         CustomButton(
           onPressed: () {
-            challengesNotifier.setView(ChallengeView.newChallenges);
+            challengesNotifier.setView(ChallengesView.newChallenges);
           },
           text: 'Новый',
-          backgroundColor: challengesState.view == ChallengeView.newChallenges
+          backgroundColor: challengesState.view == ChallengesView.newChallenges
               ? AppColors.blackMin
               : AppColors.black,
           textColor: AppColors.white,

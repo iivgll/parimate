@@ -40,7 +40,8 @@ class ChallengeRepository {
     }
   }
 
-  Future<Challenge> createChallengeFromSchema(ChallengeCreationSchema challenge) async {
+  Future<Challenge> createChallengeFromSchema(
+      ChallengeCreationSchema challenge) async {
     try {
       final response = await _dio.post(
         '/api/v2/challenge',

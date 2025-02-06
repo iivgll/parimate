@@ -66,21 +66,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     }
   }
 
-  bool _validateChallengeDuration(
-      DateTime? startDate, DateTime? endDate, String selectedRegularity) {
-    if (startDate == null || endDate == null) return false;
-
-    final durationInDays = endDate.difference(startDate).inDays + 1;
-    final regularityType = _getRegularityType(selectedRegularity);
-
-    if (regularityType == RegularityType.weekly) {
-      // Для еженедельных челленджей длительность должна быть кратна 7 дням
-      return durationInDays % 7 == 0;
-    }
-
-    return true;
-  }
-
   void _showRegularityPicker() {
     showModalBottomSheet(
       context: context,

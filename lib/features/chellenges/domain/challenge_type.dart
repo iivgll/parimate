@@ -10,4 +10,4 @@ enum ChallengeType {
         return 'Групповой';
     }
   }
-} 
+}

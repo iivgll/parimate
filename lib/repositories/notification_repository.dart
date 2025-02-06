@@ -59,6 +59,32 @@ class NotificationRepository {
     }
   }
 
+  Future<void> activateNotifications({
+    required String userTgId,
+  }) async {
+    try {
+      await _dio.post(
+        '/api/v2/notification/activate',
+        queryParameters: {'user_tg_id': userTgId},
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  Future<void> disableNotifications({
+    required String userTgId,
+  }) async {
+    try {
+      await _dio.delete(
+        '/api/v2/notification/disable',
+        queryParameters: {'user_tg_id': userTgId},
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
   Exception _handleDioError(DioException error) {
     if (error.response?.statusCode == 422) {
       return ValidationException(
