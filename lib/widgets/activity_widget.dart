@@ -119,8 +119,7 @@ class ActivityWidget extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           ...challenges
-              .map((challenge) => _buildTaskItem(challenge.name, false))
-              .toList(),
+              .map((challenge) => _buildTaskItem(challenge.name, false)),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {

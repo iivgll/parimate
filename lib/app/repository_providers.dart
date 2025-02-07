@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/providers.dart';
 import '../repositories/user_repository.dart';
 import '../repositories/chat_repository.dart';
 import '../repositories/challenge_repository.dart';
@@ -8,6 +9,7 @@ import '../repositories/notification_repository.dart';
 import '../repositories/file_repository.dart';
 import '../repositories/code_word_repository.dart';
 import '../repositories/coins_repository.dart';
+import '../repositories/metadata_repository.dart';
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   throw UnimplementedError();
@@ -44,4 +46,9 @@ final codeWordRepositoryProvider = Provider<CodeWordRepository>((ref) {
 
 final coinsRepositoryProvider = Provider<CoinsRepository>((ref) {
   throw UnimplementedError();
+});
+
+final metadataRepositoryProvider = Provider<MetadataRepository>((ref) {
+  final dio = ref.watch(dioProvider);
+  return MetadataRepository(dio);
 });

@@ -1,5 +1,5 @@
 import 'package:parimate/features/home/state/user_statistics_state.dart';
-import 'package:parimate/providers/repository_providers.dart';
+import 'package:parimate/app/repository_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/user_statistics.dart';
 

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/colors.dart';
 import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/chellenges/domain/challenge_type.dart';
-import 'package:parimate/providers/repository_providers.dart';
+import 'package:parimate/app/repository_providers.dart';
 import 'package:intl/intl.dart';
 
 enum RegularityType { daily, weekly, specificDays }

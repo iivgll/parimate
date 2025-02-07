@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user/user.dart';
 import '../models/challenge/challenge.dart';
-import '../providers/repository_providers.dart';
+import '../app/repository_providers.dart';
 
 class AppState {
   final User? user;

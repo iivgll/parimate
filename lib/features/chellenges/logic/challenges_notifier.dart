@@ -3,7 +3,7 @@ import 'package:parimate/models/challenge_statistics.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
-import '../../../providers/repository_providers.dart';
+import '../../../app/repository_providers.dart';
 
 part 'challenges_notifier.g.dart';
 
@@ -38,7 +38,6 @@ class ChallengesNotifier extends _$ChallengesNotifier {
                 userTgId: '44',
                 challengeId: challengeId,
               );
-      print('Challenge Statistics Response: $result'); // Для отладки
       return result;
     } catch (e, stackTrace) {
       print(

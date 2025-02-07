@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../app/metadata_notifier.dart';
 import '../state/app_state.dart';
 
 class AppInitializer extends ConsumerWidget {
@@ -14,7 +15,16 @@ class AppInitializer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Добавляем слушатель для метаданных
+    ref.listen(metadataProvider, (previous, next) {
+      print('Metadata state changed: $next');
+    });
+
+    // Принудительно инициализируем провайдер метаданных
+    ref.watch(metadataProvider);
+
     final appState = ref.watch(appStateProvider);
+    final metadataState = ref.watch(metadataProvider);
 
     // Инициализируем приложение при первой загрузке
     ref.listen<AppState>(appStateProvider, (previous, next) {
@@ -28,13 +38,18 @@ class AppInitializer extends ConsumerWidget {
       }
     });
 
-    if (appState.user == null && !appState.isLoading) {
+    // Инициализируем приложение при первой загрузке
+    if (!appState.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(appStateProvider.notifier).initializeApp(userTgId);
+        if (appState.user == null) {
+          ref.read(appStateProvider.notifier).initializeApp(userTgId);
+          ref.read(metadataProvider.notifier).refresh();
+        }
       });
     }
 
-    if (appState.isLoading) {
+    // Показываем индикатор загрузки, если что-то загружается
+    if (appState.isLoading || metadataState.isLoading) {
       return const Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
@@ -45,7 +60,8 @@ class AppInitializer extends ConsumerWidget {
       );
     }
 
-    if (appState.error != null) {
+    // Показываем ошибку, если что-то пошло не так
+    if (appState.error != null || metadataState.hasError) {
       return Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
@@ -58,6 +74,7 @@ class AppInitializer extends ConsumerWidget {
                 ElevatedButton(
                   onPressed: () {
                     ref.read(appStateProvider.notifier).initializeApp(userTgId);
+                    ref.read(metadataProvider.notifier).refresh();
                   },
                   child: const Text('Повторить'),
                 ),

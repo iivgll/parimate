@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:parimate/providers/repository_providers.dart';
 import 'package:parimate/widgets/app_initializer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'app/repository_providers.dart';
 import 'app/routes.dart';
 import 'common/utils/colors.dart';
 import 'core/api/api_client.dart';
@@ -16,6 +16,7 @@ import 'repositories/notification_repository.dart';
 import 'repositories/file_repository.dart';
 import 'repositories/code_word_repository.dart';
 import 'repositories/coins_repository.dart';
+import 'repositories/metadata_repository.dart';
 
 void main() {
   final apiClient = ApiClient(baseUrl: 'http://185.112.102.11:8000');
@@ -29,6 +30,7 @@ void main() {
   final fileRepository = FileRepository(apiClient.dio);
   final codeWordRepository = CodeWordRepository(apiClient.dio);
   final coinsRepository = CoinsRepository(apiClient.dio);
+  final metadataRepository = MetadataRepository(apiClient.dio);
 
   runApp(
     ProviderScope(
@@ -45,6 +47,7 @@ void main() {
         fileRepositoryProvider.overrideWithValue(fileRepository),
         codeWordRepositoryProvider.overrideWithValue(codeWordRepository),
         coinsRepositoryProvider.overrideWithValue(coinsRepository),
+        metadataRepositoryProvider.overrideWithValue(metadataRepository),
       ],
       child: const MyApp(),
     ),

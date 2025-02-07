@@ -1,4 +1,4 @@
-import 'package:parimate/providers/repository_providers.dart';
+import 'package:parimate/app/repository_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/chats_state.dart';
 

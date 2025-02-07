@@ -1,27 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'challenges_notifier.dart';
+part of 'metadata_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$challengesNotifierHash() =>
-    r'5593cf82fd94b75b14b76afb1eb5972919dabce6';
+String _$metadataRepositoryHash() =>
+    r'69e45e0531acc7d33a9c0fabb7aceed1bfe3d69f';
 
-/// See also [ChallengesNotifier].
-@ProviderFor(ChallengesNotifier)
-final challengesNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    ChallengesNotifier, ChallengesState>.internal(
-  ChallengesNotifier.new,
-  name: r'challengesNotifierProvider',
+/// See also [metadataRepository].
+@ProviderFor(metadataRepository)
+final metadataRepositoryProvider =
+    AutoDisposeProvider<MetadataRepository>.internal(
+  metadataRepository,
+  name: r'metadataRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$challengesNotifierHash,
+      : _$metadataRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ChallengesNotifier = AutoDisposeAsyncNotifier<ChallengesState>;
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MetadataRepositoryRef = AutoDisposeProviderRef<MetadataRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
