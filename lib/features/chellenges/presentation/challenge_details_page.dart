@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
+import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/challenge_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChallengeDetailsPage extends StatelessWidget {
+class ChallengeDetailsPage extends ConsumerWidget {
   final ChallengeModel challenge;
 
   const ChallengeDetailsPage({super.key, required this.challenge});
@@ -17,7 +20,7 @@ class ChallengeDetailsPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.black,
       appBar: AppBar(
@@ -61,7 +64,7 @@ class ChallengeDetailsPage extends StatelessWidget {
             const SizedBox(height: 24),
             _buildRulesBlock(),
             const SizedBox(height: 24),
-            _buildConfirmationBlock(),
+            _buildConfirmationBlock(context, ref),
             const SizedBox(height: 24),
             _buildParticipantsBlock(),
             const SizedBox(height: 32),
@@ -165,8 +168,11 @@ class ChallengeDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildConfirmationBlock() {
-    // TODO: Получать реальные данные о прогрессе
+  Widget _buildConfirmationBlock(BuildContext context, WidgetRef ref) {
+    final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
+    final statisticsFuture =
+        challengesNotifier.getChallengeStatistics(challenge.id);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -190,49 +196,101 @@ class ChallengeDetailsPage extends StatelessWidget {
             ),
           ],
         ),
-        Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.blackMin,
-                borderRadius: BorderRadius.circular(8),
+        FutureBuilder<UserChallengeStatisticsSchema>(
+          future: statisticsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Text(
+                'Ошибка загрузки статистики: ${snapshot.error}',
+                style: const TextStyle(color: AppColors.grey),
+              );
+            }
+            if (!snapshot.hasData || snapshot.data!.weeklyStats.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.blackMin,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Нет подтверждений',
+                    style: TextStyle(
+                      color: AppColors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final statistics = snapshot.data!;
+            final total = statistics.weeklyStats.fold(
+              (0, 0),
+              (prev, curr) => (
+                prev.$1 + curr.expected,
+                prev.$2 + curr.approved,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  _buildProgressRow('Всего', 20, 30),
-                  _buildProgressRow('Неделя 1', 10, 10),
-                  _buildProgressRow('Неделя 2', 10, 10),
-                  _buildProgressRow('Неделя 3', 0, 10),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Реализовать загрузку подтверждения
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blackMin,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
+            );
+
+            return Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.blackMin,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                ),
-                child: const Text(
-                  '+ Загрузить подтверждение',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProgressRow(
+                        'Всего',
+                        total.$2,
+                        total.$1,
+                      ),
+                      if (statistics.weeklyStats.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ...statistics.weeklyStats.map(
+                          (week) => _buildProgressRow(
+                            'Неделя ${week.weekNumber}',
+                            week.approved,
+                            week.expected,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-              ),
-            ),
-          ],
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // TODO: Реализовать загрузку подтверждения
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.blackMin,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      '+ Загрузить подтверждение',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );

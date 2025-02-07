@@ -3,24 +3,34 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'user_challenge_statistics.freezed.dart';
 part 'user_challenge_statistics.g.dart';
 
+/// Статистика пользователя по челленджу
 @freezed
 class UserChallengeStatisticsSchema with _$UserChallengeStatisticsSchema {
   const factory UserChallengeStatisticsSchema({
-    required List<WeekResponsesSchema> userStatistics,
+    /// Статистика по неделям
+    @JsonKey(name: 'user_statistics')
+    @Default([])
+    List<WeekStatistics> weeklyStats,
   }) = _UserChallengeStatisticsSchema;
 
   factory UserChallengeStatisticsSchema.fromJson(Map<String, dynamic> json) =>
       _$UserChallengeStatisticsSchemaFromJson(json);
 }
 
+/// Статистика за одну неделю
 @freezed
-class WeekResponsesSchema with _$WeekResponsesSchema {
-  const factory WeekResponsesSchema({
-    required int weekNum,
-    required int expected,
-    required int approved,
-  }) = _WeekResponsesSchema;
+class WeekStatistics with _$WeekStatistics {
+  const factory WeekStatistics({
+    /// Номер недели
+    @JsonKey(name: 'week_num') required int weekNumber,
 
-  factory WeekResponsesSchema.fromJson(Map<String, dynamic> json) =>
-      _$WeekResponsesSchemaFromJson(json);
+    /// Ожидаемое количество подтверждений
+    required int expected,
+
+    /// Количество одобренных подтверждений
+    required int approved,
+  }) = _WeekStatistics;
+
+  factory WeekStatistics.fromJson(Map<String, dynamic> json) =>
+      _$WeekStatisticsFromJson(json);
 }

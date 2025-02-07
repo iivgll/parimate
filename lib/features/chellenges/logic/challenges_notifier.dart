@@ -1,4 +1,5 @@
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
+import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
 import '../../../providers/repository_providers.dart';
@@ -26,6 +27,18 @@ class ChallengesNotifier extends _$ChallengesNotifier {
     } catch (e) {
       // В реальном приложении здесь должна быть обработка ошибок
       return const ChallengesState();
+    }
+  }
+
+  Future<UserChallengeStatisticsSchema> getChallengeStatistics(
+      int challengeId) async {
+    try {
+      return await ref.read(userRepositoryProvider).getUserChallengeStatistics(
+            userTgId: '44', // TODO: получать реальный ID
+            challengeId: challengeId,
+          );
+    } catch (e) {
+      throw Exception('Failed to load statistics: $e');
     }
   }
 

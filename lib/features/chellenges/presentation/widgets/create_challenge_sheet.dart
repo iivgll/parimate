@@ -149,7 +149,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                         },
                       ),
                     );
-                  }).toList(),
+                  }),
                   if (selectedRegularity == '2 раз(а) в неделю') ...[
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),

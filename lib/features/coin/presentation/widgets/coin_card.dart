@@ -12,12 +12,12 @@ class CoinCard extends StatelessWidget {
   final VoidCallback onBuy;
 
   const CoinCard({
-    Key? key,
+    super.key,
     required this.coinAmount,
     required this.coinOptionTextStyle,
     required this.buyTextStyle,
     required this.onBuy,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

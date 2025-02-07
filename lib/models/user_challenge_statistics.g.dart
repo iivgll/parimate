@@ -9,30 +9,30 @@ part of 'user_challenge_statistics.dart';
 _$UserChallengeStatisticsSchemaImpl
     _$$UserChallengeStatisticsSchemaImplFromJson(Map<String, dynamic> json) =>
         _$UserChallengeStatisticsSchemaImpl(
-          userStatistics: (json['userStatistics'] as List<dynamic>)
-              .map((e) =>
-                  WeekResponsesSchema.fromJson(e as Map<String, dynamic>))
-              .toList(),
+          weeklyStats: (json['user_statistics'] as List<dynamic>?)
+                  ?.map(
+                      (e) => WeekStatistics.fromJson(e as Map<String, dynamic>))
+                  .toList() ??
+              const [],
         );
 
 Map<String, dynamic> _$$UserChallengeStatisticsSchemaImplToJson(
         _$UserChallengeStatisticsSchemaImpl instance) =>
     <String, dynamic>{
-      'userStatistics': instance.userStatistics.map((e) => e.toJson()).toList(),
+      'user_statistics': instance.weeklyStats.map((e) => e.toJson()).toList(),
     };
 
-_$WeekResponsesSchemaImpl _$$WeekResponsesSchemaImplFromJson(
-        Map<String, dynamic> json) =>
-    _$WeekResponsesSchemaImpl(
-      weekNum: (json['weekNum'] as num).toInt(),
+_$WeekStatisticsImpl _$$WeekStatisticsImplFromJson(Map<String, dynamic> json) =>
+    _$WeekStatisticsImpl(
+      weekNumber: (json['week_num'] as num).toInt(),
       expected: (json['expected'] as num).toInt(),
       approved: (json['approved'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$WeekResponsesSchemaImplToJson(
-        _$WeekResponsesSchemaImpl instance) =>
+Map<String, dynamic> _$$WeekStatisticsImplToJson(
+        _$WeekStatisticsImpl instance) =>
     <String, dynamic>{
-      'weekNum': instance.weekNum,
+      'week_num': instance.weekNumber,
       'expected': instance.expected,
       'approved': instance.approved,
     };
