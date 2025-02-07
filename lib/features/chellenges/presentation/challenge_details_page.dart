@@ -6,6 +6,7 @@ import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../models/challenge_statistics.dart';
 
 class ChallengeDetailsPage extends ConsumerWidget {
   final ChallengeModel challenge;
@@ -66,7 +67,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
             const SizedBox(height: 24),
             _buildConfirmationBlock(context, ref),
             const SizedBox(height: 24),
-            _buildParticipantsBlock(),
+            _buildParticipantsBlock(context, ref),
             const SizedBox(height: 32),
             _buildExitButton(context),
           ],
@@ -171,7 +172,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
   Widget _buildConfirmationBlock(BuildContext context, WidgetRef ref) {
     final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
     final statisticsFuture =
-        challengesNotifier.getChallengeStatistics(challenge.id);
+        challengesNotifier.getUserChallengeStatistics(challenge.id);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,9 +204,17 @@ class ChallengeDetailsPage extends ConsumerWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Text(
-                'Ошибка загрузки статистики: ${snapshot.error}',
-                style: const TextStyle(color: AppColors.grey),
+              print('Error details: ${snapshot.error}'); // Для отладки
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.blackMin,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Ошибка загрузки статистики: ${snapshot.error}',
+                  style: const TextStyle(color: AppColors.grey),
+                ),
               );
             }
             if (!snapshot.hasData || snapshot.data!.weeklyStats.isEmpty) {
@@ -228,12 +237,13 @@ class ChallengeDetailsPage extends ConsumerWidget {
             }
 
             final statistics = snapshot.data!;
-            final total = statistics.weeklyStats.fold(
-              (0, 0),
-              (prev, curr) => (
-                prev.$1 + curr.expected,
-                prev.$2 + curr.approved,
-              ),
+            final totalExpected = statistics.weeklyStats.fold(
+              0,
+              (sum, curr) => sum + curr.expected,
+            );
+            final totalApproved = statistics.weeklyStats.fold(
+              0,
+              (sum, curr) => sum + curr.approved,
             );
 
             return Column(
@@ -249,8 +259,8 @@ class ChallengeDetailsPage extends ConsumerWidget {
                     children: [
                       _buildProgressRow(
                         'Всего',
-                        total.$2,
-                        total.$1,
+                        totalApproved,
+                        totalExpected,
                       ),
                       if (statistics.weeklyStats.isNotEmpty) ...[
                         const SizedBox(height: 16),
@@ -322,61 +332,130 @@ class ChallengeDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildParticipantsBlock() {
-    return Column(
-      children: [
-        Row(
+  Widget _buildParticipantsBlock(BuildContext context, WidgetRef ref) {
+    final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
+    final statisticsFuture =
+        challengesNotifier.getChallengeStatistics(challenge.id);
+
+    return FutureBuilder<ChallengeStatistics>(
+      future: statisticsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          print('Error details: ${snapshot.error}'); // Для отладки
+          return Text(
+            'Ошибка загрузки статистики: ${snapshot.error}',
+            style: const TextStyle(color: AppColors.grey),
+          );
+        }
+        if (!snapshot.hasData) return const SizedBox();
+
+        final statistics = snapshot.data!;
+        final activeParticipants =
+            statistics.participants.where((p) => p.active).length;
+        final totalParticipants = statistics.participants.length;
+
+        // Сортируем по количеству подтверждений
+        final activeUsers = statistics.participants
+            .where((p) => p.active)
+            .toList()
+          ..sort((a, b) => b.approved.compareTo(a.approved));
+
+        final inactiveUsers = statistics.participants
+            .where((p) => !p.active)
+            .toList()
+          ..sort((a, b) => b.approved.compareTo(a.approved));
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'УЧАСТНИКИ ${challenge.max_participants}/15',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Text(
+                  'УЧАСТНИКИ $activeParticipants/$totalParticipants',
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.arrow_circle_right_outlined,
+                    color: AppColors.white,
+                    size: 32,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: () {
-                // TODO: Реализовать загрузку подтверждения
-              },
-              icon: const Icon(Icons.arrow_circle_right_outlined,
-                  color: AppColors.white, size: 32),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.blackMin,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Топ по активности',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...activeUsers.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final user = entry.value;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        '${index + 1}. ${user.name} ${user.approved}/${statistics.expected}',
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    );
+                  }),
+                  if (inactiveUsers.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Проиграли',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ...inactiveUsers.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final user = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '${index + 1}. ${user.name} ${user.approved}/${statistics.expected}',
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ],
+              ),
             ),
           ],
-        ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppColors.blackMin,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Топ по активности',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              // TODO: Добавить список топ участников
-              const SizedBox(height: 16),
-              const Text(
-                'Проиграли',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              // TODO: Добавить список проигравших
-            ],
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 

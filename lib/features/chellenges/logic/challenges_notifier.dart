@@ -1,4 +1,5 @@
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
+import 'package:parimate/models/challenge_statistics.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
@@ -30,15 +31,35 @@ class ChallengesNotifier extends _$ChallengesNotifier {
     }
   }
 
-  Future<UserChallengeStatisticsSchema> getChallengeStatistics(
+  Future<ChallengeStatistics> getChallengeStatistics(int challengeId) async {
+    try {
+      final result =
+          await ref.read(challengeRepositoryProvider).getChallengeStatistics(
+                userTgId: '44',
+                challengeId: challengeId,
+              );
+      print('Challenge Statistics Response: $result'); // Для отладки
+      return result;
+    } catch (e, stackTrace) {
+      print(
+          'Error getting challenge statistics: $e\n$stackTrace'); // Для отладки
+      throw Exception('Failed to load challenge statistics: $e');
+    }
+  }
+
+  Future<UserChallengeStatisticsSchema> getUserChallengeStatistics(
       int challengeId) async {
     try {
-      return await ref.read(userRepositoryProvider).getUserChallengeStatistics(
-            userTgId: '44', // TODO: получать реальный ID
-            challengeId: challengeId,
-          );
-    } catch (e) {
-      throw Exception('Failed to load statistics: $e');
+      final result =
+          await ref.read(userRepositoryProvider).getUserChallengeStatistics(
+                userTgId: '44',
+                challengeId: challengeId,
+              );
+      print('User Challenge Statistics Response: $result'); // Для отладки
+      return result;
+    } catch (e, stackTrace) {
+      print('Error getting user statistics: $e\n$stackTrace'); // Для отладки
+      throw Exception('Failed to load user statistics: $e');
     }
   }
 

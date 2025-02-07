@@ -14,60 +14,60 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-ChallengeStatisticsSchema _$ChallengeStatisticsSchemaFromJson(
-    Map<String, dynamic> json) {
-  return _ChallengeStatisticsSchema.fromJson(json);
+ChallengeStatistics _$ChallengeStatisticsFromJson(Map<String, dynamic> json) {
+  return _ChallengeStatistics.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ChallengeStatisticsSchema {
-  List<UserResponsesSchema> get userStatistics =>
-      throw _privateConstructorUsedError;
+mixin _$ChallengeStatistics {
+  @JsonKey(name: 'user_statistics')
+  List<UserStatistics> get participants => throw _privateConstructorUsedError;
   int get expected => throw _privateConstructorUsedError;
 
-  /// Serializes this ChallengeStatisticsSchema to a JSON map.
+  /// Serializes this ChallengeStatistics to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ChallengeStatisticsSchema
+  /// Create a copy of ChallengeStatistics
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ChallengeStatisticsSchemaCopyWith<ChallengeStatisticsSchema> get copyWith =>
+  $ChallengeStatisticsCopyWith<ChallengeStatistics> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ChallengeStatisticsSchemaCopyWith<$Res> {
-  factory $ChallengeStatisticsSchemaCopyWith(ChallengeStatisticsSchema value,
-          $Res Function(ChallengeStatisticsSchema) then) =
-      _$ChallengeStatisticsSchemaCopyWithImpl<$Res, ChallengeStatisticsSchema>;
+abstract class $ChallengeStatisticsCopyWith<$Res> {
+  factory $ChallengeStatisticsCopyWith(
+          ChallengeStatistics value, $Res Function(ChallengeStatistics) then) =
+      _$ChallengeStatisticsCopyWithImpl<$Res, ChallengeStatistics>;
   @useResult
-  $Res call({List<UserResponsesSchema> userStatistics, int expected});
+  $Res call(
+      {@JsonKey(name: 'user_statistics') List<UserStatistics> participants,
+      int expected});
 }
 
 /// @nodoc
-class _$ChallengeStatisticsSchemaCopyWithImpl<$Res,
-        $Val extends ChallengeStatisticsSchema>
-    implements $ChallengeStatisticsSchemaCopyWith<$Res> {
-  _$ChallengeStatisticsSchemaCopyWithImpl(this._value, this._then);
+class _$ChallengeStatisticsCopyWithImpl<$Res, $Val extends ChallengeStatistics>
+    implements $ChallengeStatisticsCopyWith<$Res> {
+  _$ChallengeStatisticsCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ChallengeStatisticsSchema
+  /// Create a copy of ChallengeStatistics
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userStatistics = null,
+    Object? participants = null,
     Object? expected = null,
   }) {
     return _then(_value.copyWith(
-      userStatistics: null == userStatistics
-          ? _value.userStatistics
-          : userStatistics // ignore: cast_nullable_to_non_nullable
-              as List<UserResponsesSchema>,
+      participants: null == participants
+          ? _value.participants
+          : participants // ignore: cast_nullable_to_non_nullable
+              as List<UserStatistics>,
       expected: null == expected
           ? _value.expected
           : expected // ignore: cast_nullable_to_non_nullable
@@ -77,40 +77,39 @@ class _$ChallengeStatisticsSchemaCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$ChallengeStatisticsSchemaImplCopyWith<$Res>
-    implements $ChallengeStatisticsSchemaCopyWith<$Res> {
-  factory _$$ChallengeStatisticsSchemaImplCopyWith(
-          _$ChallengeStatisticsSchemaImpl value,
-          $Res Function(_$ChallengeStatisticsSchemaImpl) then) =
-      __$$ChallengeStatisticsSchemaImplCopyWithImpl<$Res>;
+abstract class _$$ChallengeStatisticsImplCopyWith<$Res>
+    implements $ChallengeStatisticsCopyWith<$Res> {
+  factory _$$ChallengeStatisticsImplCopyWith(_$ChallengeStatisticsImpl value,
+          $Res Function(_$ChallengeStatisticsImpl) then) =
+      __$$ChallengeStatisticsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<UserResponsesSchema> userStatistics, int expected});
+  $Res call(
+      {@JsonKey(name: 'user_statistics') List<UserStatistics> participants,
+      int expected});
 }
 
 /// @nodoc
-class __$$ChallengeStatisticsSchemaImplCopyWithImpl<$Res>
-    extends _$ChallengeStatisticsSchemaCopyWithImpl<$Res,
-        _$ChallengeStatisticsSchemaImpl>
-    implements _$$ChallengeStatisticsSchemaImplCopyWith<$Res> {
-  __$$ChallengeStatisticsSchemaImplCopyWithImpl(
-      _$ChallengeStatisticsSchemaImpl _value,
-      $Res Function(_$ChallengeStatisticsSchemaImpl) _then)
+class __$$ChallengeStatisticsImplCopyWithImpl<$Res>
+    extends _$ChallengeStatisticsCopyWithImpl<$Res, _$ChallengeStatisticsImpl>
+    implements _$$ChallengeStatisticsImplCopyWith<$Res> {
+  __$$ChallengeStatisticsImplCopyWithImpl(_$ChallengeStatisticsImpl _value,
+      $Res Function(_$ChallengeStatisticsImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ChallengeStatisticsSchema
+  /// Create a copy of ChallengeStatistics
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userStatistics = null,
+    Object? participants = null,
     Object? expected = null,
   }) {
-    return _then(_$ChallengeStatisticsSchemaImpl(
-      userStatistics: null == userStatistics
-          ? _value._userStatistics
-          : userStatistics // ignore: cast_nullable_to_non_nullable
-              as List<UserResponsesSchema>,
+    return _then(_$ChallengeStatisticsImpl(
+      participants: null == participants
+          ? _value._participants
+          : participants // ignore: cast_nullable_to_non_nullable
+              as List<UserStatistics>,
       expected: null == expected
           ? _value.expected
           : expected // ignore: cast_nullable_to_non_nullable
@@ -121,21 +120,23 @@ class __$$ChallengeStatisticsSchemaImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ChallengeStatisticsSchemaImpl implements _ChallengeStatisticsSchema {
-  const _$ChallengeStatisticsSchemaImpl(
-      {required final List<UserResponsesSchema> userStatistics,
+class _$ChallengeStatisticsImpl implements _ChallengeStatistics {
+  const _$ChallengeStatisticsImpl(
+      {@JsonKey(name: 'user_statistics')
+      final List<UserStatistics> participants = const [],
       required this.expected})
-      : _userStatistics = userStatistics;
+      : _participants = participants;
 
-  factory _$ChallengeStatisticsSchemaImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ChallengeStatisticsSchemaImplFromJson(json);
+  factory _$ChallengeStatisticsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChallengeStatisticsImplFromJson(json);
 
-  final List<UserResponsesSchema> _userStatistics;
+  final List<UserStatistics> _participants;
   @override
-  List<UserResponsesSchema> get userStatistics {
-    if (_userStatistics is EqualUnmodifiableListView) return _userStatistics;
+  @JsonKey(name: 'user_statistics')
+  List<UserStatistics> get participants {
+    if (_participants is EqualUnmodifiableListView) return _participants;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_userStatistics);
+    return EqualUnmodifiableListView(_participants);
   }
 
   @override
@@ -143,16 +144,16 @@ class _$ChallengeStatisticsSchemaImpl implements _ChallengeStatisticsSchema {
 
   @override
   String toString() {
-    return 'ChallengeStatisticsSchema(userStatistics: $userStatistics, expected: $expected)';
+    return 'ChallengeStatistics(participants: $participants, expected: $expected)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ChallengeStatisticsSchemaImpl &&
+            other is _$ChallengeStatisticsImpl &&
             const DeepCollectionEquality()
-                .equals(other._userStatistics, _userStatistics) &&
+                .equals(other._participants, _participants) &&
             (identical(other.expected, expected) ||
                 other.expected == expected));
   }
@@ -160,86 +161,88 @@ class _$ChallengeStatisticsSchemaImpl implements _ChallengeStatisticsSchema {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_userStatistics), expected);
+      const DeepCollectionEquality().hash(_participants), expected);
 
-  /// Create a copy of ChallengeStatisticsSchema
+  /// Create a copy of ChallengeStatistics
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ChallengeStatisticsSchemaImplCopyWith<_$ChallengeStatisticsSchemaImpl>
-      get copyWith => __$$ChallengeStatisticsSchemaImplCopyWithImpl<
-          _$ChallengeStatisticsSchemaImpl>(this, _$identity);
+  _$$ChallengeStatisticsImplCopyWith<_$ChallengeStatisticsImpl> get copyWith =>
+      __$$ChallengeStatisticsImplCopyWithImpl<_$ChallengeStatisticsImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ChallengeStatisticsSchemaImplToJson(
+    return _$$ChallengeStatisticsImplToJson(
       this,
     );
   }
 }
 
-abstract class _ChallengeStatisticsSchema implements ChallengeStatisticsSchema {
-  const factory _ChallengeStatisticsSchema(
-      {required final List<UserResponsesSchema> userStatistics,
-      required final int expected}) = _$ChallengeStatisticsSchemaImpl;
+abstract class _ChallengeStatistics implements ChallengeStatistics {
+  const factory _ChallengeStatistics(
+      {@JsonKey(name: 'user_statistics')
+      final List<UserStatistics> participants,
+      required final int expected}) = _$ChallengeStatisticsImpl;
 
-  factory _ChallengeStatisticsSchema.fromJson(Map<String, dynamic> json) =
-      _$ChallengeStatisticsSchemaImpl.fromJson;
+  factory _ChallengeStatistics.fromJson(Map<String, dynamic> json) =
+      _$ChallengeStatisticsImpl.fromJson;
 
   @override
-  List<UserResponsesSchema> get userStatistics;
+  @JsonKey(name: 'user_statistics')
+  List<UserStatistics> get participants;
   @override
   int get expected;
 
-  /// Create a copy of ChallengeStatisticsSchema
+  /// Create a copy of ChallengeStatistics
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ChallengeStatisticsSchemaImplCopyWith<_$ChallengeStatisticsSchemaImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$ChallengeStatisticsImplCopyWith<_$ChallengeStatisticsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
-UserResponsesSchema _$UserResponsesSchemaFromJson(Map<String, dynamic> json) {
-  return _UserResponsesSchema.fromJson(json);
+UserStatistics _$UserStatisticsFromJson(Map<String, dynamic> json) {
+  return _UserStatistics.fromJson(json);
 }
 
 /// @nodoc
-mixin _$UserResponsesSchema {
+mixin _$UserStatistics {
   String get name => throw _privateConstructorUsedError;
   bool get active => throw _privateConstructorUsedError;
   int get approved => throw _privateConstructorUsedError;
 
-  /// Serializes this UserResponsesSchema to a JSON map.
+  /// Serializes this UserStatistics to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of UserResponsesSchema
+  /// Create a copy of UserStatistics
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $UserResponsesSchemaCopyWith<UserResponsesSchema> get copyWith =>
+  $UserStatisticsCopyWith<UserStatistics> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $UserResponsesSchemaCopyWith<$Res> {
-  factory $UserResponsesSchemaCopyWith(
-          UserResponsesSchema value, $Res Function(UserResponsesSchema) then) =
-      _$UserResponsesSchemaCopyWithImpl<$Res, UserResponsesSchema>;
+abstract class $UserStatisticsCopyWith<$Res> {
+  factory $UserStatisticsCopyWith(
+          UserStatistics value, $Res Function(UserStatistics) then) =
+      _$UserStatisticsCopyWithImpl<$Res, UserStatistics>;
   @useResult
   $Res call({String name, bool active, int approved});
 }
 
 /// @nodoc
-class _$UserResponsesSchemaCopyWithImpl<$Res, $Val extends UserResponsesSchema>
-    implements $UserResponsesSchemaCopyWith<$Res> {
-  _$UserResponsesSchemaCopyWithImpl(this._value, this._then);
+class _$UserStatisticsCopyWithImpl<$Res, $Val extends UserStatistics>
+    implements $UserStatisticsCopyWith<$Res> {
+  _$UserStatisticsCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of UserResponsesSchema
+  /// Create a copy of UserStatistics
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -266,25 +269,25 @@ class _$UserResponsesSchemaCopyWithImpl<$Res, $Val extends UserResponsesSchema>
 }
 
 /// @nodoc
-abstract class _$$UserResponsesSchemaImplCopyWith<$Res>
-    implements $UserResponsesSchemaCopyWith<$Res> {
-  factory _$$UserResponsesSchemaImplCopyWith(_$UserResponsesSchemaImpl value,
-          $Res Function(_$UserResponsesSchemaImpl) then) =
-      __$$UserResponsesSchemaImplCopyWithImpl<$Res>;
+abstract class _$$UserStatisticsImplCopyWith<$Res>
+    implements $UserStatisticsCopyWith<$Res> {
+  factory _$$UserStatisticsImplCopyWith(_$UserStatisticsImpl value,
+          $Res Function(_$UserStatisticsImpl) then) =
+      __$$UserStatisticsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String name, bool active, int approved});
 }
 
 /// @nodoc
-class __$$UserResponsesSchemaImplCopyWithImpl<$Res>
-    extends _$UserResponsesSchemaCopyWithImpl<$Res, _$UserResponsesSchemaImpl>
-    implements _$$UserResponsesSchemaImplCopyWith<$Res> {
-  __$$UserResponsesSchemaImplCopyWithImpl(_$UserResponsesSchemaImpl _value,
-      $Res Function(_$UserResponsesSchemaImpl) _then)
+class __$$UserStatisticsImplCopyWithImpl<$Res>
+    extends _$UserStatisticsCopyWithImpl<$Res, _$UserStatisticsImpl>
+    implements _$$UserStatisticsImplCopyWith<$Res> {
+  __$$UserStatisticsImplCopyWithImpl(
+      _$UserStatisticsImpl _value, $Res Function(_$UserStatisticsImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of UserResponsesSchema
+  /// Create a copy of UserStatistics
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -293,7 +296,7 @@ class __$$UserResponsesSchemaImplCopyWithImpl<$Res>
     Object? active = null,
     Object? approved = null,
   }) {
-    return _then(_$UserResponsesSchemaImpl(
+    return _then(_$UserStatisticsImpl(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -312,12 +315,12 @@ class __$$UserResponsesSchemaImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$UserResponsesSchemaImpl implements _UserResponsesSchema {
-  const _$UserResponsesSchemaImpl(
+class _$UserStatisticsImpl implements _UserStatistics {
+  const _$UserStatisticsImpl(
       {required this.name, required this.active, required this.approved});
 
-  factory _$UserResponsesSchemaImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserResponsesSchemaImplFromJson(json);
+  factory _$UserStatisticsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserStatisticsImplFromJson(json);
 
   @override
   final String name;
@@ -328,14 +331,14 @@ class _$UserResponsesSchemaImpl implements _UserResponsesSchema {
 
   @override
   String toString() {
-    return 'UserResponsesSchema(name: $name, active: $active, approved: $approved)';
+    return 'UserStatistics(name: $name, active: $active, approved: $approved)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserResponsesSchemaImpl &&
+            other is _$UserStatisticsImpl &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.active, active) || other.active == active) &&
             (identical(other.approved, approved) ||
@@ -346,31 +349,31 @@ class _$UserResponsesSchemaImpl implements _UserResponsesSchema {
   @override
   int get hashCode => Object.hash(runtimeType, name, active, approved);
 
-  /// Create a copy of UserResponsesSchema
+  /// Create a copy of UserStatistics
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$UserResponsesSchemaImplCopyWith<_$UserResponsesSchemaImpl> get copyWith =>
-      __$$UserResponsesSchemaImplCopyWithImpl<_$UserResponsesSchemaImpl>(
+  _$$UserStatisticsImplCopyWith<_$UserStatisticsImpl> get copyWith =>
+      __$$UserStatisticsImplCopyWithImpl<_$UserStatisticsImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$UserResponsesSchemaImplToJson(
+    return _$$UserStatisticsImplToJson(
       this,
     );
   }
 }
 
-abstract class _UserResponsesSchema implements UserResponsesSchema {
-  const factory _UserResponsesSchema(
+abstract class _UserStatistics implements UserStatistics {
+  const factory _UserStatistics(
       {required final String name,
       required final bool active,
-      required final int approved}) = _$UserResponsesSchemaImpl;
+      required final int approved}) = _$UserStatisticsImpl;
 
-  factory _UserResponsesSchema.fromJson(Map<String, dynamic> json) =
-      _$UserResponsesSchemaImpl.fromJson;
+  factory _UserStatistics.fromJson(Map<String, dynamic> json) =
+      _$UserStatisticsImpl.fromJson;
 
   @override
   String get name;
@@ -379,10 +382,10 @@ abstract class _UserResponsesSchema implements UserResponsesSchema {
   @override
   int get approved;
 
-  /// Create a copy of UserResponsesSchema
+  /// Create a copy of UserStatistics
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserResponsesSchemaImplCopyWith<_$UserResponsesSchemaImpl> get copyWith =>
+  _$$UserStatisticsImplCopyWith<_$UserStatisticsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

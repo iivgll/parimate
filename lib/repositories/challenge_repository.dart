@@ -117,7 +117,7 @@ class ChallengeRepository {
     }
   }
 
-  Future<ChallengeStatisticsSchema> getChallengeStatistics({
+  Future<ChallengeStatistics> getChallengeStatistics({
     required String userTgId,
     required int challengeId,
   }) async {
@@ -129,7 +129,7 @@ class ChallengeRepository {
           'challenge_id': challengeId,
         },
       );
-      return ChallengeStatisticsSchema.fromJson(response.data);
+      return ChallengeStatistics.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

@@ -4,24 +4,26 @@ part 'challenge_statistics.freezed.dart';
 part 'challenge_statistics.g.dart';
 
 @freezed
-class ChallengeStatisticsSchema with _$ChallengeStatisticsSchema {
-  const factory ChallengeStatisticsSchema({
-    required List<UserResponsesSchema> userStatistics,
+class ChallengeStatistics with _$ChallengeStatistics {
+  const factory ChallengeStatistics({
+    @JsonKey(name: 'user_statistics')
+    @Default([])
+    List<UserStatistics> participants,
     required int expected,
-  }) = _ChallengeStatisticsSchema;
+  }) = _ChallengeStatistics;
 
-  factory ChallengeStatisticsSchema.fromJson(Map<String, dynamic> json) =>
-      _$ChallengeStatisticsSchemaFromJson(json);
+  factory ChallengeStatistics.fromJson(Map<String, dynamic> json) =>
+      _$ChallengeStatisticsFromJson(json);
 }
 
 @freezed
-class UserResponsesSchema with _$UserResponsesSchema {
-  const factory UserResponsesSchema({
+class UserStatistics with _$UserStatistics {
+  const factory UserStatistics({
     required String name,
     required bool active,
     required int approved,
-  }) = _UserResponsesSchema;
+  }) = _UserStatistics;
 
-  factory UserResponsesSchema.fromJson(Map<String, dynamic> json) =>
-      _$UserResponsesSchemaFromJson(json);
+  factory UserStatistics.fromJson(Map<String, dynamic> json) =>
+      _$UserStatisticsFromJson(json);
 }
