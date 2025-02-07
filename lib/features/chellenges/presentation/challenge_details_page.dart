@@ -393,6 +393,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
               ],
             ),
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.blackMin,
@@ -402,7 +403,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Топ по активности',
+                    'Топ по активности:',
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 14,
@@ -415,19 +416,31 @@ class ChallengeDetailsPage extends ConsumerWidget {
                     final user = entry.value;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        '${index + 1}. ${user.name} ${user.approved}/${statistics.expected}',
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 14,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${index + 1}. ${user.name}',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '${user.approved}/${statistics.expected}',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }),
                   if (inactiveUsers.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     const Text(
-                      'Проиграли',
+                      'Проиграли:',
                       style: TextStyle(
                         color: AppColors.white,
                         fontSize: 14,
@@ -440,12 +453,24 @@ class ChallengeDetailsPage extends ConsumerWidget {
                       final user = entry.value;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          '${index + 1}. ${user.name} ${user.approved}/${statistics.expected}',
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: 14,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${index + 1}. ${user.name}',
+                              style: const TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              '${user.approved}/${statistics.expected}',
+                              style: const TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     }),
