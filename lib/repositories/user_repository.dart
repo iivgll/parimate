@@ -42,7 +42,7 @@ class UserRepository {
     }
   }
 
-  Future<UserStatisticsSchema> getUserStatistics({
+  Future<UserStatistics> getUserStatistics({
     required String userTgId,
   }) async {
     try {
@@ -50,7 +50,7 @@ class UserRepository {
         '/api/v2/user/statistics',
         queryParameters: {'user_tg_id': userTgId},
       );
-      return UserStatisticsSchema.fromJson(response.data);
+      return UserStatistics.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

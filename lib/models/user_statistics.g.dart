@@ -6,31 +6,30 @@ part of 'user_statistics.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UserStatisticsSchemaImpl _$$UserStatisticsSchemaImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UserStatisticsSchemaImpl(
-      userStatistics: (json['userStatistics'] as List<dynamic>)
-          .map((e) =>
-              ChallengeResponseSchema.fromJson(e as Map<String, dynamic>))
+_$UserStatisticsImpl _$$UserStatisticsImplFromJson(Map<String, dynamic> json) =>
+    _$UserStatisticsImpl(
+      userStatistics: (json['user_statistics'] as List<dynamic>)
+          .map((e) => UserStatisticsItem.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$UserStatisticsSchemaImplToJson(
-        _$UserStatisticsSchemaImpl instance) =>
+Map<String, dynamic> _$$UserStatisticsImplToJson(
+        _$UserStatisticsImpl instance) =>
     <String, dynamic>{
-      'userStatistics': instance.userStatistics.map((e) => e.toJson()).toList(),
+      'user_statistics':
+          instance.userStatistics.map((e) => e.toJson()).toList(),
     };
 
-_$ChallengeResponseSchemaImpl _$$ChallengeResponseSchemaImplFromJson(
+_$UserStatisticsItemImpl _$$UserStatisticsItemImplFromJson(
         Map<String, dynamic> json) =>
-    _$ChallengeResponseSchemaImpl(
-      challengeName: json['challengeName'] as String,
+    _$UserStatisticsItemImpl(
+      challengeName: json['challenge_name'] as String,
       confirmed: json['confirmed'] as bool,
     );
 
-Map<String, dynamic> _$$ChallengeResponseSchemaImplToJson(
-        _$ChallengeResponseSchemaImpl instance) =>
+Map<String, dynamic> _$$UserStatisticsItemImplToJson(
+        _$UserStatisticsItemImpl instance) =>
     <String, dynamic>{
-      'challengeName': instance.challengeName,
+      'challenge_name': instance.challengeName,
       'confirmed': instance.confirmed,
     };

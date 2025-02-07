@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/font_family.dart';
+import 'package:parimate/features/home/logic/user_statistics_notifier.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:parimate/state/app_state.dart';
 
 import '../../../../common/utils/colors.dart';
 
-class MainCardWidget extends ConsumerWidget {
+class MainCardWidget extends ConsumerStatefulWidget {
   const MainCardWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final challenges = ref.watch(challengesProvider);
+  ConsumerState<MainCardWidget> createState() => _MainCardWidgetState();
+}
+
+class _MainCardWidgetState extends ConsumerState<MainCardWidget> {
+  @override
+  void initState() {
+    super.initState();
+    Future(() {
+      ref
+          .read(userStatisticsNotifierProvider.notifier)
+          .loadUserStatistics('44');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final statistics = ref.watch(userStatisticsNotifierProvider);
 
     return Card(
       color: AppColors.blackMin,
@@ -33,7 +48,7 @@ class MainCardWidget extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            if (challenges.isEmpty) ...[
+            if (statistics.challenges.isEmpty) ...[
               Center(
                 child: CircularPercentIndicator(
                   radius: 150.0,
@@ -80,9 +95,9 @@ class MainCardWidget extends ConsumerWidget {
                 child: CircularPercentIndicator(
                   radius: 150.0,
                   lineWidth: 50.0,
-                  percent: 0.67,
+                  percent: statistics.completionPercentage / 100,
                   center: Text(
-                    '67%',
+                    '${statistics.completionPercentage.toStringAsFixed(0)}%',
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -96,21 +111,22 @@ class MainCardWidget extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              ...challenges.map((challenge) => ListTile(
+              ...statistics.challenges.map((challenge) => ListTile(
                     title: Text(
-                      challenge.name,
+                      challenge.challengeName,
                       style: TextStyle(
                         color: AppColors.white,
                         fontFamily: AppFontFamily.ubuntu,
                         fontSize: 14,
                       ),
                     ),
-                    trailing: const Icon(
-                      Icons.close,
-                      color: AppColors.orange,
+                    trailing: Icon(
+                      challenge.confirmed ? Icons.check : Icons.close,
+                      color: challenge.confirmed
+                          ? AppColors.orange
+                          : AppColors.white,
                       size: 18,
                     ),
-                    onTap: () {},
                   )),
               const SizedBox(height: 20),
               ElevatedButton.icon(
