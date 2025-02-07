@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 
+import '../../../app/metadata_notifier.dart';
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/custom_button.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
 import '../logic/challenges_notifier.dart';
+import '../../../features/chellenges/presentation/widgets/create_challenge_sheet.dart';
 
 class ChallengesPage extends ConsumerWidget {
   const ChallengesPage({super.key});
@@ -33,7 +35,7 @@ class ChallengesPage extends ConsumerWidget {
               if (challengesState.value?.view == ChallengesView.mine)
                 _buildChallengesList(challengesState)
               else
-                _buildNewChallenges(challengesState),
+                _buildNewChallenges(context, challengesState),
             ],
           ),
         ),
@@ -97,36 +99,170 @@ class ChallengesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildNewChallenges(AsyncValue<ChallengesState> challengesState) {
-    return challengesState.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text(
-          'Ошибка загрузки челленджей: $error',
-          style: const TextStyle(color: AppColors.grey),
-        ),
-      ),
-      data: (state) {
-        if (state.newChallenges.isEmpty) {
-          return const Center(
-            child: Text(
-              'Нет доступных челленджей',
-              style: TextStyle(color: AppColors.grey),
+  Widget _buildNewChallenges(
+      BuildContext context, AsyncValue<ChallengesState> challengesState) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Логика присоединения по ссылке
+                },
+                icon: const Icon(Icons.link, color: AppColors.white),
+                label: const Text(
+                  'Присоединиться\nпо ссылке',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.blackMin,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
             ),
-          );
-        }
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const CreateChallengeSheet(),
+                  );
+                },
+                icon: const Icon(Icons.edit, color: AppColors.white),
+                label: const Text(
+                  'Создать\nчеллендж',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.blackMin,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'ДОСТУПНЫЕ',
+          style: TextStyle(
+            fontFamily: AppFontFamily.uncage,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.white,
+          ),
+        ),
+        const SizedBox(height: 16),
+        challengesState.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Text(
+              'Ошибка загрузки челленджей: $error',
+              style: const TextStyle(color: AppColors.grey),
+            ),
+          ),
+          data: (state) {
+            if (state.newChallenges.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Нет доступных челленджей',
+                  style: TextStyle(color: AppColors.grey),
+                ),
+              );
+            }
 
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: state.newChallenges.length,
-          itemBuilder: (context, index) {
-            final challenge = state.newChallenges[index];
-            return ChallengeContainer(
-              challenge: challenge,
-              onArchive: () {}, // Для новых челленджей архивация не нужна
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: state.newChallenges.length,
+              itemBuilder: (context, index) {
+                final challenge = state.newChallenges[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: ChallengeContainer(
+                    challenge: challenge,
+                    onArchive: () {},
+                  ),
+                );
+              },
             );
           },
+        ),
+        const SizedBox(height: 24),
+        _buildCategoriesSection(),
+      ],
+    );
+  }
+
+  Widget _buildCategoriesSection() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final metadataState = ref.watch(metadataProvider);
+
+        return metadataState.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Text(
+              'Ошибка загрузки категорий: $error',
+              style: const TextStyle(color: AppColors.grey),
+            ),
+          ),
+          data: (metadata) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'КАТЕГОРИИ',
+                style: TextStyle(
+                  fontFamily: AppFontFamily.uncage,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.white,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: metadata.categories.map((category) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.blackMin,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      category,
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         );
       },
     );
