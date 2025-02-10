@@ -71,7 +71,7 @@ _$AuthorImpl _$$AuthorImplFromJson(Map<String, dynamic> json) => _$AuthorImpl(
       tg_id: json['tg_id'] as String,
       name: json['name'] as String,
       coins: (json['coins'] as num).toInt(),
-      photo: json['photo'] as String,
+      photo: json['photo'] as String?,
     );
 
 Map<String, dynamic> _$$AuthorImplToJson(_$AuthorImpl instance) =>
@@ -87,7 +87,7 @@ Map<String, dynamic> _$$AuthorImplToJson(_$AuthorImpl instance) =>
 _$ChatImpl _$$ChatImplFromJson(Map<String, dynamic> json) => _$ChatImpl(
       id: json['id'] as String,
       link: json['link'] as String,
-      photo: json['photo'] as String,
+      photo: json['photo'] as String?,
     );
 
 Map<String, dynamic> _$$ChatImplToJson(_$ChatImpl instance) =>

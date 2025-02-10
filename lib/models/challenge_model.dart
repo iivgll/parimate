@@ -43,7 +43,7 @@ class Author with _$Author {
     required String tg_id,
     required String name,
     required int coins,
-    required String photo,
+    String? photo,
   }) = _Author;
 
   factory Author.fromJson(Map<String, dynamic> json) => _$AuthorFromJson(json);
@@ -54,7 +54,7 @@ class Chat with _$Chat {
   const factory Chat({
     required String id,
     required String link,
-    required String photo,
+    String? photo,
   }) = _Chat;
 
   factory Chat.fromJson(Map<String, dynamic> json) => _$ChatFromJson(json);

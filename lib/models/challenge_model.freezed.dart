@@ -715,7 +715,7 @@ mixin _$Author {
   String get tg_id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get coins => throw _privateConstructorUsedError;
-  String get photo => throw _privateConstructorUsedError;
+  String? get photo => throw _privateConstructorUsedError;
 
   /// Serializes this Author to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -737,7 +737,7 @@ abstract class $AuthorCopyWith<$Res> {
       String tg_id,
       String name,
       int coins,
-      String photo});
+      String? photo});
 }
 
 /// @nodoc
@@ -760,7 +760,7 @@ class _$AuthorCopyWithImpl<$Res, $Val extends Author>
     Object? tg_id = null,
     Object? name = null,
     Object? coins = null,
-    Object? photo = null,
+    Object? photo = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -783,10 +783,10 @@ class _$AuthorCopyWithImpl<$Res, $Val extends Author>
           ? _value.coins
           : coins // ignore: cast_nullable_to_non_nullable
               as int,
-      photo: null == photo
+      photo: freezed == photo
           ? _value.photo
           : photo // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -804,7 +804,7 @@ abstract class _$$AuthorImplCopyWith<$Res> implements $AuthorCopyWith<$Res> {
       String tg_id,
       String name,
       int coins,
-      String photo});
+      String? photo});
 }
 
 /// @nodoc
@@ -825,7 +825,7 @@ class __$$AuthorImplCopyWithImpl<$Res>
     Object? tg_id = null,
     Object? name = null,
     Object? coins = null,
-    Object? photo = null,
+    Object? photo = freezed,
   }) {
     return _then(_$AuthorImpl(
       id: null == id
@@ -848,10 +848,10 @@ class __$$AuthorImplCopyWithImpl<$Res>
           ? _value.coins
           : coins // ignore: cast_nullable_to_non_nullable
               as int,
-      photo: null == photo
+      photo: freezed == photo
           ? _value.photo
           : photo // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -865,7 +865,7 @@ class _$AuthorImpl implements _Author {
       required this.tg_id,
       required this.name,
       required this.coins,
-      required this.photo});
+      this.photo});
 
   factory _$AuthorImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthorImplFromJson(json);
@@ -881,7 +881,7 @@ class _$AuthorImpl implements _Author {
   @override
   final int coins;
   @override
-  final String photo;
+  final String? photo;
 
   @override
   String toString() {
@@ -930,7 +930,7 @@ abstract class _Author implements Author {
       required final String tg_id,
       required final String name,
       required final int coins,
-      required final String photo}) = _$AuthorImpl;
+      final String? photo}) = _$AuthorImpl;
 
   factory _Author.fromJson(Map<String, dynamic> json) = _$AuthorImpl.fromJson;
 
@@ -945,7 +945,7 @@ abstract class _Author implements Author {
   @override
   int get coins;
   @override
-  String get photo;
+  String? get photo;
 
   /// Create a copy of Author
   /// with the given fields replaced by the non-null parameter values.
@@ -963,7 +963,7 @@ Chat _$ChatFromJson(Map<String, dynamic> json) {
 mixin _$Chat {
   String get id => throw _privateConstructorUsedError;
   String get link => throw _privateConstructorUsedError;
-  String get photo => throw _privateConstructorUsedError;
+  String? get photo => throw _privateConstructorUsedError;
 
   /// Serializes this Chat to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -979,7 +979,7 @@ abstract class $ChatCopyWith<$Res> {
   factory $ChatCopyWith(Chat value, $Res Function(Chat) then) =
       _$ChatCopyWithImpl<$Res, Chat>;
   @useResult
-  $Res call({String id, String link, String photo});
+  $Res call({String id, String link, String? photo});
 }
 
 /// @nodoc
@@ -999,7 +999,7 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
   $Res call({
     Object? id = null,
     Object? link = null,
-    Object? photo = null,
+    Object? photo = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -1010,10 +1010,10 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
           ? _value.link
           : link // ignore: cast_nullable_to_non_nullable
               as String,
-      photo: null == photo
+      photo: freezed == photo
           ? _value.photo
           : photo // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -1025,7 +1025,7 @@ abstract class _$$ChatImplCopyWith<$Res> implements $ChatCopyWith<$Res> {
       __$$ChatImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String link, String photo});
+  $Res call({String id, String link, String? photo});
 }
 
 /// @nodoc
@@ -1042,7 +1042,7 @@ class __$$ChatImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? link = null,
-    Object? photo = null,
+    Object? photo = freezed,
   }) {
     return _then(_$ChatImpl(
       id: null == id
@@ -1053,10 +1053,10 @@ class __$$ChatImplCopyWithImpl<$Res>
           ? _value.link
           : link // ignore: cast_nullable_to_non_nullable
               as String,
-      photo: null == photo
+      photo: freezed == photo
           ? _value.photo
           : photo // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -1064,7 +1064,7 @@ class __$$ChatImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ChatImpl implements _Chat {
-  const _$ChatImpl({required this.id, required this.link, required this.photo});
+  const _$ChatImpl({required this.id, required this.link, this.photo});
 
   factory _$ChatImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatImplFromJson(json);
@@ -1074,7 +1074,7 @@ class _$ChatImpl implements _Chat {
   @override
   final String link;
   @override
-  final String photo;
+  final String? photo;
 
   @override
   String toString() {
@@ -1115,7 +1115,7 @@ abstract class _Chat implements Chat {
   const factory _Chat(
       {required final String id,
       required final String link,
-      required final String photo}) = _$ChatImpl;
+      final String? photo}) = _$ChatImpl;
 
   factory _Chat.fromJson(Map<String, dynamic> json) = _$ChatImpl.fromJson;
 
@@ -1124,7 +1124,7 @@ abstract class _Chat implements Chat {
   @override
   String get link;
   @override
-  String get photo;
+  String? get photo;
 
   /// Create a copy of Chat
   /// with the given fields replaced by the non-null parameter values.
