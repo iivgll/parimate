@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:parimate/features/chellenges/logic/selected_category_provider.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 
@@ -171,100 +172,106 @@ class ChallengesPage extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 16),
-        challengesState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(
-            child: Text(
-              'Ошибка загрузки челленджей: $error',
-              style: const TextStyle(color: AppColors.grey),
-            ),
-          ),
-          data: (state) {
-            if (state.newChallenges.isEmpty) {
-              return const Center(
-                child: Text(
-                  'Нет доступных челленджей',
-                  style: TextStyle(color: AppColors.grey),
-                ),
-              );
-            }
+        Consumer(
+          builder: (context, ref, child) {
+            final metadataState = ref.watch(metadataProvider);
+            final selectedCategory = ref.watch(selectedCategoryProvider);
 
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: state.newChallenges.length,
-              itemBuilder: (context, index) {
-                final challenge = state.newChallenges[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: ChallengeContainer(
-                    challenge: challenge,
-                    onArchive: () {},
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: metadataState.when(
+                    loading: () => const CircularProgressIndicator(),
+                    error: (error, _) => Text(
+                      'Ошибка: $error',
+                      style: const TextStyle(color: AppColors.grey),
+                    ),
+                    data: (metadata) => Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('Все'),
+                          selected: selectedCategory == null,
+                          onSelected: (_) {
+                            ref.read(selectedCategoryProvider.notifier).state =
+                                null;
+                          },
+                          backgroundColor: AppColors.black,
+                          selectedColor: AppColors.blackMin,
+                          labelStyle: const TextStyle(color: AppColors.white),
+                        ),
+                        const SizedBox(width: 8),
+                        ...metadata.categories.map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: FilterChip(
+                              label: Text(category),
+                              selected: selectedCategory == category,
+                              onSelected: (_) {
+                                ref
+                                    .read(selectedCategoryProvider.notifier)
+                                    .state = category;
+                              },
+                              backgroundColor: AppColors.black,
+                              selectedColor: AppColors.blackMin,
+                              labelStyle:
+                                  const TextStyle(color: AppColors.white),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 16),
+                challengesState.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(
+                    child: Text(
+                      'Ошибка загрузки челленджей: $error',
+                      style: const TextStyle(color: AppColors.grey),
+                    ),
+                  ),
+                  data: (state) {
+                    final filteredChallenges = selectedCategory == null
+                        ? state.newChallenges
+                        : state.newChallenges
+                            .where((c) => c.category == selectedCategory)
+                            .toList();
+
+                    if (filteredChallenges.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Нет доступных челленджей',
+                          style: TextStyle(color: AppColors.grey),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: filteredChallenges.length,
+                      itemBuilder: (context, index) {
+                        final challenge = filteredChallenges[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: ChallengeContainer(
+                            challenge: challenge,
+                            onArchive: () {},
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             );
           },
         ),
-        const SizedBox(height: 24),
-        _buildCategoriesSection(),
       ],
-    );
-  }
-
-  Widget _buildCategoriesSection() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final metadataState = ref.watch(metadataProvider);
-
-        return metadataState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(
-            child: Text(
-              'Ошибка загрузки категорий: $error',
-              style: const TextStyle(color: AppColors.grey),
-            ),
-          ),
-          data: (metadata) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'КАТЕГОРИИ',
-                style: TextStyle(
-                  fontFamily: AppFontFamily.uncage,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: metadata.categories.map((category) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.blackMin,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      category,
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 14,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 

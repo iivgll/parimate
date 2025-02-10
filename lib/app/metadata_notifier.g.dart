@@ -6,7 +6,7 @@ part of 'metadata_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$metadataHash() => r'69c527a65fa57d54d90bad0bbe76696ca1d1b485';
+String _$metadataHash() => r'7d952a7a4ed27f595ab4fb8c36702d2724488f0c';
 
 /// See also [Metadata].
 @ProviderFor(Metadata)

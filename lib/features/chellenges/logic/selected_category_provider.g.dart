@@ -1,29 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'metadata_repository.dart';
+part of 'selected_category_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$metadataRepositoryHash() =>
-    r'69e45e0531acc7d33a9c0fabb7aceed1bfe3d69f';
+String _$selectedCategoryHash() => r'c81491b14a2d095be52535ef4bd61db6c6f5c589';
 
-/// See also [metadataRepository].
-@ProviderFor(metadataRepository)
-final metadataRepositoryProvider =
-    AutoDisposeProvider<MetadataRepository>.internal(
-  metadataRepository,
-  name: r'metadataRepositoryProvider',
+/// See also [SelectedCategory].
+@ProviderFor(SelectedCategory)
+final selectedCategoryProvider =
+    AutoDisposeNotifierProvider<SelectedCategory, String?>.internal(
+  SelectedCategory.new,
+  name: r'selectedCategoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$metadataRepositoryHash,
+      : _$selectedCategoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef MetadataRepositoryRef = AutoDisposeProviderRef<MetadataRepository>;
+typedef _$SelectedCategory = AutoDisposeNotifier<String?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
