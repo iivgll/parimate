@@ -6,6 +6,9 @@ import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/chellenges/domain/challenge_type.dart';
 import 'package:parimate/app/repository_providers.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'icon_picker_sheet.dart';
+import 'category_picker_sheet.dart';
 
 enum RegularityType { daily, weekly, specificDays }
 
@@ -51,6 +54,17 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
 
   int selectedBet = 100;
 
+  @override
+  void initState() {
+    super.initState();
+    // Устанавливаем начальную дату на следующий день
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    startDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+    // Устанавливаем конечную дату через неделю после начальной
+    endDate = startDate!
+        .add(const Duration(days: 6)); // 6 дней + 1 день начала = 7 дней
+  }
+
   RegularityType _getRegularityType(String selectedRegularity) {
     switch (selectedRegularity) {
       case 'Каждый день':
@@ -66,120 +80,113 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     }
   }
 
+  String _formatRegularityText(String regularity) {
+    if (regularity == '2 раз(а) в неделю') {
+      return '$selectedDaysPerWeek раз(а) в неделю';
+    }
+    return regularity;
+  }
+
   void _showRegularityPicker() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: AppColors.blackMin,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: AppColors.black,
-                    width: 1,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          decoration: const BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors.black,
+                      width: 1,
+                    ),
                   ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      color: AppColors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    'Периодичность',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 18,
-                      fontFamily: AppFontFamily.uncage,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                children: [
-                  ...regularityOptions.map((option) {
-                    return Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: AppColors.black,
-                            width: 1,
-                          ),
-                        ),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.white,
+                        size: 20,
                       ),
-                      child: ListTile(
-                        title: Text(
-                          option,
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        trailing: selectedRegularity == option
-                            ? const Icon(
-                                Icons.check,
-                                color: AppColors.orange,
-                                size: 20,
-                              )
-                            : null,
-                        onTap: () {
-                          setState(() {
-                            selectedRegularity = option;
-                          });
-                          Navigator.pop(context);
-                          if (option == 'Свой период') {
-                            _showDaysPicker();
-                          }
-                        },
-                      ),
-                    );
-                  }),
-                  if (selectedRegularity == '2 раз(а) в неделю') ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Slider(
-                        value: selectedDaysPerWeek.toDouble(),
-                        min: 1,
-                        max: 7,
-                        divisions: 6,
-                        activeColor: AppColors.orange,
-                        inactiveColor: AppColors.grey.withOpacity(0.2),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedDaysPerWeek = value.toInt();
-                          });
-                        },
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Периодичность',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: ListView(
+                  children: [
+                    ...regularityOptions.map((option) {
+                      final displayText = _formatRegularityText(option);
+                      return Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: AppColors.black,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            displayText,
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                          trailing: selectedRegularity == option
+                              ? const Icon(
+                                  Icons.check,
+                                  color: AppColors.orange,
+                                  size: 20,
+                                )
+                              : null,
+                          onTap: () {
+                            setState(() {
+                              selectedRegularity = option;
+                            });
+                            Navigator.pop(context);
+                            if (option == 'Свой период') {
+                              _showDaysPicker();
+                            } else if (option == '2 раз(а) в неделю') {
+                              _showTimesPerWeekPicker();
+                            }
+                          },
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   void _showDaysPicker() {
-    int timesPerWeek = 1;
-    bool isSliderMoved = false;
     // Создаем локальную копию выбранных дней
     List<bool> localSelectedDays = List.from(selectedDays);
 
@@ -212,9 +219,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                       onTap: () {
                         // Применяем изменения при закрытии
                         this.setState(() {
-                          for (int i = 0; i < selectedDays.length; i++) {
-                            selectedDays[i] = localSelectedDays[i];
-                          }
+                          selectedDays.setAll(0,
+                              localSelectedDays); // Используем setAll вместо цикла
                         });
                         Navigator.pop(context);
                       },
@@ -225,98 +231,185 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Text(
-                      'Периодичность',
+                    const Text(
+                      'Выберите дни',
                       style: TextStyle(
                         color: AppColors.white,
-                        fontSize: 18,
-                        fontFamily: AppFontFamily.uncage,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ),
-              if (!isSliderMoved) ...[
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: List.generate(7, (index) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            localSelectedDays[index] =
-                                !localSelectedDays[index];
-                            isSliderMoved = false;
-                          });
-                        },
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: localSelectedDays[index]
-                                ? AppColors.orange
-                                : AppColors.black,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              weekDays[index],
-                              style: TextStyle(
-                                color: localSelectedDays[index]
-                                    ? AppColors.white
-                                    : AppColors.grey,
-                                fontSize: 16,
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: List.generate(7, (index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              localSelectedDays[index] =
+                                  !localSelectedDays[index];
+                            });
+                          },
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: localSelectedDays[index]
+                                  ? AppColors.orange
+                                  : AppColors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                weekDays[index],
+                                style: TextStyle(
+                                  color: localSelectedDays[index]
+                                      ? AppColors.white
+                                      : AppColors.grey,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          this.setState(() {
+                            selectedDays.setAll(0, localSelectedDays);
+                          });
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.orange,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                      );
-                    }),
+                        child: const Text(
+                          'Готово',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showTimesPerWeekPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          decoration: const BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors.black,
+                      width: 1,
+                    ),
                   ),
                 ),
-              ],
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Раз в неделю',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '$timesPerWeek раз(а) в неделю',
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      '$selectedDaysPerWeek раз(а) в неделю',
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                      ),
                     ),
                     Slider(
-                      value: timesPerWeek.toDouble(),
+                      value: selectedDaysPerWeek.toDouble(),
                       min: 1,
-                      max: 50,
-                      divisions: 49,
+                      max: 7,
+                      divisions: 6,
                       activeColor: AppColors.orange,
                       inactiveColor: AppColors.grey.withOpacity(0.2),
                       onChanged: (value) {
-                        setState(() {
-                          timesPerWeek = value.toInt();
-                          isSliderMoved = true;
-                          // Сбрасываем выбранные дни
-                          for (int i = 0; i < localSelectedDays.length; i++) {
-                            localSelectedDays[i] = false;
-                          }
+                        // Обновляем оба состояния
+                        setModalState(() {
+                          selectedDaysPerWeek = value.toInt();
                         });
                         this.setState(() {
-                          selectedDaysPerWeek = timesPerWeek;
-                          // Обновляем выбранные дни в основном состоянии
-                          for (int i = 0; i < selectedDays.length; i++) {
-                            selectedDays[i] = false;
-                          }
+                          selectedDaysPerWeek = value.toInt();
                         });
                       },
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.orange,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Готово',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -508,11 +601,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   }
 
   String _formatDateRange() {
-    if (startDate != null && endDate != null) {
-      final DateFormat formatter = DateFormat('dd.MM.yy');
-      return '${formatter.format(startDate!)} - ${formatter.format(endDate!)}';
-    }
-    return '06.10.24 - 26.10.24';
+    final DateFormat formatter = DateFormat('dd.MM.yy');
+    return '${formatter.format(startDate!)} - ${formatter.format(endDate!)}';
   }
 
   void _showConfirmationTypePicker() {
@@ -746,81 +836,34 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     }
   }
 
-  Widget _buildTextField(
-    String label, {
-    required TextEditingController controller,
-    String? hint,
-    String? value,
-    bool isRequired = false,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.blackMin,
-        borderRadius: BorderRadius.circular(8),
+  void _showIconPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => IconPickerSheet(
+        selectedIcon: selectedIcon,
+        onIconSelected: (icon) {
+          setState(() {
+            selectedIcon = icon;
+          });
+        },
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (isRequired)
-                    Text(
-                      ' *',
-                      style: TextStyle(
-                        color: AppColors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                ],
-              ),
-              if (value != null)
-                InkWell(
-                  onTap: onTap,
-                  child: Row(
-                    children: [
-                      Text(
-                        value,
-                        style: const TextStyle(
-                          color: AppColors.grey,
-                        ),
-                      ),
-                      if (onTap != null)
-                        const Icon(
-                          Icons.chevron_right,
-                          color: AppColors.grey,
-                          size: 20,
-                        ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-          if (hint != null) ...[
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              style: const TextStyle(color: AppColors.white),
-              decoration: InputDecoration(
-                hintText: _getHintText(),
-                hintStyle: TextStyle(color: AppColors.grey.withOpacity(0.5)),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ],
-        ],
+    );
+  }
+
+  void _showCategoryPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => CategoryPickerSheet(
+        selectedCategory: selectedCategory,
+        onCategorySelected: (category) {
+          setState(() {
+            selectedCategory = category;
+          });
+        },
       ),
     );
   }
@@ -869,67 +912,54 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       return;
     }
 
-    // Проверяем кратность недели для еженедельных челленджей
-    if (selectedRegularity == 'Каждую неделю' ||
-        selectedRegularity == '2 раз(а) в неделю' ||
-        selectedRegularity.contains('раза в неделю')) {
-      if (startDate == null || endDate == null) {
-        _showErrorDialog(
-          context,
-          'Пожалуйста, выберите даты начала и окончания челленджа',
-        );
-        return;
-      }
-
-      final durationInDays = endDate!.difference(startDate!).inDays + 1;
-      if (durationInDays % 7 != 0) {
-        _showErrorDialog(
-          context,
-          'Для еженедельного челленджа длительность должна быть кратна 7 дням.\n\nТекущая длительность: $durationInDays дней\nРекомендуемая длительность: ${((durationInDays / 7).round() * 7)} дней\n\nПожалуйста, измените даты начала и окончания.',
-        );
-        return;
-      }
-    }
-
-    final now = DateTime.now();
-    final defaultStartDate = DateTime(now.year, now.month, now.day);
-    final defaultEndDate = defaultStartDate.add(const Duration(days: 7));
-
-    // Определяем тип регулярности и количество раз в неделю
+    // Определяем тип регулярности и параметры
     String regularityType;
+    int? timesPerDay;
     int? timesPerWeek;
     List<int>? confirmationDays;
 
     switch (selectedRegularity) {
-      case 'Каждый день':
-        regularityType = 'TIMES_PER_WEEK';
-        timesPerWeek = 7;
+      case 'Единоразово':
+        regularityType = 'ONCE';
         break;
-      case 'Раз в неделю':
+
+      case 'Каждый день':
+        regularityType = 'TIMES_PER_DAY';
+        timesPerDay = 1;
+        break;
+
+      case 'Каждую неделю':
         regularityType = 'TIMES_PER_WEEK';
         timesPerWeek = 1;
         break;
-      case '2 раза в неделю':
+
+      case '2 раз(а) в неделю':
         regularityType = 'TIMES_PER_WEEK';
-        timesPerWeek = 2;
+        timesPerWeek = selectedDaysPerWeek;
         break;
-      case '3 раза в неделю':
-        regularityType = 'TIMES_PER_WEEK';
-        timesPerWeek = 3;
-        break;
-      case 'Конкретные дни':
-        regularityType = 'SPECIFIC_DAYS';
+
+      case 'Свой период':
+        regularityType = 'CONCRETE_DAYS';
         confirmationDays = [];
         for (int i = 0; i < selectedDays.length; i++) {
           if (selectedDays[i]) {
-            // Преобразуем в формат API (0 = Понедельник, 6 = Воскресенье)
-            confirmationDays.add(i);
+            // API ожидает дни недели от 1 до 7, где 1 - понедельник
+            confirmationDays.add(i + 1);
           }
         }
+        // Если не выбраны дни для своего периода, показываем ошибку
+        if (confirmationDays.isEmpty) {
+          _showErrorDialog(
+            context,
+            'Пожалуйста, выберите хотя бы один день недели',
+          );
+          return;
+        }
         break;
+
       default:
-        regularityType = 'TIMES_PER_WEEK';
-        timesPerWeek = 7;
+        regularityType = 'TIMES_PER_DAY';
+        timesPerDay = 1;
     }
 
     // Форматируем время в формат HH:mm
@@ -941,22 +971,21 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
 
     final challenge = {
       'name': nameController.text.trim(),
-      'participation_type':
-          selectedType == ChallengeType.personal ? 'PERSONAL' : 'GROUP',
+      'participation_type': selectedType == ChallengeType.personal
+          ? 'PERSONAL'
+          : (!isPublic ? 'GROUP' : 'PRIVATE_GROUP'),
       'icon': selectedIcon.isEmpty ? 'flash' : selectedIcon,
       'category': selectedCategory.isEmpty ? 'Спорт' : selectedCategory,
       'confirmation_type': 'PHOTO',
-      'start_date': startDate?.toIso8601String().split('T')[0] ??
-          defaultStartDate.toIso8601String().split('T')[0],
-      'end_date': endDate?.toIso8601String().split('T')[0] ??
-          defaultEndDate.toIso8601String().split('T')[0],
+      'start_date': startDate!.toIso8601String().split('T')[0],
+      'end_date': endDate!.toIso8601String().split('T')[0],
       'regularity_type': regularityType,
-      'times_per_day': 0,
-      'times_per_week': timesPerWeek,
+      if (timesPerDay != null) 'times_per_day': timesPerDay,
+      if (timesPerWeek != null) 'times_per_week': timesPerWeek,
       if (confirmationDays != null) 'confirmation_days': confirmationDays,
       'confirmation_description': descriptionController.text.trim(),
       'author_tg_id': '44',
-      'price': 100,
+      'price': selectedBet,
       'currency': 'RUB',
       'confirm_until': confirmUntil,
       if (selectedType == ChallengeType.group) ...{
@@ -1059,12 +1088,27 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                       hint: 'Введите название челленджа',
                       isRequired: true,
                     ),
-                    _buildSelectField('Иконка', 'Выбрать', onTap: () {
-                      // Показать выбор иконки
-                    }),
-                    _buildSelectField('Категория', 'Выбрать', onTap: () {
-                      // Показать выбор категории
-                    }),
+                    _buildSelectField(
+                      'Иконка',
+                      selectedIcon.isEmpty ? 'Выбрать' : selectedIcon,
+                      onTap: _showIconPicker,
+                      icon: selectedIcon.isNotEmpty
+                          ? SvgPicture.asset(
+                              'assets/icons/$selectedIcon.svg',
+                              width: 24,
+                              height: 24,
+                              colorFilter: const ColorFilter.mode(
+                                AppColors.grey,
+                                BlendMode.srcIn,
+                              ),
+                            )
+                          : null,
+                    ),
+                    _buildSelectField(
+                      'Категория',
+                      selectedCategory.isEmpty ? 'Выбрать' : selectedCategory,
+                      onTap: _showCategoryPicker,
+                    ),
                   ]),
                   const SizedBox(height: 16),
                   _buildInputSection([
@@ -1143,7 +1187,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                   ]),
                   const SizedBox(height: 16),
                   _buildInputSection([
-                    _buildSelectField('Периодичность', selectedRegularity,
+                    _buildSelectField('Периодичность',
+                        _formatRegularityText(selectedRegularity),
                         onTap: _showRegularityPicker),
                   ]),
                   const SizedBox(height: 16),
@@ -1233,8 +1278,12 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     );
   }
 
-  Widget _buildSelectField(String label, String value,
-      {required VoidCallback onTap}) {
+  Widget _buildSelectField(
+    String label,
+    String value, {
+    required VoidCallback onTap,
+    Widget? icon,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -1251,6 +1300,10 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
             ),
             Row(
               children: [
+                if (icon != null) ...[
+                  icon,
+                  const SizedBox(width: 8),
+                ],
                 Text(
                   value,
                   style: const TextStyle(
@@ -1266,6 +1319,85 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    String label, {
+    required TextEditingController controller,
+    String? hint,
+    String? value,
+    bool isRequired = false,
+    VoidCallback? onTap,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.blackMin,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (isRequired)
+                    Text(
+                      ' *',
+                      style: TextStyle(
+                        color: AppColors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+              if (value != null)
+                InkWell(
+                  onTap: onTap,
+                  child: Row(
+                    children: [
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          color: AppColors.grey,
+                        ),
+                      ),
+                      if (onTap != null)
+                        const Icon(
+                          Icons.chevron_right,
+                          color: AppColors.grey,
+                          size: 20,
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          if (hint != null) ...[
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              style: const TextStyle(color: AppColors.white),
+              decoration: InputDecoration(
+                hintText: _getHintText(),
+                hintStyle: TextStyle(color: AppColors.grey.withOpacity(0.5)),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -1339,7 +1471,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
             setState(() {
               isPublic = newValue;
             });
-            if (newValue) {
+            if (!newValue) {
               showDialog(
                 context: context,
                 barrierColor: Colors.black.withOpacity(0.8),
@@ -1355,7 +1487,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text(
-                          'Присоединиться к челленджу\nсмогут только люди,\nу которых есть ссылка',
+                          'Челлендж будет доступен\nвсем пользователям',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.white,
