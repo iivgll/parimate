@@ -37,7 +37,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   final List<String> confirmationTypes = [
     'Отправлять фото',
     'Отправлять видео',
-    'Отправлять геолокацию',
     'Отправлять текст',
   ];
 
@@ -822,17 +821,15 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   }
 
   String _getHintText() {
-    switch (selectedConfirmationType.toLowerCase()) {
-      case 'отправлять фото':
-        return 'Что должно быть на фото';
-      case 'отправлять видео':
-        return 'Что должно быть на видео';
-      case 'отправлять геолокацию':
-        return 'Куда нужно прийти';
-      case 'отправлять текст':
+    switch (selectedConfirmationType) {
+      case 'Отправлять фото':
+        return 'Что нужно сфотографировать';
+      case 'Отправлять видео':
+        return 'Что нужно снять на видео';
+      case 'Отправлять текст':
         return 'Что нужно написать';
       default:
-        return 'Опишите задание';
+        return '';
     }
   }
 
@@ -1136,9 +1133,9 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                                             'Отправлять видео'
                                         ? 'Что должно быть на видео'
                                         : selectedConfirmationType ==
-                                                'Отправлять геолокацию'
-                                            ? 'Куда нужно прийти'
-                                            : 'Что нужно написать',
+                                                'Отправлять текст'
+                                            ? 'Что нужно написать'
+                                            : '',
                                 hintStyle: TextStyle(
                                     color: AppColors.grey.withOpacity(0.5)),
                                 border: InputBorder.none,
@@ -1172,9 +1169,9 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                                             'Отправлять видео'
                                         ? 'Что должно быть на видео'
                                         : selectedConfirmationType ==
-                                                'Отправлять геолокацию'
-                                            ? 'Куда нужно прийти'
-                                            : 'Что нужно написать',
+                                                'Отправлять текст'
+                                            ? 'Что нужно написать'
+                                            : '',
                                 hintStyle: TextStyle(
                                     color: AppColors.grey.withOpacity(0.5)),
                                 border: InputBorder.none,
