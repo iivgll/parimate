@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'icon_picker_sheet.dart';
 import 'category_picker_sheet.dart';
+import 'challenge_preview_page.dart';
 
 enum RegularityType { daily, weekly, specificDays }
 
@@ -990,21 +991,12 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       },
     };
 
-    try {
-      await ref.read(challengeRepositoryProvider).createChallenge(challenge);
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Челлендж успешно создан')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка при создании челленджа: $e')),
-        );
-      }
-    }
+    // Вместо отправки на сервер показываем экран предпросмотра
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ChallengePreviewPage(challenge: challenge),
+      ),
+    );
   }
 
   @override
