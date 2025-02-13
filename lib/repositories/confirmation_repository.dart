@@ -7,7 +7,7 @@ class ConfirmationRepository {
 
   ConfirmationRepository(this._dio);
 
-  Future<ConfirmationSchemaInput> postConfirmation({
+  Future<bool> postConfirmation({
     required String userTgId,
     required int challengeId,
     required ConfirmationData data,
@@ -19,11 +19,12 @@ class ConfirmationRepository {
         data: {
           'user_tg_id': userTgId,
           'challenge_id': challengeId,
-          'data': data,
+          'data': data.toJson(),
           'share': share,
         },
       );
-      return ConfirmationSchemaInput.fromJson(response.data);
+
+      return response.statusCode == 200;
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

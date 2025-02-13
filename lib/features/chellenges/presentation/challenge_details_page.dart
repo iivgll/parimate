@@ -7,6 +7,7 @@ import '../../../common/utils/colors.dart';
 import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/challenge_statistics.dart';
+import '../../../features/chellenges/presentation/confirmation_upload_page.dart';
 
 class ChallengeDetailsPage extends ConsumerWidget {
   final ChallengeModel challenge;
@@ -129,7 +130,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 const SizedBox(height: 24),
                 _buildRulesBlock(),
                 const SizedBox(height: 24),
-                _buildConfirmationBlockContent(userStatistics),
+                _buildConfirmationBlockContent(userStatistics, context),
                 const SizedBox(height: 24),
                 _buildParticipantsBlockContent(statistics),
                 const SizedBox(height: 32),
@@ -238,7 +239,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
   }
 
   Widget _buildConfirmationBlockContent(
-      UserChallengeStatisticsSchema statistics) {
+      UserChallengeStatisticsSchema statistics, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -256,7 +257,13 @@ class ChallengeDetailsPage extends ConsumerWidget {
               const SizedBox(width: 8),
               IconButton(
                 onPressed: () {
-                  // TODO: Реализовать загрузку подтверждения
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ConfirmationUploadPage(challenge: challenge),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.arrow_circle_right_outlined,
                     color: AppColors.white, size: 32),
@@ -348,7 +355,13 @@ class ChallengeDetailsPage extends ConsumerWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: Реализовать загрузку подтверждения
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ConfirmationUploadPage(challenge: challenge),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.blackMin,

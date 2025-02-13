@@ -25,15 +25,14 @@ _$ConfirmationSchemaInputImpl _$$ConfirmationSchemaInputImplFromJson(
     _$ConfirmationSchemaInputImpl(
       id: (json['id'] as num).toInt(),
       approved: json['approved'] as bool?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      approvedAt: json['approvedAt'] == null
-          ? null
-          : DateTime.parse(json['approvedAt'] as String),
+      createdAt: json['createdAt'] as String,
+      approvedAt: json['approvedAt'] as String?,
       data: ConfirmationData.fromJson(json['data'] as Map<String, dynamic>),
       rejectReason: json['rejectReason'] as String?,
       share: json['share'] as bool,
       userTgId: json['userTgId'] as String,
       challengeId: (json['challengeId'] as num).toInt(),
+      url: json['url'] as String?,
     );
 
 Map<String, dynamic> _$$ConfirmationSchemaInputImplToJson(
@@ -41,13 +40,14 @@ Map<String, dynamic> _$$ConfirmationSchemaInputImplToJson(
     <String, dynamic>{
       'id': instance.id,
       'approved': instance.approved,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'approvedAt': instance.approvedAt?.toIso8601String(),
+      'createdAt': instance.createdAt,
+      'approvedAt': instance.approvedAt,
       'data': instance.data.toJson(),
       'rejectReason': instance.rejectReason,
       'share': instance.share,
       'userTgId': instance.userTgId,
       'challengeId': instance.challengeId,
+      'url': instance.url,
     };
 
 _$ConfirmationListResponseImpl _$$ConfirmationListResponseImplFromJson(

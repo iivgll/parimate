@@ -18,14 +18,15 @@ class ConfirmationData with _$ConfirmationData {
 class ConfirmationSchemaInput with _$ConfirmationSchemaInput {
   const factory ConfirmationSchemaInput({
     required int id,
-    bool? approved,
-    required DateTime createdAt,
-    DateTime? approvedAt,
+    @JsonKey(nullable: true) bool? approved,
+    required String createdAt,
+    @JsonKey(nullable: true) String? approvedAt,
     required ConfirmationData data,
-    String? rejectReason,
+    @JsonKey(nullable: true) String? rejectReason,
     required bool share,
     required String userTgId,
     required int challengeId,
+    @JsonKey(nullable: true) String? url,
   }) = _ConfirmationSchemaInput;
 
   factory ConfirmationSchemaInput.fromJson(Map<String, dynamic> json) =>

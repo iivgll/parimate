@@ -29,7 +29,7 @@ final participationRepositoryProvider =
 });
 
 final confirmationRepositoryProvider = Provider<ConfirmationRepository>((ref) {
-  throw UnimplementedError();
+  return ConfirmationRepository(ref.watch(dioProvider));
 });
 
 final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
@@ -37,7 +37,7 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
 });
 
 final fileRepositoryProvider = Provider<FileRepository>((ref) {
-  throw UnimplementedError();
+  return FileRepository(ref.watch(dioProvider));
 });
 
 final codeWordRepositoryProvider = Provider<CodeWordRepository>((ref) {
