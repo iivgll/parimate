@@ -20,6 +20,21 @@ class ChallengeDetailsPage extends ConsumerWidget {
     return '$startDate - $endDate';
   }
 
+  Widget _buildStatusIcon() {
+    if (challenge.isArchived) {
+      return Icon(
+        Icons.verified,
+        color: AppColors.green,
+        size: 20,
+      );
+    }
+    return const Icon(
+      Icons.schedule,
+      color: AppColors.grey,
+      size: 20,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -30,8 +45,10 @@ class ChallengeDetailsPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        centerTitle: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               challenge.name,
@@ -41,14 +58,29 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const SizedBox(width: 8),
+            Column(
+              children: [
+                _buildStatusIcon(),
+                SizedBox(
+                  height: 5,
+                )
+              ],
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(20),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
               _formatDateRange(),
               style: const TextStyle(
                 color: AppColors.white,
                 fontSize: 14,
               ),
             ),
-          ],
+          ),
         ),
       ),
       body: SingleChildScrollView(
