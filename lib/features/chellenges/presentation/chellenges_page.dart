@@ -20,6 +20,18 @@ class ChallengesPage extends ConsumerWidget {
     final challengesState = ref.watch(challengesNotifierProvider);
     final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
 
+    // Показываем загрузчик на весь экран, пока данные не загрузились
+    if (challengesState.isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.black,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.orange,
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.black,
       appBar: const MainAppbarWidget(),
@@ -198,8 +210,15 @@ class ChallengesPage extends ConsumerWidget {
                                 null;
                           },
                           backgroundColor: AppColors.black,
-                          selectedColor: AppColors.blackMin,
-                          labelStyle: const TextStyle(color: AppColors.white),
+                          selectedColor: AppColors.orange,
+                          labelStyle: TextStyle(
+                            color: selectedCategory == null
+                                ? AppColors.white
+                                : AppColors.grey,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         const SizedBox(width: 8),
                         ...metadata.categories.map((category) {
@@ -214,9 +233,15 @@ class ChallengesPage extends ConsumerWidget {
                                     .state = category;
                               },
                               backgroundColor: AppColors.black,
-                              selectedColor: AppColors.blackMin,
-                              labelStyle:
-                                  const TextStyle(color: AppColors.white),
+                              selectedColor: AppColors.orange,
+                              labelStyle: TextStyle(
+                                color: selectedCategory == category
+                                    ? AppColors.white
+                                    : AppColors.grey,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                           );
                         }),
@@ -243,9 +268,16 @@ class ChallengesPage extends ConsumerWidget {
 
                     if (filteredChallenges.isEmpty) {
                       return const Center(
-                        child: Text(
-                          'Нет доступных челленджей',
-                          style: TextStyle(color: AppColors.grey),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              'Нет доступных челленджей',
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                          ],
                         ),
                       );
                     }

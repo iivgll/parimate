@@ -21,13 +21,17 @@ class ChallengesNotifier extends _$ChallengesNotifier {
       final newChallenges =
           await ref.read(challengeRepositoryProvider).getNewChallenges();
 
-      return const ChallengesState().copyWith(
+      return const ChallengesState(
+        view: ChallengesView.mine,
+      ).copyWith(
         challenges: challenges,
         newChallenges: newChallenges,
       );
     } catch (e) {
       // В реальном приложении здесь должна быть обработка ошибок
-      return const ChallengesState();
+      return const ChallengesState(
+        view: ChallengesView.mine,
+      );
     }
   }
 

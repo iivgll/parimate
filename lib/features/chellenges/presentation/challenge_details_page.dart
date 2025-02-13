@@ -35,6 +35,20 @@ class ChallengeDetailsPage extends ConsumerWidget {
     );
   }
 
+  Future<(ChallengeStatistics, UserChallengeStatisticsSchema)> _loadData(
+      WidgetRef ref) async {
+    final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
+    final futures = await Future.wait([
+      challengesNotifier.getChallengeStatistics(challenge.id),
+      challengesNotifier.getUserChallengeStatistics(challenge.id),
+    ]);
+
+    return (
+      futures[0] as ChallengeStatistics,
+      futures[1] as UserChallengeStatisticsSchema
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -62,48 +76,68 @@ class ChallengeDetailsPage extends ConsumerWidget {
             Column(
               children: [
                 _buildStatusIcon(),
-                SizedBox(
-                  height: 5,
-                )
+                const SizedBox(height: 5),
               ],
             ),
           ],
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(20),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              _formatDateRange(),
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 14,
-              ),
+          preferredSize: const Size.fromHeight(0),
+          child: Text(
+            _formatDateRange(),
+            style: const TextStyle(
+              color: AppColors.white,
+              fontSize: 14,
             ),
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(
-          left: 24,
-          right: 24,
-          top: 16,
-          bottom: 32,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPrizeBlock(context),
-            const SizedBox(height: 24),
-            _buildRulesBlock(),
-            const SizedBox(height: 24),
-            _buildConfirmationBlock(context, ref),
-            const SizedBox(height: 24),
-            _buildParticipantsBlock(context, ref),
-            const SizedBox(height: 32),
-            _buildExitButton(context),
-          ],
-        ),
+      body: FutureBuilder<(ChallengeStatistics, UserChallengeStatisticsSchema)>(
+        future: _loadData(ref),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.orange,
+              ),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Ошибка загрузки данных: ${snapshot.error}',
+                style: const TextStyle(color: AppColors.grey),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
+          final (statistics, userStatistics) = snapshot.data!;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 16,
+              bottom: 32,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPrizeBlock(context),
+                const SizedBox(height: 24),
+                _buildRulesBlock(),
+                const SizedBox(height: 24),
+                _buildConfirmationBlockContent(userStatistics),
+                const SizedBox(height: 24),
+                _buildParticipantsBlockContent(statistics),
+                const SizedBox(height: 32),
+                _buildExitButton(context),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -142,28 +176,30 @@ class ChallengeDetailsPage extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          Container(
-            padding:
-                const EdgeInsets.only(right: 24, left: 24, top: 16, bottom: 16),
-            decoration: BoxDecoration(
-              color: AppColors.blackMin,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: IconButton(
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-                icon: const Icon(Icons.link, color: AppColors.white),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: challenge.link));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Ссылка скопирована')),
-                  );
-                },
+          if (!challenge.isArchived) ...[
+            const SizedBox(width: 16),
+            Container(
+              padding: const EdgeInsets.only(
+                  right: 24, left: 24, top: 16, bottom: 16),
+              decoration: BoxDecoration(
+                color: AppColors.blackMin,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.link, color: AppColors.white),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: challenge.link));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Ссылка скопирована')),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -201,11 +237,8 @@ class ChallengeDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildConfirmationBlock(BuildContext context, WidgetRef ref) {
-    final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
-    final statisticsFuture =
-        challengesNotifier.getUserChallengeStatistics(challenge.id);
-
+  Widget _buildConfirmationBlockContent(
+      UserChallengeStatisticsSchema statistics) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -219,18 +252,20 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: () {
-                // TODO: Реализовать загрузку подтверждения
-              },
-              icon: const Icon(Icons.arrow_circle_right_outlined,
-                  color: AppColors.white, size: 32),
-            ),
+            if (!challenge.isArchived) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () {
+                  // TODO: Реализовать загрузку подтверждения
+                },
+                icon: const Icon(Icons.arrow_circle_right_outlined,
+                    color: AppColors.white, size: 32),
+              ),
+            ],
           ],
         ),
         FutureBuilder<UserChallengeStatisticsSchema>(
-          future: statisticsFuture,
+          future: Future.value(statistics),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -307,29 +342,31 @@ class ChallengeDetailsPage extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Реализовать загрузку подтверждения
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blackMin,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                if (!challenge.isArchived) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // TODO: Реализовать загрузку подтверждения
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.blackMin,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      '+ Загрузить подтверждение',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.bold,
+                      child: const Text(
+                        '+ Загрузить подтверждение',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             );
           },
@@ -364,159 +401,140 @@ class ChallengeDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildParticipantsBlock(BuildContext context, WidgetRef ref) {
-    final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
-    final statisticsFuture =
-        challengesNotifier.getChallengeStatistics(challenge.id);
+  Widget _buildParticipantsBlockContent(ChallengeStatistics statistics) {
+    final activeParticipants =
+        statistics.participants.where((p) => p.active).length;
+    final totalParticipants = statistics.participants.length;
 
-    return FutureBuilder<ChallengeStatistics>(
-      future: statisticsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          print('Error details: ${snapshot.error}'); // Для отладки
-          return Text(
-            'Ошибка загрузки статистики: ${snapshot.error}',
-            style: const TextStyle(color: AppColors.grey),
-          );
-        }
-        if (!snapshot.hasData) return const SizedBox();
+    // Сортируем по количеству подтверждений
+    final activeUsers = statistics.participants.where((p) => p.active).toList()
+      ..sort((a, b) => b.approved.compareTo(a.approved));
 
-        final statistics = snapshot.data!;
-        final activeParticipants =
-            statistics.participants.where((p) => p.active).length;
-        final totalParticipants = statistics.participants.length;
+    final inactiveUsers = statistics.participants
+        .where((p) => !p.active)
+        .toList()
+      ..sort((a, b) => b.approved.compareTo(a.approved));
 
-        // Сортируем по количеству подтверждений
-        final activeUsers = statistics.participants
-            .where((p) => p.active)
-            .toList()
-          ..sort((a, b) => b.approved.compareTo(a.approved));
-
-        final inactiveUsers = statistics.participants
-            .where((p) => !p.active)
-            .toList()
-          ..sort((a, b) => b.approved.compareTo(a.approved));
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  'УЧАСТНИКИ $activeParticipants/$totalParticipants',
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: AppColors.white,
-                    size: 32,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.blackMin,
-                borderRadius: BorderRadius.circular(8),
+            Text(
+              'УЧАСТНИКИ $activeParticipants/$totalParticipants',
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Топ по активности:',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ...activeUsers.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final user = entry.value;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${index + 1}. ${user.name}',
-                            style: const TextStyle(
-                              color: AppColors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            '${user.approved}/${statistics.expected}',
-                            style: const TextStyle(
-                              color: AppColors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                  if (inactiveUsers.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Проиграли:',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ...inactiveUsers.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final user = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${index + 1}. ${user.name}',
-                              style: const TextStyle(
-                                color: AppColors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              '${user.approved}/${statistics.expected}',
-                              style: const TextStyle(
-                                color: AppColors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ],
-                ],
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.arrow_circle_right_outlined,
+                color: AppColors.white,
+                size: 32,
               ),
             ),
           ],
-        );
-      },
+        ),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Топ по активности:',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...activeUsers.asMap().entries.map((entry) {
+                final index = entry.key;
+                final user = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${index + 1}. ${user.name}',
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        '${user.approved}/${statistics.expected}',
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              if (inactiveUsers.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Text(
+                  'Проиграли:',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...inactiveUsers.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final user = entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${index + 1}. ${user.name}',
+                          style: const TextStyle(
+                            color: AppColors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          '${user.approved}/${statistics.expected}',
+                          style: const TextStyle(
+                            color: AppColors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildExitButton(BuildContext context) {
+    if (challenge.isArchived) {
+      return const SizedBox
+          .shrink(); // Не показываем кнопку для архивных челленджей
+    }
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(

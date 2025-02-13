@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parimate/features/settings/presentation/settings_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../common/widgets/bottom_navigation_bar.dart';
+import '../features/chellenges/logic/challenges_notifier.dart';
 import '../features/chellenges/presentation/challenge_details_page.dart';
 import '../features/chellenges/presentation/chellenges_page.dart';
+import '../features/chellenges/state/challenges_state.dart';
 import '../features/coin/presentation/coin_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/chats/presentation/chats_page.dart';
