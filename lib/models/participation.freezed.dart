@@ -23,9 +23,12 @@ mixin _$ParticipationSchema {
   bool get payed => throw _privateConstructorUsedError;
   bool get win => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
+  @JsonKey(name: 'reject_reason')
   String? get rejectReason => throw _privateConstructorUsedError;
   bool get accepted => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_tg_id')
   String get userTgId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'challenge_id')
   int get challengeId => throw _privateConstructorUsedError;
 
   /// Serializes this ParticipationSchema to a JSON map.
@@ -48,10 +51,10 @@ abstract class $ParticipationSchemaCopyWith<$Res> {
       {bool payed,
       bool win,
       bool archived,
-      String? rejectReason,
+      @JsonKey(name: 'reject_reason') String? rejectReason,
       bool accepted,
-      String userTgId,
-      int challengeId});
+      @JsonKey(name: 'user_tg_id') String userTgId,
+      @JsonKey(name: 'challenge_id') int challengeId});
 }
 
 /// @nodoc
@@ -122,10 +125,10 @@ abstract class _$$ParticipationSchemaImplCopyWith<$Res>
       {bool payed,
       bool win,
       bool archived,
-      String? rejectReason,
+      @JsonKey(name: 'reject_reason') String? rejectReason,
       bool accepted,
-      String userTgId,
-      int challengeId});
+      @JsonKey(name: 'user_tg_id') String userTgId,
+      @JsonKey(name: 'challenge_id') int challengeId});
 }
 
 /// @nodoc
@@ -189,10 +192,10 @@ class _$ParticipationSchemaImpl implements _ParticipationSchema {
       {required this.payed,
       required this.win,
       required this.archived,
-      this.rejectReason,
+      @JsonKey(name: 'reject_reason') this.rejectReason,
       required this.accepted,
-      required this.userTgId,
-      required this.challengeId});
+      @JsonKey(name: 'user_tg_id') required this.userTgId,
+      @JsonKey(name: 'challenge_id') required this.challengeId});
 
   factory _$ParticipationSchemaImpl.fromJson(Map<String, dynamic> json) =>
       _$$ParticipationSchemaImplFromJson(json);
@@ -204,12 +207,15 @@ class _$ParticipationSchemaImpl implements _ParticipationSchema {
   @override
   final bool archived;
   @override
+  @JsonKey(name: 'reject_reason')
   final String? rejectReason;
   @override
   final bool accepted;
   @override
+  @JsonKey(name: 'user_tg_id')
   final String userTgId;
   @override
+  @JsonKey(name: 'challenge_id')
   final int challengeId;
 
   @override
@@ -260,13 +266,14 @@ class _$ParticipationSchemaImpl implements _ParticipationSchema {
 
 abstract class _ParticipationSchema implements ParticipationSchema {
   const factory _ParticipationSchema(
-      {required final bool payed,
-      required final bool win,
-      required final bool archived,
-      final String? rejectReason,
-      required final bool accepted,
-      required final String userTgId,
-      required final int challengeId}) = _$ParticipationSchemaImpl;
+          {required final bool payed,
+          required final bool win,
+          required final bool archived,
+          @JsonKey(name: 'reject_reason') final String? rejectReason,
+          required final bool accepted,
+          @JsonKey(name: 'user_tg_id') required final String userTgId,
+          @JsonKey(name: 'challenge_id') required final int challengeId}) =
+      _$ParticipationSchemaImpl;
 
   factory _ParticipationSchema.fromJson(Map<String, dynamic> json) =
       _$ParticipationSchemaImpl.fromJson;
@@ -278,12 +285,15 @@ abstract class _ParticipationSchema implements ParticipationSchema {
   @override
   bool get archived;
   @override
+  @JsonKey(name: 'reject_reason')
   String? get rejectReason;
   @override
   bool get accepted;
   @override
+  @JsonKey(name: 'user_tg_id')
   String get userTgId;
   @override
+  @JsonKey(name: 'challenge_id')
   int get challengeId;
 
   /// Create a copy of ParticipationSchema

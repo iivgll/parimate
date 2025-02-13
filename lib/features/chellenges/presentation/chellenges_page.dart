@@ -294,19 +294,63 @@ class ChallengesPage extends ConsumerWidget {
           );
         }
 
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: state.challenges.length,
-          itemBuilder: (context, index) {
-            final challenge = state.challenges[index];
-            return ChallengeContainer(
-              challenge: challenge,
-              onArchive: () {
-                // Обработка архивации
-              },
-            );
-          },
+        // Разделяем челленджи на активные и архивные
+        final activeChallenges =
+            state.challenges.where((c) => !c.isArchived).toList();
+        final archivedChallenges =
+            state.challenges.where((c) => c.isArchived).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Активные челленджи
+            if (activeChallenges.isNotEmpty) ...[
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: activeChallenges.length,
+                itemBuilder: (context, index) {
+                  final challenge = activeChallenges[index];
+                  return ChallengeContainer(
+                    challenge: challenge,
+                    onArchive: () {
+                      // Обработка архивации
+                    },
+                  );
+                },
+              ),
+            ],
+
+            // Архивные челленджи
+            if (archivedChallenges.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              Text(
+                'АРХИВ',
+                style: TextStyle(
+                  fontFamily: AppFontFamily.uncage,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.white,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: archivedChallenges.length,
+                itemBuilder: (context, index) {
+                  final challenge = archivedChallenges[index];
+                  return ChallengeContainer(
+                    challenge: challenge,
+                    onArchive: () {
+                      // Обработка архивации
+                    },
+                    isArchived: true,
+                  );
+                },
+              ),
+            ],
+          ],
         );
       },
     );

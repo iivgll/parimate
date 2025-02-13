@@ -9,10 +9,10 @@ class ParticipationSchema with _$ParticipationSchema {
     required bool payed,
     required bool win,
     required bool archived,
-    String? rejectReason,
+    @JsonKey(name: 'reject_reason') String? rejectReason,
     required bool accepted,
-    required String userTgId,
-    required int challengeId,
+    @JsonKey(name: 'user_tg_id') required String userTgId,
+    @JsonKey(name: 'challenge_id') required int challengeId,
   }) = _ParticipationSchema;
 
   factory ParticipationSchema.fromJson(Map<String, dynamic> json) =>

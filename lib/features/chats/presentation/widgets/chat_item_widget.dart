@@ -69,7 +69,7 @@ class ChatItemWidget extends StatelessWidget {
                   Text(
                     chat.link,
                     style: TextStyle(
-                      color: AppColors.white.withOpacity(0.7),
+                      color: AppColors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),

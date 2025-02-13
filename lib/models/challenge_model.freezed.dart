@@ -437,7 +437,7 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ChallengeModelImpl implements _ChallengeModel {
+class _$ChallengeModelImpl extends _ChallengeModel {
   const _$ChallengeModelImpl(
       {required this.id,
       required this.name,
@@ -462,7 +462,8 @@ class _$ChallengeModelImpl implements _ChallengeModel {
       required this.chat,
       required this.link,
       this.admin_chat})
-      : _confirmation_days = confirmation_days;
+      : _confirmation_days = confirmation_days,
+        super._();
 
   factory _$ChallengeModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChallengeModelImplFromJson(json);
@@ -620,7 +621,7 @@ class _$ChallengeModelImpl implements _ChallengeModel {
   }
 }
 
-abstract class _ChallengeModel implements ChallengeModel {
+abstract class _ChallengeModel extends ChallengeModel {
   const factory _ChallengeModel(
       {required final int id,
       required final String name,
@@ -645,6 +646,7 @@ abstract class _ChallengeModel implements ChallengeModel {
       required final Chat chat,
       required final String link,
       final Chat? admin_chat}) = _$ChallengeModelImpl;
+  const _ChallengeModel._() : super._();
 
   factory _ChallengeModel.fromJson(Map<String, dynamic> json) =
       _$ChallengeModelImpl.fromJson;

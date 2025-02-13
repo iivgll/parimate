@@ -5,6 +5,8 @@ part 'challenge_model.freezed.dart';
 
 @freezed
 class ChallengeModel with _$ChallengeModel {
+  const ChallengeModel._();
+
   const factory ChallengeModel({
     required int id,
     required String name,
@@ -33,6 +35,8 @@ class ChallengeModel with _$ChallengeModel {
 
   factory ChallengeModel.fromJson(Map<String, dynamic> json) =>
       _$ChallengeModelFromJson(json);
+
+  bool get isArchived => status == 'WIN' || status == 'LOSS';
 }
 
 @freezed

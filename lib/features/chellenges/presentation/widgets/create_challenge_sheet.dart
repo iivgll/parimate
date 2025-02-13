@@ -3,8 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/colors.dart';
 import 'package:parimate/common/utils/font_family.dart';
-import 'package:parimate/features/chellenges/domain/challenge_type.dart';
-import 'package:parimate/app/repository_providers.dart';
+import 'package:parimate/features/chellenges/logic/challenge_type.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'icon_picker_sheet.dart';
@@ -379,13 +378,13 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                       max: 7,
                       divisions: 6,
                       activeColor: AppColors.orange,
-                      inactiveColor: AppColors.grey.withOpacity(0.2),
+                      inactiveColor: AppColors.grey.withValues(alpha: 0.2),
                       onChanged: (value) {
                         // Обновляем оба состояния
                         setModalState(() {
                           selectedDaysPerWeek = value.toInt();
                         });
-                        this.setState(() {
+                        setState(() {
                           selectedDaysPerWeek = value.toInt();
                         });
                       },
@@ -523,7 +522,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
               secondary: AppColors.orange,
               onSecondary: AppColors.white,
             ).copyWith(
-              secondaryContainer: AppColors.orange.withOpacity(0.3),
+              secondaryContainer: AppColors.orange.withValues(alpha: 0.3),
             ),
             dialogBackgroundColor: AppColors.blackMin,
           ),
@@ -866,46 +865,32 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     );
   }
 
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.blackMin,
-        title: Text(
-          'Ошибка',
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 18,
-            fontFamily: AppFontFamily.uncage,
-          ),
-        ),
-        content: Text(
-          message,
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 16,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'OK',
-              style: TextStyle(
-                color: AppColors.orange,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _createChallenge() async {
+    // Проверяем обязательные поля
     if (nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Введите название челленджа')),
+      );
+      return;
+    }
+
+    if (selectedIcon.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Выберите иконку челленджа')),
+      );
+      return;
+    }
+
+    if (selectedCategory.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Выберите категорию челленджа')),
+      );
+      return;
+    }
+
+    if (descriptionController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Введите описание челленджа')),
       );
       return;
     }
@@ -920,52 +905,29 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       case 'Единоразово':
         regularityType = 'ONCE';
         break;
-
       case 'Каждый день':
         regularityType = 'TIMES_PER_DAY';
         timesPerDay = 1;
         break;
-
       case 'Каждую неделю':
         regularityType = 'TIMES_PER_WEEK';
         timesPerWeek = 1;
         break;
-
       case '2 раз(а) в неделю':
         regularityType = 'TIMES_PER_WEEK';
         timesPerWeek = selectedDaysPerWeek;
         break;
-
       case 'Свой период':
         regularityType = 'CONCRETE_DAYS';
-        confirmationDays = [];
-        for (int i = 0; i < selectedDays.length; i++) {
-          if (selectedDays[i]) {
-            // API ожидает дни недели от 1 до 7, где 1 - понедельник
-            confirmationDays.add(i + 1);
-          }
-        }
-        // Если не выбраны дни для своего периода, показываем ошибку
-        if (confirmationDays.isEmpty) {
-          _showErrorDialog(
-            context,
-            'Пожалуйста, выберите хотя бы один день недели',
-          );
-          return;
-        }
+        confirmationDays = List.generate(
+          selectedDays.length,
+          (i) => selectedDays[i] ? i + 1 : null,
+        ).where((day) => day != null).cast<int>().toList();
         break;
-
       default:
         regularityType = 'TIMES_PER_DAY';
         timesPerDay = 1;
     }
-
-    // Форматируем время в формат HH:mm
-    final timeStr = confirmationTime?.format(context).split(' ')[0] ?? '23:59';
-    final parts = timeStr.split(':');
-    final hour = parts[0].padLeft(2, '0');
-    final minute = parts[1].padLeft(2, '0');
-    final confirmUntil = '$hour:$minute';
 
     final challenge = {
       'name': nameController.text.trim(),
@@ -985,13 +947,14 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       'author_tg_id': '44',
       'price': selectedBet,
       'currency': 'RUB',
-      'confirm_until': confirmUntil,
+      'confirm_until':
+          confirmationTime?.format(context).split(' ')[0] ?? '23:59',
       if (selectedType == ChallengeType.group) ...{
         'max_participants': maxParticipants ?? 36,
       },
     };
 
-    // Вместо отправки на сервер показываем экран предпросмотра
+    // Показываем экран предпросмотра
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ChallengePreviewPage(challenge: challenge),
@@ -1129,7 +1092,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                                             ? 'Что нужно написать'
                                             : '',
                                 hintStyle: TextStyle(
-                                    color: AppColors.grey.withOpacity(0.5)),
+                                    color:
+                                        AppColors.grey.withValues(alpha: 0.5)),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.zero,
                               ),
@@ -1165,7 +1129,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                                             ? 'Что нужно написать'
                                             : '',
                                 hintStyle: TextStyle(
-                                    color: AppColors.grey.withOpacity(0.5)),
+                                    color:
+                                        AppColors.grey.withValues(alpha: 0.5)),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.zero,
                               ),
@@ -1230,7 +1195,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.white.withOpacity(0.2),
+                            color: AppColors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
@@ -1348,7 +1313,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                         color: AppColors.orange,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
+                    )
                 ],
               ),
               if (value != null)
@@ -1380,7 +1345,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
               style: const TextStyle(color: AppColors.white),
               decoration: InputDecoration(
                 hintText: _getHintText(),
-                hintStyle: TextStyle(color: AppColors.grey.withOpacity(0.5)),
+                hintStyle:
+                    TextStyle(color: AppColors.grey.withValues(alpha: 0.5)),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
@@ -1418,7 +1384,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                       min: 1,
                       max: 100,
                       activeColor: AppColors.orange,
-                      inactiveColor: AppColors.grey.withOpacity(0.2),
+                      inactiveColor: AppColors.grey.withValues(alpha: 0.2),
                       onChanged: (newValue) {
                         setState(() {
                           maxParticipants = newValue.toInt();
@@ -1463,7 +1429,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
             if (!newValue) {
               showDialog(
                 context: context,
-                barrierColor: Colors.black.withOpacity(0.8),
+                barrierColor: Colors.black.withValues(alpha: 0.8),
                 builder: (context) => Dialog(
                   backgroundColor: Colors.transparent,
                   child: Container(

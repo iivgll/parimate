@@ -12,10 +12,10 @@ _$ParticipationSchemaImpl _$$ParticipationSchemaImplFromJson(
       payed: json['payed'] as bool,
       win: json['win'] as bool,
       archived: json['archived'] as bool,
-      rejectReason: json['rejectReason'] as String?,
+      rejectReason: json['reject_reason'] as String?,
       accepted: json['accepted'] as bool,
-      userTgId: json['userTgId'] as String,
-      challengeId: (json['challengeId'] as num).toInt(),
+      userTgId: json['user_tg_id'] as String,
+      challengeId: (json['challenge_id'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$ParticipationSchemaImplToJson(
@@ -24,8 +24,8 @@ Map<String, dynamic> _$$ParticipationSchemaImplToJson(
       'payed': instance.payed,
       'win': instance.win,
       'archived': instance.archived,
-      'rejectReason': instance.rejectReason,
+      'reject_reason': instance.rejectReason,
       'accepted': instance.accepted,
-      'userTgId': instance.userTgId,
-      'challengeId': instance.challengeId,
+      'user_tg_id': instance.userTgId,
+      'challenge_id': instance.challengeId,
     };

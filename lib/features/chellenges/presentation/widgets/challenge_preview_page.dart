@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 import '../../../../common/utils/colors.dart';
 import '../../../../app/repository_providers.dart';
+import '../../logic/challenges_notifier.dart';
 
 class ChallengePreviewPage extends ConsumerWidget {
   final Map<String, dynamic> challenge;
@@ -164,6 +164,9 @@ class ChallengePreviewPage extends ConsumerWidget {
             payed: true,
           );
 
+      // Обновляем списки челленджей
+      await ref.read(challengesNotifierProvider.notifier).refreshChallenges();
+
       if (context.mounted) {
         Navigator.of(context).pop(); // Закрываем экран предпросмотра
         Navigator.of(context).pop(); // Закрываем экран создания
@@ -172,10 +175,48 @@ class ChallengePreviewPage extends ConsumerWidget {
         );
       }
     } catch (e) {
-      TalkerLogger().error('Ошибка при создании челленджа: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка при создании челленджа: $e')),
+        String errorMessage = 'Произошла ошибка';
+
+        if (e.toString().contains('message')) {
+          // Извлекаем сообщение об ошибке из JSON
+          final start = e.toString().indexOf('"message": "') + 11;
+          final end = e.toString().indexOf('"', start);
+          errorMessage = e.toString().substring(start, end);
+        }
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppColors.blackMin,
+            title: const Text(
+              'Ошибка',
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Text(
+              errorMessage,
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    color: AppColors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       }
     }

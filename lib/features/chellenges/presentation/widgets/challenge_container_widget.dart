@@ -25,8 +25,11 @@ class ChallengeContainer extends StatelessWidget {
     final type = challenge.participation_type == 'PERSONAL'
         ? 'персональный'
         : 'групповой';
+    final status = isArchived
+        ? (challenge.status == 'WIN' ? ' (выигран)' : ' (проигран)')
+        : '';
 
-    return '$startDate - $endDate ($type)';
+    return '$startDate - $endDate ($type)$status';
   }
 
   @override
@@ -35,7 +38,9 @@ class ChallengeContainer extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: AppColors.blackMin,
+        color: isArchived
+            ? AppColors.black.withValues(alpha: 0.5)
+            : AppColors.blackMin,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
