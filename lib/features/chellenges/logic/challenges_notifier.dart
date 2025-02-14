@@ -114,12 +114,26 @@ class ChallengesNotifier extends _$ChallengesNotifier {
 
   Future<void> joinChallenge(int challengeId, BuildContext context) async {
     try {
+      // Обновляем списки челленджей перед поиском
+      await refreshChallenges();
+
+      // Теперь ищем в обновленном списке
+      final challenge = state.value?.newChallenges.firstWhere(
+        (c) => c.id == challengeId,
+        orElse: () => throw Exception('Challenge not found'),
+      );
+
+      if (challenge == null) {
+        throw Exception('Challenge not found');
+      }
+
       final result =
           await ref.read(participationRepositoryProvider).registerToChallenge(
                 userTgId: '44',
                 challengeId: challengeId,
                 accepted: true,
                 payed: false,
+                confirmationType: challenge.confirmationType,
               );
 
       if (result.confirmationUrl != null && context.mounted) {

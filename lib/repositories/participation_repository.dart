@@ -12,6 +12,7 @@ class ParticipationRepository {
     required int challengeId,
     required bool accepted,
     required bool payed,
+    required String confirmationType,
   }) async {
     try {
       final response = await _dio.post(
@@ -21,6 +22,7 @@ class ParticipationRepository {
           'challenge_id': challengeId,
           'accepted': accepted,
           'payed': payed,
+          'confirmation_type': confirmationType,
         },
       );
 

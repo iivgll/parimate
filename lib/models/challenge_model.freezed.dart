@@ -22,27 +22,40 @@ ChallengeModel _$ChallengeModelFromJson(Map<String, dynamic> json) {
 mixin _$ChallengeModel {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get participation_type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'participation_type')
+  String get participationType => throw _privateConstructorUsedError;
   String get icon => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
-  String get confirmation_type => throw _privateConstructorUsedError;
-  String get start_date => throw _privateConstructorUsedError;
-  String get end_date => throw _privateConstructorUsedError;
-  String get regularity_type => throw _privateConstructorUsedError;
-  int? get times_per_day => throw _privateConstructorUsedError;
-  int? get times_per_week => throw _privateConstructorUsedError;
-  List<int>? get confirmation_days => throw _privateConstructorUsedError;
+  @JsonKey(name: 'confirmation_type')
+  String get confirmationType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'start_date')
+  String get startDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'end_date')
+  String get endDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'regularity_type')
+  String get regularityType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'times_per_day')
+  int? get timesPerDay => throw _privateConstructorUsedError;
+  @JsonKey(name: 'times_per_week')
+  int? get timesPerWeek => throw _privateConstructorUsedError;
+  @JsonKey(name: 'confirmation_days')
+  List<int>? get confirmationDays => throw _privateConstructorUsedError;
   Author get author => throw _privateConstructorUsedError;
   int get price => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
-  String get confirmation_description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'confirmation_description')
+  String get confirmationDescription => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  int get max_participants => throw _privateConstructorUsedError;
-  String get confirm_until => throw _privateConstructorUsedError;
-  String get created_at => throw _privateConstructorUsedError;
+  @JsonKey(name: 'max_participants')
+  int get maxParticipants => throw _privateConstructorUsedError;
+  @JsonKey(name: 'confirm_until')
+  String get confirmUntil => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String get createdAt => throw _privateConstructorUsedError;
   Chat get chat => throw _privateConstructorUsedError;
   String get link => throw _privateConstructorUsedError;
-  Chat? get admin_chat => throw _privateConstructorUsedError;
+  @JsonKey(name: 'admin_chat')
+  Chat? get adminChat => throw _privateConstructorUsedError;
 
   /// Serializes this ChallengeModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,31 +76,31 @@ abstract class $ChallengeModelCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
-      String participation_type,
+      @JsonKey(name: 'participation_type') String participationType,
       String icon,
       String category,
-      String confirmation_type,
-      String start_date,
-      String end_date,
-      String regularity_type,
-      int? times_per_day,
-      int? times_per_week,
-      List<int>? confirmation_days,
+      @JsonKey(name: 'confirmation_type') String confirmationType,
+      @JsonKey(name: 'start_date') String startDate,
+      @JsonKey(name: 'end_date') String endDate,
+      @JsonKey(name: 'regularity_type') String regularityType,
+      @JsonKey(name: 'times_per_day') int? timesPerDay,
+      @JsonKey(name: 'times_per_week') int? timesPerWeek,
+      @JsonKey(name: 'confirmation_days') List<int>? confirmationDays,
       Author author,
       int price,
       String currency,
-      String confirmation_description,
+      @JsonKey(name: 'confirmation_description') String confirmationDescription,
       String status,
-      int max_participants,
-      String confirm_until,
-      String created_at,
+      @JsonKey(name: 'max_participants') int maxParticipants,
+      @JsonKey(name: 'confirm_until') String confirmUntil,
+      @JsonKey(name: 'created_at') String createdAt,
       Chat chat,
       String link,
-      Chat? admin_chat});
+      @JsonKey(name: 'admin_chat') Chat? adminChat});
 
   $AuthorCopyWith<$Res> get author;
   $ChatCopyWith<$Res> get chat;
-  $ChatCopyWith<$Res>? get admin_chat;
+  $ChatCopyWith<$Res>? get adminChat;
 }
 
 /// @nodoc
@@ -107,27 +120,27 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? participation_type = null,
+    Object? participationType = null,
     Object? icon = null,
     Object? category = null,
-    Object? confirmation_type = null,
-    Object? start_date = null,
-    Object? end_date = null,
-    Object? regularity_type = null,
-    Object? times_per_day = freezed,
-    Object? times_per_week = freezed,
-    Object? confirmation_days = freezed,
+    Object? confirmationType = null,
+    Object? startDate = null,
+    Object? endDate = null,
+    Object? regularityType = null,
+    Object? timesPerDay = freezed,
+    Object? timesPerWeek = freezed,
+    Object? confirmationDays = freezed,
     Object? author = null,
     Object? price = null,
     Object? currency = null,
-    Object? confirmation_description = null,
+    Object? confirmationDescription = null,
     Object? status = null,
-    Object? max_participants = null,
-    Object? confirm_until = null,
-    Object? created_at = null,
+    Object? maxParticipants = null,
+    Object? confirmUntil = null,
+    Object? createdAt = null,
     Object? chat = null,
     Object? link = null,
-    Object? admin_chat = freezed,
+    Object? adminChat = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -138,9 +151,9 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      participation_type: null == participation_type
-          ? _value.participation_type
-          : participation_type // ignore: cast_nullable_to_non_nullable
+      participationType: null == participationType
+          ? _value.participationType
+          : participationType // ignore: cast_nullable_to_non_nullable
               as String,
       icon: null == icon
           ? _value.icon
@@ -150,33 +163,33 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
-      confirmation_type: null == confirmation_type
-          ? _value.confirmation_type
-          : confirmation_type // ignore: cast_nullable_to_non_nullable
+      confirmationType: null == confirmationType
+          ? _value.confirmationType
+          : confirmationType // ignore: cast_nullable_to_non_nullable
               as String,
-      start_date: null == start_date
-          ? _value.start_date
-          : start_date // ignore: cast_nullable_to_non_nullable
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
               as String,
-      end_date: null == end_date
-          ? _value.end_date
-          : end_date // ignore: cast_nullable_to_non_nullable
+      endDate: null == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
               as String,
-      regularity_type: null == regularity_type
-          ? _value.regularity_type
-          : regularity_type // ignore: cast_nullable_to_non_nullable
+      regularityType: null == regularityType
+          ? _value.regularityType
+          : regularityType // ignore: cast_nullable_to_non_nullable
               as String,
-      times_per_day: freezed == times_per_day
-          ? _value.times_per_day
-          : times_per_day // ignore: cast_nullable_to_non_nullable
+      timesPerDay: freezed == timesPerDay
+          ? _value.timesPerDay
+          : timesPerDay // ignore: cast_nullable_to_non_nullable
               as int?,
-      times_per_week: freezed == times_per_week
-          ? _value.times_per_week
-          : times_per_week // ignore: cast_nullable_to_non_nullable
+      timesPerWeek: freezed == timesPerWeek
+          ? _value.timesPerWeek
+          : timesPerWeek // ignore: cast_nullable_to_non_nullable
               as int?,
-      confirmation_days: freezed == confirmation_days
-          ? _value.confirmation_days
-          : confirmation_days // ignore: cast_nullable_to_non_nullable
+      confirmationDays: freezed == confirmationDays
+          ? _value.confirmationDays
+          : confirmationDays // ignore: cast_nullable_to_non_nullable
               as List<int>?,
       author: null == author
           ? _value.author
@@ -190,25 +203,25 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
           ? _value.currency
           : currency // ignore: cast_nullable_to_non_nullable
               as String,
-      confirmation_description: null == confirmation_description
-          ? _value.confirmation_description
-          : confirmation_description // ignore: cast_nullable_to_non_nullable
+      confirmationDescription: null == confirmationDescription
+          ? _value.confirmationDescription
+          : confirmationDescription // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      max_participants: null == max_participants
-          ? _value.max_participants
-          : max_participants // ignore: cast_nullable_to_non_nullable
+      maxParticipants: null == maxParticipants
+          ? _value.maxParticipants
+          : maxParticipants // ignore: cast_nullable_to_non_nullable
               as int,
-      confirm_until: null == confirm_until
-          ? _value.confirm_until
-          : confirm_until // ignore: cast_nullable_to_non_nullable
+      confirmUntil: null == confirmUntil
+          ? _value.confirmUntil
+          : confirmUntil // ignore: cast_nullable_to_non_nullable
               as String,
-      created_at: null == created_at
-          ? _value.created_at
-          : created_at // ignore: cast_nullable_to_non_nullable
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
       chat: null == chat
           ? _value.chat
@@ -218,9 +231,9 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
           ? _value.link
           : link // ignore: cast_nullable_to_non_nullable
               as String,
-      admin_chat: freezed == admin_chat
-          ? _value.admin_chat
-          : admin_chat // ignore: cast_nullable_to_non_nullable
+      adminChat: freezed == adminChat
+          ? _value.adminChat
+          : adminChat // ignore: cast_nullable_to_non_nullable
               as Chat?,
     ) as $Val);
   }
@@ -249,13 +262,13 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ChatCopyWith<$Res>? get admin_chat {
-    if (_value.admin_chat == null) {
+  $ChatCopyWith<$Res>? get adminChat {
+    if (_value.adminChat == null) {
       return null;
     }
 
-    return $ChatCopyWith<$Res>(_value.admin_chat!, (value) {
-      return _then(_value.copyWith(admin_chat: value) as $Val);
+    return $ChatCopyWith<$Res>(_value.adminChat!, (value) {
+      return _then(_value.copyWith(adminChat: value) as $Val);
     });
   }
 }
@@ -271,34 +284,34 @@ abstract class _$$ChallengeModelImplCopyWith<$Res>
   $Res call(
       {int id,
       String name,
-      String participation_type,
+      @JsonKey(name: 'participation_type') String participationType,
       String icon,
       String category,
-      String confirmation_type,
-      String start_date,
-      String end_date,
-      String regularity_type,
-      int? times_per_day,
-      int? times_per_week,
-      List<int>? confirmation_days,
+      @JsonKey(name: 'confirmation_type') String confirmationType,
+      @JsonKey(name: 'start_date') String startDate,
+      @JsonKey(name: 'end_date') String endDate,
+      @JsonKey(name: 'regularity_type') String regularityType,
+      @JsonKey(name: 'times_per_day') int? timesPerDay,
+      @JsonKey(name: 'times_per_week') int? timesPerWeek,
+      @JsonKey(name: 'confirmation_days') List<int>? confirmationDays,
       Author author,
       int price,
       String currency,
-      String confirmation_description,
+      @JsonKey(name: 'confirmation_description') String confirmationDescription,
       String status,
-      int max_participants,
-      String confirm_until,
-      String created_at,
+      @JsonKey(name: 'max_participants') int maxParticipants,
+      @JsonKey(name: 'confirm_until') String confirmUntil,
+      @JsonKey(name: 'created_at') String createdAt,
       Chat chat,
       String link,
-      Chat? admin_chat});
+      @JsonKey(name: 'admin_chat') Chat? adminChat});
 
   @override
   $AuthorCopyWith<$Res> get author;
   @override
   $ChatCopyWith<$Res> get chat;
   @override
-  $ChatCopyWith<$Res>? get admin_chat;
+  $ChatCopyWith<$Res>? get adminChat;
 }
 
 /// @nodoc
@@ -316,27 +329,27 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? participation_type = null,
+    Object? participationType = null,
     Object? icon = null,
     Object? category = null,
-    Object? confirmation_type = null,
-    Object? start_date = null,
-    Object? end_date = null,
-    Object? regularity_type = null,
-    Object? times_per_day = freezed,
-    Object? times_per_week = freezed,
-    Object? confirmation_days = freezed,
+    Object? confirmationType = null,
+    Object? startDate = null,
+    Object? endDate = null,
+    Object? regularityType = null,
+    Object? timesPerDay = freezed,
+    Object? timesPerWeek = freezed,
+    Object? confirmationDays = freezed,
     Object? author = null,
     Object? price = null,
     Object? currency = null,
-    Object? confirmation_description = null,
+    Object? confirmationDescription = null,
     Object? status = null,
-    Object? max_participants = null,
-    Object? confirm_until = null,
-    Object? created_at = null,
+    Object? maxParticipants = null,
+    Object? confirmUntil = null,
+    Object? createdAt = null,
     Object? chat = null,
     Object? link = null,
-    Object? admin_chat = freezed,
+    Object? adminChat = freezed,
   }) {
     return _then(_$ChallengeModelImpl(
       id: null == id
@@ -347,9 +360,9 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      participation_type: null == participation_type
-          ? _value.participation_type
-          : participation_type // ignore: cast_nullable_to_non_nullable
+      participationType: null == participationType
+          ? _value.participationType
+          : participationType // ignore: cast_nullable_to_non_nullable
               as String,
       icon: null == icon
           ? _value.icon
@@ -359,33 +372,33 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
-      confirmation_type: null == confirmation_type
-          ? _value.confirmation_type
-          : confirmation_type // ignore: cast_nullable_to_non_nullable
+      confirmationType: null == confirmationType
+          ? _value.confirmationType
+          : confirmationType // ignore: cast_nullable_to_non_nullable
               as String,
-      start_date: null == start_date
-          ? _value.start_date
-          : start_date // ignore: cast_nullable_to_non_nullable
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
               as String,
-      end_date: null == end_date
-          ? _value.end_date
-          : end_date // ignore: cast_nullable_to_non_nullable
+      endDate: null == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
               as String,
-      regularity_type: null == regularity_type
-          ? _value.regularity_type
-          : regularity_type // ignore: cast_nullable_to_non_nullable
+      regularityType: null == regularityType
+          ? _value.regularityType
+          : regularityType // ignore: cast_nullable_to_non_nullable
               as String,
-      times_per_day: freezed == times_per_day
-          ? _value.times_per_day
-          : times_per_day // ignore: cast_nullable_to_non_nullable
+      timesPerDay: freezed == timesPerDay
+          ? _value.timesPerDay
+          : timesPerDay // ignore: cast_nullable_to_non_nullable
               as int?,
-      times_per_week: freezed == times_per_week
-          ? _value.times_per_week
-          : times_per_week // ignore: cast_nullable_to_non_nullable
+      timesPerWeek: freezed == timesPerWeek
+          ? _value.timesPerWeek
+          : timesPerWeek // ignore: cast_nullable_to_non_nullable
               as int?,
-      confirmation_days: freezed == confirmation_days
-          ? _value._confirmation_days
-          : confirmation_days // ignore: cast_nullable_to_non_nullable
+      confirmationDays: freezed == confirmationDays
+          ? _value._confirmationDays
+          : confirmationDays // ignore: cast_nullable_to_non_nullable
               as List<int>?,
       author: null == author
           ? _value.author
@@ -399,25 +412,25 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
           ? _value.currency
           : currency // ignore: cast_nullable_to_non_nullable
               as String,
-      confirmation_description: null == confirmation_description
-          ? _value.confirmation_description
-          : confirmation_description // ignore: cast_nullable_to_non_nullable
+      confirmationDescription: null == confirmationDescription
+          ? _value.confirmationDescription
+          : confirmationDescription // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      max_participants: null == max_participants
-          ? _value.max_participants
-          : max_participants // ignore: cast_nullable_to_non_nullable
+      maxParticipants: null == maxParticipants
+          ? _value.maxParticipants
+          : maxParticipants // ignore: cast_nullable_to_non_nullable
               as int,
-      confirm_until: null == confirm_until
-          ? _value.confirm_until
-          : confirm_until // ignore: cast_nullable_to_non_nullable
+      confirmUntil: null == confirmUntil
+          ? _value.confirmUntil
+          : confirmUntil // ignore: cast_nullable_to_non_nullable
               as String,
-      created_at: null == created_at
-          ? _value.created_at
-          : created_at // ignore: cast_nullable_to_non_nullable
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
       chat: null == chat
           ? _value.chat
@@ -427,9 +440,9 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
           ? _value.link
           : link // ignore: cast_nullable_to_non_nullable
               as String,
-      admin_chat: freezed == admin_chat
-          ? _value.admin_chat
-          : admin_chat // ignore: cast_nullable_to_non_nullable
+      adminChat: freezed == adminChat
+          ? _value.adminChat
+          : adminChat // ignore: cast_nullable_to_non_nullable
               as Chat?,
     ));
   }
@@ -441,28 +454,29 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   const _$ChallengeModelImpl(
       {required this.id,
       required this.name,
-      required this.participation_type,
+      @JsonKey(name: 'participation_type') required this.participationType,
       required this.icon,
       required this.category,
-      required this.confirmation_type,
-      required this.start_date,
-      required this.end_date,
-      required this.regularity_type,
-      this.times_per_day,
-      this.times_per_week,
-      final List<int>? confirmation_days,
+      @JsonKey(name: 'confirmation_type') required this.confirmationType,
+      @JsonKey(name: 'start_date') required this.startDate,
+      @JsonKey(name: 'end_date') required this.endDate,
+      @JsonKey(name: 'regularity_type') required this.regularityType,
+      @JsonKey(name: 'times_per_day') this.timesPerDay,
+      @JsonKey(name: 'times_per_week') this.timesPerWeek,
+      @JsonKey(name: 'confirmation_days') final List<int>? confirmationDays,
       required this.author,
       required this.price,
       required this.currency,
-      required this.confirmation_description,
+      @JsonKey(name: 'confirmation_description')
+      required this.confirmationDescription,
       required this.status,
-      required this.max_participants,
-      required this.confirm_until,
-      required this.created_at,
+      @JsonKey(name: 'max_participants') required this.maxParticipants,
+      @JsonKey(name: 'confirm_until') required this.confirmUntil,
+      @JsonKey(name: 'created_at') required this.createdAt,
       required this.chat,
       required this.link,
-      this.admin_chat})
-      : _confirmation_days = confirmation_days,
+      @JsonKey(name: 'admin_chat') this.adminChat})
+      : _confirmationDays = confirmationDays,
         super._();
 
   factory _$ChallengeModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -473,30 +487,38 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   @override
   final String name;
   @override
-  final String participation_type;
+  @JsonKey(name: 'participation_type')
+  final String participationType;
   @override
   final String icon;
   @override
   final String category;
   @override
-  final String confirmation_type;
+  @JsonKey(name: 'confirmation_type')
+  final String confirmationType;
   @override
-  final String start_date;
+  @JsonKey(name: 'start_date')
+  final String startDate;
   @override
-  final String end_date;
+  @JsonKey(name: 'end_date')
+  final String endDate;
   @override
-  final String regularity_type;
+  @JsonKey(name: 'regularity_type')
+  final String regularityType;
   @override
-  final int? times_per_day;
+  @JsonKey(name: 'times_per_day')
+  final int? timesPerDay;
   @override
-  final int? times_per_week;
-  final List<int>? _confirmation_days;
+  @JsonKey(name: 'times_per_week')
+  final int? timesPerWeek;
+  final List<int>? _confirmationDays;
   @override
-  List<int>? get confirmation_days {
-    final value = _confirmation_days;
+  @JsonKey(name: 'confirmation_days')
+  List<int>? get confirmationDays {
+    final value = _confirmationDays;
     if (value == null) return null;
-    if (_confirmation_days is EqualUnmodifiableListView)
-      return _confirmation_days;
+    if (_confirmationDays is EqualUnmodifiableListView)
+      return _confirmationDays;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -508,25 +530,30 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   @override
   final String currency;
   @override
-  final String confirmation_description;
+  @JsonKey(name: 'confirmation_description')
+  final String confirmationDescription;
   @override
   final String status;
   @override
-  final int max_participants;
+  @JsonKey(name: 'max_participants')
+  final int maxParticipants;
   @override
-  final String confirm_until;
+  @JsonKey(name: 'confirm_until')
+  final String confirmUntil;
   @override
-  final String created_at;
+  @JsonKey(name: 'created_at')
+  final String createdAt;
   @override
   final Chat chat;
   @override
   final String link;
   @override
-  final Chat? admin_chat;
+  @JsonKey(name: 'admin_chat')
+  final Chat? adminChat;
 
   @override
   String toString() {
-    return 'ChallengeModel(id: $id, name: $name, participation_type: $participation_type, icon: $icon, category: $category, confirmation_type: $confirmation_type, start_date: $start_date, end_date: $end_date, regularity_type: $regularity_type, times_per_day: $times_per_day, times_per_week: $times_per_week, confirmation_days: $confirmation_days, author: $author, price: $price, currency: $currency, confirmation_description: $confirmation_description, status: $status, max_participants: $max_participants, confirm_until: $confirm_until, created_at: $created_at, chat: $chat, link: $link, admin_chat: $admin_chat)';
+    return 'ChallengeModel(id: $id, name: $name, participationType: $participationType, icon: $icon, category: $category, confirmationType: $confirmationType, startDate: $startDate, endDate: $endDate, regularityType: $regularityType, timesPerDay: $timesPerDay, timesPerWeek: $timesPerWeek, confirmationDays: $confirmationDays, author: $author, price: $price, currency: $currency, confirmationDescription: $confirmationDescription, status: $status, maxParticipants: $maxParticipants, confirmUntil: $confirmUntil, createdAt: $createdAt, chat: $chat, link: $link, adminChat: $adminChat)';
   }
 
   @override
@@ -536,43 +563,42 @@ class _$ChallengeModelImpl extends _ChallengeModel {
             other is _$ChallengeModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.participation_type, participation_type) ||
-                other.participation_type == participation_type) &&
+            (identical(other.participationType, participationType) ||
+                other.participationType == participationType) &&
             (identical(other.icon, icon) || other.icon == icon) &&
             (identical(other.category, category) ||
                 other.category == category) &&
-            (identical(other.confirmation_type, confirmation_type) ||
-                other.confirmation_type == confirmation_type) &&
-            (identical(other.start_date, start_date) ||
-                other.start_date == start_date) &&
-            (identical(other.end_date, end_date) ||
-                other.end_date == end_date) &&
-            (identical(other.regularity_type, regularity_type) ||
-                other.regularity_type == regularity_type) &&
-            (identical(other.times_per_day, times_per_day) ||
-                other.times_per_day == times_per_day) &&
-            (identical(other.times_per_week, times_per_week) ||
-                other.times_per_week == times_per_week) &&
+            (identical(other.confirmationType, confirmationType) ||
+                other.confirmationType == confirmationType) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.endDate, endDate) || other.endDate == endDate) &&
+            (identical(other.regularityType, regularityType) ||
+                other.regularityType == regularityType) &&
+            (identical(other.timesPerDay, timesPerDay) ||
+                other.timesPerDay == timesPerDay) &&
+            (identical(other.timesPerWeek, timesPerWeek) ||
+                other.timesPerWeek == timesPerWeek) &&
             const DeepCollectionEquality()
-                .equals(other._confirmation_days, _confirmation_days) &&
+                .equals(other._confirmationDays, _confirmationDays) &&
             (identical(other.author, author) || other.author == author) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.currency, currency) ||
                 other.currency == currency) &&
             (identical(
-                    other.confirmation_description, confirmation_description) ||
-                other.confirmation_description == confirmation_description) &&
+                    other.confirmationDescription, confirmationDescription) ||
+                other.confirmationDescription == confirmationDescription) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.max_participants, max_participants) ||
-                other.max_participants == max_participants) &&
-            (identical(other.confirm_until, confirm_until) ||
-                other.confirm_until == confirm_until) &&
-            (identical(other.created_at, created_at) ||
-                other.created_at == created_at) &&
+            (identical(other.maxParticipants, maxParticipants) ||
+                other.maxParticipants == maxParticipants) &&
+            (identical(other.confirmUntil, confirmUntil) ||
+                other.confirmUntil == confirmUntil) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
             (identical(other.chat, chat) || other.chat == chat) &&
             (identical(other.link, link) || other.link == link) &&
-            (identical(other.admin_chat, admin_chat) ||
-                other.admin_chat == admin_chat));
+            (identical(other.adminChat, adminChat) ||
+                other.adminChat == adminChat));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -581,27 +607,27 @@ class _$ChallengeModelImpl extends _ChallengeModel {
         runtimeType,
         id,
         name,
-        participation_type,
+        participationType,
         icon,
         category,
-        confirmation_type,
-        start_date,
-        end_date,
-        regularity_type,
-        times_per_day,
-        times_per_week,
-        const DeepCollectionEquality().hash(_confirmation_days),
+        confirmationType,
+        startDate,
+        endDate,
+        regularityType,
+        timesPerDay,
+        timesPerWeek,
+        const DeepCollectionEquality().hash(_confirmationDays),
         author,
         price,
         currency,
-        confirmation_description,
+        confirmationDescription,
         status,
-        max_participants,
-        confirm_until,
-        created_at,
+        maxParticipants,
+        confirmUntil,
+        createdAt,
         chat,
         link,
-        admin_chat
+        adminChat
       ]);
 
   /// Create a copy of ChallengeModel
@@ -625,27 +651,31 @@ abstract class _ChallengeModel extends ChallengeModel {
   const factory _ChallengeModel(
       {required final int id,
       required final String name,
-      required final String participation_type,
+      @JsonKey(name: 'participation_type')
+      required final String participationType,
       required final String icon,
       required final String category,
-      required final String confirmation_type,
-      required final String start_date,
-      required final String end_date,
-      required final String regularity_type,
-      final int? times_per_day,
-      final int? times_per_week,
-      final List<int>? confirmation_days,
+      @JsonKey(name: 'confirmation_type')
+      required final String confirmationType,
+      @JsonKey(name: 'start_date') required final String startDate,
+      @JsonKey(name: 'end_date') required final String endDate,
+      @JsonKey(name: 'regularity_type') required final String regularityType,
+      @JsonKey(name: 'times_per_day') final int? timesPerDay,
+      @JsonKey(name: 'times_per_week') final int? timesPerWeek,
+      @JsonKey(name: 'confirmation_days') final List<int>? confirmationDays,
       required final Author author,
       required final int price,
       required final String currency,
-      required final String confirmation_description,
+      @JsonKey(name: 'confirmation_description')
+      required final String confirmationDescription,
       required final String status,
-      required final int max_participants,
-      required final String confirm_until,
-      required final String created_at,
+      @JsonKey(name: 'max_participants') required final int maxParticipants,
+      @JsonKey(name: 'confirm_until') required final String confirmUntil,
+      @JsonKey(name: 'created_at') required final String createdAt,
       required final Chat chat,
       required final String link,
-      final Chat? admin_chat}) = _$ChallengeModelImpl;
+      @JsonKey(name: 'admin_chat')
+      final Chat? adminChat}) = _$ChallengeModelImpl;
   const _ChallengeModel._() : super._();
 
   factory _ChallengeModel.fromJson(Map<String, dynamic> json) =
@@ -656,25 +686,33 @@ abstract class _ChallengeModel extends ChallengeModel {
   @override
   String get name;
   @override
-  String get participation_type;
+  @JsonKey(name: 'participation_type')
+  String get participationType;
   @override
   String get icon;
   @override
   String get category;
   @override
-  String get confirmation_type;
+  @JsonKey(name: 'confirmation_type')
+  String get confirmationType;
   @override
-  String get start_date;
+  @JsonKey(name: 'start_date')
+  String get startDate;
   @override
-  String get end_date;
+  @JsonKey(name: 'end_date')
+  String get endDate;
   @override
-  String get regularity_type;
+  @JsonKey(name: 'regularity_type')
+  String get regularityType;
   @override
-  int? get times_per_day;
+  @JsonKey(name: 'times_per_day')
+  int? get timesPerDay;
   @override
-  int? get times_per_week;
+  @JsonKey(name: 'times_per_week')
+  int? get timesPerWeek;
   @override
-  List<int>? get confirmation_days;
+  @JsonKey(name: 'confirmation_days')
+  List<int>? get confirmationDays;
   @override
   Author get author;
   @override
@@ -682,21 +720,26 @@ abstract class _ChallengeModel extends ChallengeModel {
   @override
   String get currency;
   @override
-  String get confirmation_description;
+  @JsonKey(name: 'confirmation_description')
+  String get confirmationDescription;
   @override
   String get status;
   @override
-  int get max_participants;
+  @JsonKey(name: 'max_participants')
+  int get maxParticipants;
   @override
-  String get confirm_until;
+  @JsonKey(name: 'confirm_until')
+  String get confirmUntil;
   @override
-  String get created_at;
+  @JsonKey(name: 'created_at')
+  String get createdAt;
   @override
   Chat get chat;
   @override
   String get link;
   @override
-  Chat? get admin_chat;
+  @JsonKey(name: 'admin_chat')
+  Chat? get adminChat;
 
   /// Create a copy of ChallengeModel
   /// with the given fields replaced by the non-null parameter values.

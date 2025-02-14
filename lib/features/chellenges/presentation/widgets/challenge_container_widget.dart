@@ -20,9 +20,9 @@ class ChallengeContainer extends StatelessWidget {
 
   String _formatDateRange(ChallengeModel challenge) {
     final DateFormat formatter = DateFormat('dd.MM.yy');
-    final startDate = formatter.format(DateTime.parse(challenge.start_date));
-    final endDate = formatter.format(DateTime.parse(challenge.end_date));
-    final type = challenge.participation_type == 'PERSONAL'
+    final startDate = formatter.format(DateTime.parse(challenge.startDate));
+    final endDate = formatter.format(DateTime.parse(challenge.endDate));
+    final type = challenge.participationType == 'PERSONAL'
         ? 'персональный'
         : 'групповой';
     final status = isArchived

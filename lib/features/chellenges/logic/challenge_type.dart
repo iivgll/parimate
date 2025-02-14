@@ -11,3 +11,19 @@ enum ChallengeType {
     }
   }
 }
+
+enum ConfirmationType {
+  text('TEXT'),
+  photo('PHOTO'),
+  video('VIDEO');
+
+  final String value;
+  const ConfirmationType(this.value);
+
+  static ConfirmationType fromString(String value) {
+    return ConfirmationType.values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => ConfirmationType.photo,
+    );
+  }
+}

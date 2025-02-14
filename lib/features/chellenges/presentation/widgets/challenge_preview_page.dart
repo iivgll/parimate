@@ -151,17 +151,22 @@ class ChallengePreviewPage extends ConsumerWidget {
 
   Future<void> _createChallenge(BuildContext context, WidgetRef ref) async {
     try {
+      // Получаем выбранный тип подтверждения и убеждаемся, что он корректен
+      print('Challenge data before create: $challenge'); // Для отладки
+
       final createdChallenge = await ref
           .read(challengeRepositoryProvider)
           .createChallenge(challenge);
+
+      print('Created challenge: $createdChallenge'); // Для отладки
 
       await ref
           .read(challengesNotifierProvider.notifier)
           .joinChallenge(createdChallenge.id, context);
 
       if (context.mounted) {
-        Navigator.of(context).pop(); // Закрываем экран предпросмотра
-        Navigator.of(context).pop(); // Закрываем экран создания
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Челлендж успешно создан')),
         );
@@ -169,13 +174,11 @@ class ChallengePreviewPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         String errorMessage = 'Произошла ошибка';
-
         if (e.toString().contains('message')) {
           final start = e.toString().indexOf('"message": "') + 11;
           final end = e.toString().indexOf('"', start);
           errorMessage = e.toString().substring(start, end);
         }
-
         showDialog(
           context: context,
           builder: (context) => AlertDialog(

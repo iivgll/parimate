@@ -105,7 +105,7 @@ class _ConfirmationUploadPageState
   }
 
   Widget _buildUploadSection(BuildContext context) {
-    if (widget.challenge.confirmation_type == 'TEXT') {
+    if (widget.challenge.confirmationType == 'TEXT') {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -139,7 +139,7 @@ class _ConfirmationUploadPageState
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: widget.challenge.confirmation_type == 'PHOTO'
+                  child: widget.challenge.confirmationType == 'PHOTO'
                       ? kIsWeb
                           ? Image.network(
                               _selectedFile!.path,
@@ -212,7 +212,7 @@ class _ConfirmationUploadPageState
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  widget.challenge.confirmation_type == 'PHOTO'
+                  widget.challenge.confirmationType == 'PHOTO'
                       ? Icons.photo_camera
                       : Icons.videocam,
                   color: AppColors.white,
@@ -221,7 +221,7 @@ class _ConfirmationUploadPageState
                 if (_selectedFile == null) ...[
                   const SizedBox(height: 16),
                   Text(
-                    widget.challenge.confirmation_type == 'PHOTO'
+                    widget.challenge.confirmationType == 'PHOTO'
                         ? 'Загрузить фото'
                         : 'Загрузить видео',
                     style: const TextStyle(
@@ -241,7 +241,7 @@ class _ConfirmationUploadPageState
   Future<void> _pickFile() async {
     final ImagePicker picker = ImagePicker();
     try {
-      final XFile? file = widget.challenge.confirmation_type == 'PHOTO'
+      final XFile? file = widget.challenge.confirmationType == 'PHOTO'
           ? await picker.pickImage(
               source: ImageSource.gallery,
               maxWidth: 1920,
@@ -255,7 +255,7 @@ class _ConfirmationUploadPageState
 
       if (file != null) {
         final fileSize = await file.length();
-        final maxSize = widget.challenge.confirmation_type == 'PHOTO'
+        final maxSize = widget.challenge.confirmationType == 'PHOTO'
             ? 10 * 1024 * 1024
             : 100 * 1024 * 1024;
 
@@ -286,7 +286,7 @@ class _ConfirmationUploadPageState
   Future<void> _handleUpload() async {
     if (_isLoading) return;
 
-    if (widget.challenge.confirmation_type != 'TEXT' && _selectedFile == null) {
+    if (widget.challenge.confirmationType != 'TEXT' && _selectedFile == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Пожалуйста, выберите файл')),
@@ -294,7 +294,7 @@ class _ConfirmationUploadPageState
       return;
     }
 
-    if (widget.challenge.confirmation_type == 'TEXT' &&
+    if (widget.challenge.confirmationType == 'TEXT' &&
         _textController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Пожалуйста, введите текст')),
@@ -309,7 +309,7 @@ class _ConfirmationUploadPageState
     try {
       String value;
 
-      if (widget.challenge.confirmation_type == 'TEXT') {
+      if (widget.challenge.confirmationType == 'TEXT') {
         value = _textController.text.trim();
       } else {
         value = await ref.read(fileRepositoryProvider).uploadFile(
@@ -324,7 +324,7 @@ class _ConfirmationUploadPageState
                 userTgId: '44',
                 challengeId: widget.challenge.id,
                 data: ConfirmationData(
-                  type: widget.challenge.confirmation_type,
+                  type: widget.challenge.confirmationType,
                   value: value,
                 ),
                 share: true,

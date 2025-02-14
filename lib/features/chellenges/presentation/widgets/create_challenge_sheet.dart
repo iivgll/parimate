@@ -865,34 +865,18 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     );
   }
 
-  Future<void> _createChallenge() async {
-    // Проверяем обязательные поля
-    if (nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Введите название челленджа')),
-      );
-      return;
-    }
-
-    if (selectedIcon.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Выберите иконку челленджа')),
-      );
-      return;
-    }
-
-    if (selectedCategory.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Выберите категорию челленджа')),
-      );
-      return;
-    }
-
-    if (descriptionController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Введите описание челленджа')),
-      );
-      return;
+  Map<String, dynamic> _buildChallengeData() {
+    String confirmationType;
+    switch (selectedConfirmationType) {
+      case 'Отправлять текст':
+        confirmationType = 'TEXT';
+        break;
+      case 'Отправлять видео':
+        confirmationType = 'VIDEO';
+        break;
+      case 'Отправлять фото':
+      default:
+        confirmationType = 'PHOTO';
     }
 
     // Определяем тип регулярности и параметры
@@ -917,49 +901,80 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         regularityType = 'TIMES_PER_WEEK';
         timesPerWeek = selectedDaysPerWeek;
         break;
-      case 'Свой период':
-        regularityType = 'CONCRETE_DAYS';
-        confirmationDays = List.generate(
-          selectedDays.length,
-          (i) => selectedDays[i] ? i + 1 : null,
-        ).where((day) => day != null).cast<int>().toList();
-        break;
       default:
         regularityType = 'TIMES_PER_DAY';
         timesPerDay = 1;
     }
 
-    final challenge = {
-      'name': nameController.text.trim(),
-      'participation_type': selectedType == ChallengeType.personal
-          ? 'PERSONAL'
-          : (!isPublic ? 'GROUP' : 'PRIVATE_GROUP'),
-      'icon': selectedIcon.isEmpty ? 'flash' : selectedIcon,
-      'category': selectedCategory.isEmpty ? 'Спорт' : selectedCategory,
-      'confirmation_type': 'PHOTO',
-      'start_date': startDate!.toIso8601String().split('T')[0],
-      'end_date': endDate!.toIso8601String().split('T')[0],
+    return {
+      'name': nameController.text,
+      'participation_type':
+          selectedType == ChallengeType.personal ? 'PERSONAL' : 'PRIVATE_GROUP',
+      'icon': selectedIcon,
+      'category': selectedCategory,
+      'confirmation_type': confirmationType,
+      'start_date': DateFormat('yyyy-MM-dd').format(startDate!),
+      'end_date': DateFormat('yyyy-MM-dd').format(endDate!),
       'regularity_type': regularityType,
-      if (timesPerDay != null) 'times_per_day': timesPerDay,
-      if (timesPerWeek != null) 'times_per_week': timesPerWeek,
-      if (confirmationDays != null) 'confirmation_days': confirmationDays,
-      'confirmation_description': descriptionController.text.trim(),
+      'times_per_day': timesPerDay,
+      'times_per_week': timesPerWeek,
+      'confirmation_days': confirmationDays,
+      'confirmation_description': descriptionController.text,
       'author_tg_id': '44',
       'price': selectedBet,
       'currency': 'RUB',
       'confirm_until':
           confirmationTime?.format(context).split(' ')[0] ?? '23:59',
-      if (selectedType == ChallengeType.group) ...{
-        'max_participants': maxParticipants ?? 36,
-      },
+      'max_participants': maxParticipants ?? 36,
     };
+  }
 
-    // Показываем экран предпросмотра
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ChallengePreviewPage(challenge: challenge),
-      ),
-    );
+  void _createChallenge() {
+    if (_validateForm()) {
+      final challengeData = _buildChallengeData();
+      print('Creating challenge with data: $challengeData'); // Для отладки
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChallengePreviewPage(
+            challenge: challengeData,
+          ),
+        ),
+      );
+    }
+  }
+
+  bool _validateForm() {
+    if (nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Введите название челленджа')),
+      );
+      return false;
+    }
+
+    if (selectedIcon.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Выберите иконку челленджа')),
+      );
+      return false;
+    }
+
+    if (selectedCategory.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Выберите категорию челленджа')),
+      );
+      return false;
+    }
+
+    if (descriptionController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Введите описание челленджа')),
+      );
+      return false;
+    }
+
+    return true;
   }
 
   @override

@@ -16,8 +16,8 @@ class ChallengeDetailsPage extends ConsumerWidget {
 
   String _formatDateRange() {
     final DateFormat formatter = DateFormat('dd.MM.yy');
-    final startDate = formatter.format(DateTime.parse(challenge.start_date));
-    final endDate = formatter.format(DateTime.parse(challenge.end_date));
+    final startDate = formatter.format(DateTime.parse(challenge.startDate));
+    final endDate = formatter.format(DateTime.parse(challenge.endDate));
     return '$startDate - $endDate';
   }
 
@@ -227,7 +227,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            challenge.confirmation_description,
+            challenge.confirmationType,
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 14,
