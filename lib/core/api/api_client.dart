@@ -18,6 +18,12 @@ class ApiClient {
           settings: const TalkerDioLoggerSettings(
             printRequestHeaders: true,
             printResponseHeaders: true,
+            printRequestData: true,
+            printErrorData: true,
+            printErrorHeaders: true,
+            printErrorMessage: true,
+            printResponseData: true,
+            printResponseMessage: true,
           ),
         ),
       );

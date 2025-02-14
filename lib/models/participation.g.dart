@@ -9,6 +9,20 @@ part of 'participation.dart';
 _$ParticipationSchemaImpl _$$ParticipationSchemaImplFromJson(
         Map<String, dynamic> json) =>
     _$ParticipationSchemaImpl(
+      participation:
+          Participation.fromJson(json['participation'] as Map<String, dynamic>),
+      confirmationUrl: json['confirmation_url'] as String?,
+    );
+
+Map<String, dynamic> _$$ParticipationSchemaImplToJson(
+        _$ParticipationSchemaImpl instance) =>
+    <String, dynamic>{
+      'participation': instance.participation.toJson(),
+      'confirmation_url': instance.confirmationUrl,
+    };
+
+_$ParticipationImpl _$$ParticipationImplFromJson(Map<String, dynamic> json) =>
+    _$ParticipationImpl(
       payed: json['payed'] as bool,
       win: json['win'] as bool,
       archived: json['archived'] as bool,
@@ -18,8 +32,7 @@ _$ParticipationSchemaImpl _$$ParticipationSchemaImplFromJson(
       challengeId: (json['challenge_id'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ParticipationSchemaImplToJson(
-        _$ParticipationSchemaImpl instance) =>
+Map<String, dynamic> _$$ParticipationImplToJson(_$ParticipationImpl instance) =>
     <String, dynamic>{
       'payed': instance.payed,
       'win': instance.win,

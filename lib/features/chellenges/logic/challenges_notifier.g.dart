@@ -7,7 +7,7 @@ part of 'challenges_notifier.dart';
 // **************************************************************************
 
 String _$challengesNotifierHash() =>
-    r'c852612f368af99bd52c6884d9c45585017f1e0f';
+    r'3a7bd6308c56298e6961fd116ef1392e28c16bfc';
 
 /// See also [ChallengesNotifier].
 @ProviderFor(ChallengesNotifier)

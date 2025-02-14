@@ -6,6 +6,7 @@ import '../../../app/repository_providers.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/confirmation.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class ConfirmationUploadPage extends ConsumerStatefulWidget {
   final ChallengeModel challenge;
@@ -52,35 +53,29 @@ class _ConfirmationUploadPageState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.blackMin,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Column(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Загрузи подтверждение',
+                    'Загрузи подтверждения\nвыполнения челленджа',
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    'выполнения челленджа',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 16,
-                    ),
-                  ),
+                  const SizedBox(height: 24),
+                  _buildUploadSection(context),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            _buildUploadSection(context),
-            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -130,39 +125,116 @@ class _ConfirmationUploadPageState
       );
     }
 
-    return GestureDetector(
-      onTap: _pickFile,
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.white),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              widget.challenge.confirmation_type == 'PHOTO'
-                  ? Icons.photo_camera
-                  : Icons.videocam,
-              color: AppColors.white,
-              size: 48,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _selectedFile != null
-                  ? 'Файл выбран'
-                  : widget.challenge.confirmation_type == 'PHOTO'
-                      ? 'Загрузить фото'
-                      : 'Загрузить видео',
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 16,
+    return Column(
+      children: [
+        if (_selectedFile != null) ...[
+          Stack(
+            children: [
+              Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.white),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: widget.challenge.confirmation_type == 'PHOTO'
+                      ? kIsWeb
+                          ? Image.network(
+                              _selectedFile!.path,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              File(_selectedFile!.path),
+                              fit: BoxFit.cover,
+                            )
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              color: AppColors.blackMin,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                            const Icon(
+                              Icons.video_file,
+                              color: AppColors.white,
+                              size: 48,
+                            ),
+                            const Text(
+                              'Видео выбрано',
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
               ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedFile = null;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: AppColors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: AppColors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+        GestureDetector(
+          onTap: _pickFile,
+          child: Container(
+            height: _selectedFile != null ? 60 : 200,
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.white),
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  widget.challenge.confirmation_type == 'PHOTO'
+                      ? Icons.photo_camera
+                      : Icons.videocam,
+                  color: AppColors.white,
+                  size: _selectedFile != null ? 24 : 48,
+                ),
+                if (_selectedFile == null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.challenge.confirmation_type == 'PHOTO'
+                        ? 'Загрузить фото'
+                        : 'Загрузить видео',
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
 import '../../../app/repository_providers.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'challenges_notifier.g.dart';
 
@@ -108,5 +109,37 @@ class ChallengesNotifier extends _$ChallengesNotifier {
       challenges: [...currentState.challenges, unarchivedChallenge],
       archivedChallenges: updatedArchivedChallenges,
     ));
+  }
+
+  Future<void> joinChallenge(int challengeId) async {
+    try {
+      final result =
+          await ref.read(participationRepositoryProvider).registerToChallenge(
+                userTgId: '44', // TODO: Get real user ID
+                challengeId: challengeId,
+                accepted: true,
+                payed: false,
+              );
+      print('conf conf ${result.confirmationUrl}');
+
+      // Проверяем наличие URL для оплаты
+      if (result.confirmationUrl != null) {
+        final uri = Uri.parse(result.confirmationUrl!);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(
+            uri,
+            mode: LaunchMode
+                .platformDefault, // Используем дефолтный режим платформы
+          );
+          return;
+        }
+      }
+      print('conf conf2 ${result.confirmationUrl}');
+      // Обновляем список челленджей только если нет URL для оплаты
+      await refreshChallenges();
+    } catch (e) {
+      print('Error joining challenge: $e');
+      rethrow;
+    }
   }
 }

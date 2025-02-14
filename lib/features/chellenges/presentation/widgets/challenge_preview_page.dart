@@ -156,16 +156,10 @@ class ChallengePreviewPage extends ConsumerWidget {
           .read(challengeRepositoryProvider)
           .createChallenge(challenge);
 
-      // Регистрируем пользователя в челлендже
-      await ref.read(participationRepositoryProvider).registerToChallenge(
-            userTgId: '44',
-            challengeId: createdChallenge.id,
-            accepted: true,
-            payed: true,
-          );
-
-      // Обновляем списки челленджей
-      await ref.read(challengesNotifierProvider.notifier).refreshChallenges();
+      // Используем метод joinChallenge из ChallengesNotifier
+      await ref
+          .read(challengesNotifierProvider.notifier)
+          .joinChallenge(createdChallenge.id);
 
       if (context.mounted) {
         Navigator.of(context).pop(); // Закрываем экран предпросмотра
@@ -179,7 +173,6 @@ class ChallengePreviewPage extends ConsumerWidget {
         String errorMessage = 'Произошла ошибка';
 
         if (e.toString().contains('message')) {
-          // Извлекаем сообщение об ошибке из JSON
           final start = e.toString().indexOf('"message": "') + 11;
           final end = e.toString().indexOf('"', start);
           errorMessage = e.toString().substring(start, end);
