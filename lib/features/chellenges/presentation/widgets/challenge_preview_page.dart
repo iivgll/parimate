@@ -151,15 +151,13 @@ class ChallengePreviewPage extends ConsumerWidget {
 
   Future<void> _createChallenge(BuildContext context, WidgetRef ref) async {
     try {
-      // Создаем челлендж
       final createdChallenge = await ref
           .read(challengeRepositoryProvider)
           .createChallenge(challenge);
 
-      // Используем метод joinChallenge из ChallengesNotifier
       await ref
           .read(challengesNotifierProvider.notifier)
-          .joinChallenge(createdChallenge.id);
+          .joinChallenge(createdChallenge.id, context);
 
       if (context.mounted) {
         Navigator.of(context).pop(); // Закрываем экран предпросмотра

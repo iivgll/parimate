@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 import 'package:parimate/models/challenge_statistics.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
@@ -5,6 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
 import '../../../app/repository_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../presentation/widgets/payment_iframe_page.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 part 'challenges_notifier.g.dart';
 
@@ -111,31 +114,31 @@ class ChallengesNotifier extends _$ChallengesNotifier {
     ));
   }
 
-  Future<void> joinChallenge(int challengeId) async {
+  Future<void> joinChallenge(int challengeId, BuildContext context) async {
     try {
       final result =
           await ref.read(participationRepositoryProvider).registerToChallenge(
-                userTgId: '44', // TODO: Get real user ID
+                userTgId: '44',
                 challengeId: challengeId,
                 accepted: true,
                 payed: false,
               );
-      print('conf conf ${result.confirmationUrl}');
 
-      // Проверяем наличие URL для оплаты
-      if (result.confirmationUrl != null) {
-        final uri = Uri.parse(result.confirmationUrl!);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(
-            uri,
-            mode: LaunchMode
-                .platformDefault, // Используем дефолтный режим платформы
-          );
-          return;
+      if (result.confirmationUrl != null && context.mounted) {
+        final success = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (context) => PaymentIframePage(
+              paymentUrl: result.confirmationUrl!,
+            ),
+          ),
+        );
+
+        if (success == true) {
+          await refreshChallenges();
         }
+        return;
       }
-      print('conf conf2 ${result.confirmationUrl}');
-      // Обновляем список челленджей только если нет URL для оплаты
+
       await refreshChallenges();
     } catch (e) {
       print('Error joining challenge: $e');
