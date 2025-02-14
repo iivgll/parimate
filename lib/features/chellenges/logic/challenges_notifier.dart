@@ -5,9 +5,7 @@ import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
 import '../../../app/repository_providers.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../presentation/widgets/payment_iframe_page.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 part 'challenges_notifier.g.dart';
 

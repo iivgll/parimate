@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 import '../models/participation.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ParticipationRepository {
   final Dio _dio;

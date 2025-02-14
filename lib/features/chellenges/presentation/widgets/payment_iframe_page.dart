@@ -1,8 +1,5 @@
-import 'dart:ui_web';
-
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
-import 'dart:ui' as ui;
 import '../../../../common/utils/colors.dart';
 
 class PaymentIframePage extends StatefulWidget {
@@ -18,57 +15,35 @@ class PaymentIframePage extends StatefulWidget {
 }
 
 class _PaymentIframePageState extends State<PaymentIframePage> {
-  final String viewId =
-      'payment-iframe-${DateTime.now().millisecondsSinceEpoch}';
-
   @override
   void initState() {
     super.initState();
-    // Регистрируем view
-    platformViewRegistry.registerViewFactory(
-      viewId,
-      (int viewId) {
-        final iframe = html.IFrameElement()
-          ..src = widget.paymentUrl
-          ..style.border = 'none'
-          ..style.width = '100%'
-          ..style.height = '100%';
+    _redirectToPayment();
+  }
 
-        // Слушаем изменения URL
-        iframe.onLoad.listen((event) {
-          final currentUrl = iframe.contentWindow?.location.toString();
-          if (currentUrl != null &&
-              currentUrl.contains('yoomoney.ru/checkout/payments/v2/success')) {
-            Navigator.of(context).pop(true);
-          }
-        });
+  void _redirectToPayment() {
+    // Сохраняем текущий URL для возврата
+    final currentUrl = html.window.location.href;
 
-        return iframe;
-      },
-    );
+    // Подписываемся на изменения URL
+    html.window.onPopState.listen((event) {
+      if (html.window.location.href
+          .contains('yoomoney.ru/checkout/payments/v2/success')) {
+        Navigator.of(context).pop(true);
+      }
+    });
+
+    // Переходим на страницу оплаты
+    html.window.location.href = widget.paymentUrl;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.black,
-      appBar: AppBar(
-        backgroundColor: AppColors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: AppColors.white),
-          onPressed: () => Navigator.pop(context, false),
-        ),
-        title: const Text(
-          'Оплата',
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
-      body: HtmlElementView(viewType: viewId),
     );
   }
 }
