@@ -61,6 +61,10 @@ class FileRepository {
     if (error.response?.statusCode == 415) {
       return Exception('Неподдерживаемый формат файла');
     }
+    if (error.response?.statusCode == 418) {
+      final message = error.response?.data['message'] as String?;
+      return Exception(message ?? 'Неверный формат файла');
+    }
     return Exception(error.message ?? 'Произошла ошибка при загрузке файла');
   }
 }

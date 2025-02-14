@@ -26,6 +26,7 @@ class _ConfirmationUploadPageState
   final TextEditingController _textController = TextEditingController();
   XFile? _selectedFile;
   bool _isLoading = false;
+  bool _shareInChat = true;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,7 @@ class _ConfirmationUploadPageState
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _handleUpload,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.orange,
+                  backgroundColor: AppColors.black,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -90,7 +91,7 @@ class _ConfirmationUploadPageState
                 child: _isLoading
                     ? const CircularProgressIndicator(color: AppColors.white)
                     : const Text(
-                        'Отправить',
+                        'Отправить на проверку',
                         style: TextStyle(
                           color: AppColors.white,
                           fontWeight: FontWeight.bold,
@@ -127,11 +128,11 @@ class _ConfirmationUploadPageState
 
     return Column(
       children: [
-        if (_selectedFile != null) ...[
+        if (_selectedFile != null)
           Stack(
             children: [
               Container(
-                height: 200,
+                height: MediaQuery.of(context).size.height * 0.4,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.white),
@@ -197,28 +198,27 @@ class _ConfirmationUploadPageState
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 16),
-        ],
-        GestureDetector(
-          onTap: _pickFile,
-          child: Container(
-            height: _selectedFile != null ? 60 : 200,
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.white),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  widget.challenge.confirmationType == 'PHOTO'
-                      ? Icons.photo_camera
-                      : Icons.videocam,
-                  color: AppColors.white,
-                  size: _selectedFile != null ? 24 : 48,
-                ),
-                if (_selectedFile == null) ...[
+          )
+        else
+          GestureDetector(
+            onTap: _pickFile,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.white),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    widget.challenge.confirmationType == 'PHOTO'
+                        ? Icons.photo_camera
+                        : Icons.videocam,
+                    color: AppColors.white,
+                    size: 48,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     widget.challenge.confirmationType == 'PHOTO'
@@ -230,8 +230,37 @@ class _ConfirmationUploadPageState
                     ),
                   ),
                 ],
-              ],
+              ),
             ),
+          ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Делиться в чате',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 16,
+                ),
+              ),
+              Switch(
+                value: _shareInChat,
+                onChanged: (value) {
+                  setState(() {
+                    _shareInChat = value;
+                  });
+                },
+                activeColor: AppColors.orange,
+                inactiveTrackColor: AppColors.grey,
+              ),
+            ],
           ),
         ),
       ],
@@ -312,11 +341,40 @@ class _ConfirmationUploadPageState
       if (widget.challenge.confirmationType == 'TEXT') {
         value = _textController.text.trim();
       } else {
-        value = await ref.read(fileRepositoryProvider).uploadFile(
-              _selectedFile!,
-              userTgId: '44', // TODO: Получить реальный ID пользователя
-              challengeId: widget.challenge.id,
+        try {
+          value = await ref.read(fileRepositoryProvider).uploadFile(
+                _selectedFile!,
+                userTgId: '44', // TODO: Получить реальный ID пользователя
+                challengeId: widget.challenge.id,
+              );
+        } catch (e) {
+          if (mounted) {
+            await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: AppColors.blackMin,
+                title: const Text(
+                  'Ошибка',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                content: Text(
+                  e.toString().replaceAll('Exception: ', ''),
+                  style: const TextStyle(color: AppColors.white),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(color: AppColors.orange),
+                    ),
+                  ),
+                ],
+              ),
             );
+          }
+          return;
+        }
       }
 
       final success =
@@ -327,7 +385,7 @@ class _ConfirmationUploadPageState
                   type: widget.challenge.confirmationType,
                   value: value,
                 ),
-                share: true,
+                share: _shareInChat,
               );
 
       if (mounted) {
