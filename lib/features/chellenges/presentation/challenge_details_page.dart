@@ -227,7 +227,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            challenge.confirmationType,
+            challenge.confirmationDescription,
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 14,
