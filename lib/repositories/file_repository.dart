@@ -26,7 +26,7 @@ class FileRepository {
       final bytes = await file.readAsBytes();
 
       final formData = FormData.fromMap({
-        'file': await MultipartFile.fromBytes(
+        'file': MultipartFile.fromBytes(
           bytes,
           filename: filename,
           contentType: MediaType.parse(mimeType),

@@ -22,9 +22,6 @@ class _PaymentIframePageState extends State<PaymentIframePage> {
   }
 
   void _redirectToPayment() {
-    // Сохраняем текущий URL для возврата
-    final currentUrl = html.window.location.href;
-
     // Подписываемся на изменения URL
     html.window.onPopState.listen((event) {
       if (html.window.location.href

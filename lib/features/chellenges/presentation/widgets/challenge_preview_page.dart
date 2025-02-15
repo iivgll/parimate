@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:parimate/features/chellenges/presentation/widgets/payment_iframe_page.dart';
 import '../../../../common/utils/colors.dart';
 import '../../../../app/repository_providers.dart';
 import '../../logic/challenges_notifier.dart';
+import 'package:dio/dio.dart';
 
 class ChallengePreviewPage extends ConsumerWidget {
   final Map<String, dynamic> challenge;
+  final bool showJoinButton;
+  final String? joinLink;
 
   const ChallengePreviewPage({
     super.key,
     required this.challenge,
+    this.showJoinButton = false,
+    this.joinLink,
   });
 
   @override
@@ -73,34 +79,54 @@ class ChallengePreviewPage extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => _createChallenge(context, ref),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.orange,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            if (showJoinButton) ...[
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => _joinChallenge(context, ref),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Вступить в челлендж',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
+                  child: const Text(
+                    'Вступить в челлендж',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
   }
 
+  String _formatDate(String dateStr) {
+    if (!dateStr.contains('T')) {
+      // Если это просто время, форматируем его
+      final timeParts = dateStr.split(':');
+      return '${timeParts[0]}:${timeParts[1]}'; // Берем только часы и минуты
+    }
+    final date = DateTime.parse(dateStr);
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year.toString().substring(2)}';
+  }
+
   Widget _buildInfoRow(String label, String value) {
+    String displayValue = value;
+    if (label.contains('Начало/конец')) {
+      final dates = value.split(' - ');
+      displayValue = '${_formatDate(dates[0])} - ${_formatDate(dates[1])}';
+    } else if (label == 'До:') {
+      displayValue = _formatDate(value); // Теперь форматируем и время
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -114,7 +140,7 @@ class ChallengePreviewPage extends ConsumerWidget {
             ),
           ),
           Text(
-            value,
+            displayValue,
             style: const TextStyle(
               color: AppColors.grey,
               fontSize: 14,
@@ -149,36 +175,36 @@ class ChallengePreviewPage extends ConsumerWidget {
     return days[day - 1];
   }
 
-  Future<void> _createChallenge(BuildContext context, WidgetRef ref) async {
+  Future<void> _joinChallenge(BuildContext context, WidgetRef ref) async {
     try {
-      // Получаем выбранный тип подтверждения и убеждаемся, что он корректен
-      print('Challenge data before create: $challenge'); // Для отладки
+      final result = await ref
+          .read(participationRepositoryProvider)
+          .joinToChallengeViaLink(
+            link: joinLink!,
+            userTgId: '44', // TODO: Получать реальный ID пользователя
+            accepted: true,
+            payed: false,
+          );
 
-      final createdChallenge = await ref
-          .read(challengeRepositoryProvider)
-          .createChallenge(challenge);
-
-      print('Created challenge: $createdChallenge'); // Для отладки
-
-      await ref
-          .read(challengesNotifierProvider.notifier)
-          .joinChallenge(createdChallenge.id, context);
-
-      if (context.mounted) {
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Челлендж успешно создан')),
+      if (result.confirmationUrl != null && context.mounted) {
+        final success = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (context) => PaymentIframePage(
+              paymentUrl: result.confirmationUrl!,
+            ),
+          ),
         );
+
+        if (success == true && context.mounted) {
+          await ref
+              .read(challengesNotifierProvider.notifier)
+              .refreshChallenges();
+          Navigator.of(context).pop(); // Закрываем превью
+          Navigator.of(context).pop(); // Закрываем диалог со ссылкой
+        }
       }
     } catch (e) {
       if (context.mounted) {
-        String errorMessage = 'Произошла ошибка';
-        if (e.toString().contains('message')) {
-          final start = e.toString().indexOf('"message": "') + 11;
-          final end = e.toString().indexOf('"', start);
-          errorMessage = e.toString().substring(start, end);
-        }
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -186,28 +212,20 @@ class ChallengePreviewPage extends ConsumerWidget {
             title: const Text(
               'Ошибка',
               style: TextStyle(
-                color: AppColors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+                  color: AppColors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
-            content: Text(
-              errorMessage,
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 16,
-              ),
+            content: const Text(
+              'Вы не можете присоединиться к данному челленджу',
+              style: TextStyle(color: AppColors.white, fontSize: 16),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'OK',
-                  style: TextStyle(
-                    color: AppColors.orange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: const Text('OK',
+                    style: TextStyle(
+                        color: AppColors.orange, fontWeight: FontWeight.bold)),
               ),
             ],
           ),

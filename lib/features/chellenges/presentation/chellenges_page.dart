@@ -5,12 +5,15 @@ import 'package:parimate/features/chellenges/presentation/widgets/challenge_cont
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 
 import '../../../app/metadata_notifier.dart';
+import '../../../app/repository_providers.dart';
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/custom_button.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
 import '../logic/challenges_notifier.dart';
 import '../../../features/chellenges/presentation/widgets/create_challenge_sheet.dart';
+import '../../../features/chellenges/presentation/widgets/join_by_link_dialog.dart';
+import '../../../features/chellenges/presentation/widgets/challenge_preview_page.dart';
 
 class ChallengesPage extends ConsumerWidget {
   const ChallengesPage({super.key});
@@ -48,7 +51,7 @@ class ChallengesPage extends ConsumerWidget {
               if (challengesState.value?.view == ChallengesView.mine)
                 _buildChallengesList(challengesState)
               else
-                _buildNewChallenges(context, challengesState),
+                _buildNewChallenges(context, challengesState, ref),
             ],
           ),
         ),
@@ -112,8 +115,8 @@ class ChallengesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildNewChallenges(
-      BuildContext context, AsyncValue<ChallengesState> challengesState) {
+  Widget _buildNewChallenges(BuildContext context,
+      AsyncValue<ChallengesState> challengesState, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,8 +124,44 @@ class ChallengesPage extends ConsumerWidget {
           children: [
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () {
-                  // Логика присоединения по ссылке
+                onPressed: () async {
+                  final link = await showDialog<String>(
+                    context: context,
+                    builder: (context) => const JoinByLinkDialog(),
+                  );
+
+                  if (link != null && context.mounted) {
+                    try {
+                      final challenge = await ref
+                          .read(challengeRepositoryProvider)
+                          .getChallengeByLink(
+                            userTgId:
+                                '44', // TODO: Получать реальный ID пользователя
+                            link: link,
+                          );
+
+                      if (context.mounted) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChallengePreviewPage(
+                              challenge: challenge.toJson(),
+                              showJoinButton: true,
+                              joinLink: link,
+                            ),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text('Ошибка при получении челленджа: $e')),
+                        );
+                      }
+                    }
+                  }
                 },
                 icon: const Icon(Icons.link, color: AppColors.white),
                 label: const Text(
