@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:parimate/app/repository_providers.dart';
 import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
+import 'package:parimate/features/chellenges/state/challenges_state.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/challenge_statistics.dart';
 import '../../../features/chellenges/presentation/confirmation_upload_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
 
 class ChallengeDetailsPage extends ConsumerWidget {
   final ChallengeModel challenge;
@@ -134,7 +138,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 const SizedBox(height: 24),
                 _buildParticipantsBlockContent(statistics),
                 const SizedBox(height: 32),
-                _buildExitButton(context),
+                _buildExitButton(context, ref),
               ],
             ),
           );
@@ -542,17 +546,15 @@ class ChallengeDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildExitButton(BuildContext context) {
+  Widget _buildExitButton(BuildContext context, WidgetRef ref) {
     if (challenge.isArchived) {
-      return const SizedBox
-          .shrink(); // Не показываем кнопку для архивных челленджей
+      return const SizedBox.shrink();
     }
 
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // TODO: Реализовать выход из челленджа
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -562,25 +564,89 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 style: TextStyle(color: AppColors.white),
               ),
               content: const Text(
-                'Вы уверены, что хотите выйти из челленджа? Ваша ставка не будет возвращена.',
+                'Вы точно хотите покинуть челлендж?',
                 style: TextStyle(color: AppColors.white),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text(
-                    'Отмена',
+                    'Нет',
                     style: TextStyle(color: AppColors.white),
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    // TODO: Реализовать выход
-                    Navigator.pop(context);
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    try {
+                      await ref
+                          .read(participationRepositoryProvider)
+                          .leaveChallenge(
+                            userTgId: '44',
+                            challengeId: challenge.id,
+                          );
+
+                      if (context.mounted) {
+                        await ref
+                            .read(challengesNotifierProvider.notifier)
+                            .refreshChallenges();
+                        ref
+                            .read(challengesNotifierProvider.notifier)
+                            .setView(ChallengesView.mine);
+
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          context.go('/challenges');
+                        }
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        Navigator.pop(
+                            context); // Закрываем диалог подтверждения
+
+                        String errorMessage = 'Не удалось покинуть челлендж';
+                        if (e is DioException && e.response?.data != null) {
+                          errorMessage =
+                              e.response?.data['message'] ?? errorMessage;
+                        }
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: AppColors.blackMin,
+                            title: const Text(
+                              'Ошибка',
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Text(
+                              errorMessage,
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(
+                                    color: AppColors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
                   },
                   child: const Text(
-                    'Выйти',
+                    'Да',
                     style: TextStyle(color: AppColors.orange),
                   ),
                 ),

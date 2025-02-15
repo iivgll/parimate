@@ -146,7 +146,7 @@ class ChallengesPage extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => ChallengePreviewPage(
                               challenge: challenge.toJson(),
-                              showJoinButton: true,
+                              isCreating: false,
                               joinLink: link,
                             ),
                           ),

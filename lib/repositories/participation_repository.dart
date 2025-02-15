@@ -72,6 +72,23 @@ class ParticipationRepository {
     }
   }
 
+  Future<void> leaveChallenge({
+    required String userTgId,
+    required int challengeId,
+  }) async {
+    try {
+      await _dio.delete(
+        '/api/v2/participation',
+        queryParameters: {
+          'user_tg_id': userTgId,
+          'challenge_id': challengeId,
+        },
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
   Exception _handleDioError(DioException error) {
     if (error.response?.statusCode == 422) {
       return ValidationException(

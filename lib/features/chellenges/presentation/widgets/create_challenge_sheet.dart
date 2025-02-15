@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'icon_picker_sheet.dart';
 import 'category_picker_sheet.dart';
 import 'challenge_preview_page.dart';
+import 'package:go_router/go_router.dart';
 
 enum RegularityType { daily, weekly, specificDays }
 
@@ -879,7 +880,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         confirmationType = 'PHOTO';
     }
 
-    // Определяем тип регулярности и параметры
     String regularityType;
     int? timesPerDay;
     int? timesPerWeek;
@@ -932,16 +932,10 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   void _createChallenge() {
     if (_validateForm()) {
       final challengeData = _buildChallengeData();
-      print('Creating challenge with data: $challengeData'); // Для отладки
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChallengePreviewPage(
-            challenge: challengeData,
-          ),
-        ),
-      );
+      context.push('/challenge-preview', extra: {
+        'challenge': challengeData,
+        'isCreating': true,
+      });
     }
   }
 

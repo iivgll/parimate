@@ -5,16 +5,17 @@ import '../../../../common/utils/colors.dart';
 import '../../../../app/repository_providers.dart';
 import '../../logic/challenges_notifier.dart';
 import 'package:dio/dio.dart';
+import 'package:go_router/go_router.dart';
 
 class ChallengePreviewPage extends ConsumerWidget {
   final Map<String, dynamic> challenge;
-  final bool showJoinButton;
+  final bool isCreating;
   final String? joinLink;
 
   const ChallengePreviewPage({
     super.key,
     required this.challenge,
-    this.showJoinButton = false,
+    this.isCreating = false,
     this.joinLink,
   });
 
@@ -79,29 +80,30 @@ class ChallengePreviewPage extends ConsumerWidget {
                 ],
               ),
             ),
-            if (showJoinButton) ...[
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => _joinChallenge(context, ref),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => isCreating
+                    ? _createChallenge(context, ref)
+                    : _joinChallenge(context, ref),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      isCreating ? AppColors.orange : AppColors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'Вступить в челлендж',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                child: Text(
+                  isCreating ? 'Создать челлендж' : 'Вступить в челлендж',
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
+            ),
           ],
         ),
       ),
@@ -109,22 +111,30 @@ class ChallengePreviewPage extends ConsumerWidget {
   }
 
   String _formatDate(String dateStr) {
+    if (dateStr.isEmpty) return '';
+
     if (!dateStr.contains('T')) {
-      // Если это просто время, форматируем его
-      final timeParts = dateStr.split(':');
-      return '${timeParts[0]}:${timeParts[1]}'; // Берем только часы и минуты
+      // Если это просто время, возвращаем как есть
+      return dateStr;
     }
-    final date = DateTime.parse(dateStr);
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year.toString().substring(2)}';
+
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year.toString().substring(2)}';
+    } catch (e) {
+      return dateStr; // В случае ошибки парсинга возвращаем исходную строку
+    }
   }
 
   Widget _buildInfoRow(String label, String value) {
     String displayValue = value;
     if (label.contains('Начало/конец')) {
       final dates = value.split(' - ');
-      displayValue = '${_formatDate(dates[0])} - ${_formatDate(dates[1])}';
+      if (dates.length == 2) {
+        displayValue = '${_formatDate(dates[0])} - ${_formatDate(dates[1])}';
+      }
     } else if (label == 'До:') {
-      displayValue = _formatDate(value); // Теперь форматируем и время
+      displayValue = _formatDate(value);
     }
 
     return Padding(
@@ -175,13 +185,40 @@ class ChallengePreviewPage extends ConsumerWidget {
     return days[day - 1];
   }
 
+  Future<void> _createChallenge(BuildContext context, WidgetRef ref) async {
+    try {
+      final createdChallenge = await ref
+          .read(challengeRepositoryProvider)
+          .createChallenge(challenge);
+
+      await ref
+          .read(challengesNotifierProvider.notifier)
+          .joinChallenge(createdChallenge.id, context);
+
+      if (context.mounted) {
+        context.go('/challenges');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Челлендж успешно создан')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        String errorMessage = 'Произошла ошибка при создании челленджа';
+        if (e is DioException && e.response?.data != null) {
+          errorMessage = e.response?.data['message'] ?? errorMessage;
+        }
+        _showErrorDialog(context, errorMessage);
+      }
+    }
+  }
+
   Future<void> _joinChallenge(BuildContext context, WidgetRef ref) async {
     try {
       final result = await ref
           .read(participationRepositoryProvider)
           .joinToChallengeViaLink(
             link: joinLink!,
-            userTgId: '44', // TODO: Получать реальный ID пользователя
+            userTgId: '44',
             accepted: true,
             payed: false,
           );
@@ -199,38 +236,53 @@ class ChallengePreviewPage extends ConsumerWidget {
           await ref
               .read(challengesNotifierProvider.notifier)
               .refreshChallenges();
-          Navigator.of(context).pop(); // Закрываем превью
-          Navigator.of(context).pop(); // Закрываем диалог со ссылкой
+          context.go('/challenges');
         }
       }
     } catch (e) {
       if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: AppColors.blackMin,
-            title: const Text(
-              'Ошибка',
-              style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
-            content: const Text(
-              'Вы не можете присоединиться к данному челленджу',
-              style: TextStyle(color: AppColors.white, fontSize: 16),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK',
-                    style: TextStyle(
-                        color: AppColors.orange, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        );
+        String errorMessage = 'Не удалось присоединиться к челленджу';
+        if (e is DioException && e.response?.data != null) {
+          errorMessage = e.response?.data['message'] ?? errorMessage;
+        }
+        _showErrorDialog(context, errorMessage);
       }
     }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.blackMin,
+        title: const Text(
+          'Ошибка',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: AppColors.white,
+            fontSize: 16,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                color: AppColors.orange,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
