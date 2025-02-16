@@ -1,27 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'challenges_notifier.dart';
+part of 'code_word_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$challengesNotifierHash() =>
-    r'f462585b3754cac56d84d67d972d69f96110ac81';
+String _$codeWordNotifierHash() => r'3067c6289a7d5c589685f747e19f49e1b48f18d7';
 
-/// See also [ChallengesNotifier].
-@ProviderFor(ChallengesNotifier)
-final challengesNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    ChallengesNotifier, ChallengesState>.internal(
-  ChallengesNotifier.new,
-  name: r'challengesNotifierProvider',
+/// See also [CodeWordNotifier].
+@ProviderFor(CodeWordNotifier)
+final codeWordNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<CodeWordNotifier, CodeWord>.internal(
+  CodeWordNotifier.new,
+  name: r'codeWordNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$challengesNotifierHash,
+      : _$codeWordNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ChallengesNotifier = AutoDisposeAsyncNotifier<ChallengesState>;
+typedef _$CodeWordNotifier = AutoDisposeAsyncNotifier<CodeWord>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

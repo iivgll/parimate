@@ -7,6 +7,8 @@ import '../../../common/utils/colors.dart';
 import '../../../models/confirmation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+import '../../../app/code_word_notifier.dart';
+import 'dart:io';
 
 class ConfirmationUploadPage extends ConsumerStatefulWidget {
   final ChallengeModel challenge;
@@ -79,7 +81,7 @@ class _ConfirmationUploadPageState
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Загрузи подтверждения\nвыполнения челленджа',
+                    'Загрузи подтверждение\nвыполнения челленджа',
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 18,
@@ -143,7 +145,116 @@ class _ConfirmationUploadPageState
 
     return Column(
       children: [
+        if (widget.challenge.confirmationType == 'VIDEO')
+          ref.watch(codeWordNotifierProvider).when(
+                data: (codeWord) => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.blackMin,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.orange),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Важно!',
+                        style: TextStyle(
+                          color: AppColors.orange,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Для подтверждения подлинности видео, пожалуйста, '
+                        'покажите или произнесите кодовое слово:',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.black,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          codeWord.word,
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: AppColors.orange),
+                ),
+                error: (error, stack) => const SizedBox.shrink(),
+              ),
         if (_selectedFile != null &&
+            widget.challenge.confirmationType == 'PHOTO')
+          Stack(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.white),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: kIsWeb
+                      ? Image.network(
+                          _selectedFile!.path,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.memory(
+                          Uint8List.fromList(
+                            File(_selectedFile!.path).readAsBytesSync(),
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedFile = null;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: AppColors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: AppColors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        else if (_selectedFile != null &&
             widget.challenge.confirmationType == 'VIDEO')
           Stack(
             children: [

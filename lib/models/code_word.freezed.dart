@@ -14,45 +14,44 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-CodeWordSchema _$CodeWordSchemaFromJson(Map<String, dynamic> json) {
-  return _CodeWordSchema.fromJson(json);
+CodeWord _$CodeWordFromJson(Map<String, dynamic> json) {
+  return _CodeWord.fromJson(json);
 }
 
 /// @nodoc
-mixin _$CodeWordSchema {
+mixin _$CodeWord {
   int get id => throw _privateConstructorUsedError;
   String get word => throw _privateConstructorUsedError;
 
-  /// Serializes this CodeWordSchema to a JSON map.
+  /// Serializes this CodeWord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of CodeWordSchema
+  /// Create a copy of CodeWord
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CodeWordSchemaCopyWith<CodeWordSchema> get copyWith =>
+  $CodeWordCopyWith<CodeWord> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CodeWordSchemaCopyWith<$Res> {
-  factory $CodeWordSchemaCopyWith(
-          CodeWordSchema value, $Res Function(CodeWordSchema) then) =
-      _$CodeWordSchemaCopyWithImpl<$Res, CodeWordSchema>;
+abstract class $CodeWordCopyWith<$Res> {
+  factory $CodeWordCopyWith(CodeWord value, $Res Function(CodeWord) then) =
+      _$CodeWordCopyWithImpl<$Res, CodeWord>;
   @useResult
   $Res call({int id, String word});
 }
 
 /// @nodoc
-class _$CodeWordSchemaCopyWithImpl<$Res, $Val extends CodeWordSchema>
-    implements $CodeWordSchemaCopyWith<$Res> {
-  _$CodeWordSchemaCopyWithImpl(this._value, this._then);
+class _$CodeWordCopyWithImpl<$Res, $Val extends CodeWord>
+    implements $CodeWordCopyWith<$Res> {
+  _$CodeWordCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CodeWordSchema
+  /// Create a copy of CodeWord
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -74,25 +73,25 @@ class _$CodeWordSchemaCopyWithImpl<$Res, $Val extends CodeWordSchema>
 }
 
 /// @nodoc
-abstract class _$$CodeWordSchemaImplCopyWith<$Res>
-    implements $CodeWordSchemaCopyWith<$Res> {
-  factory _$$CodeWordSchemaImplCopyWith(_$CodeWordSchemaImpl value,
-          $Res Function(_$CodeWordSchemaImpl) then) =
-      __$$CodeWordSchemaImplCopyWithImpl<$Res>;
+abstract class _$$CodeWordImplCopyWith<$Res>
+    implements $CodeWordCopyWith<$Res> {
+  factory _$$CodeWordImplCopyWith(
+          _$CodeWordImpl value, $Res Function(_$CodeWordImpl) then) =
+      __$$CodeWordImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int id, String word});
 }
 
 /// @nodoc
-class __$$CodeWordSchemaImplCopyWithImpl<$Res>
-    extends _$CodeWordSchemaCopyWithImpl<$Res, _$CodeWordSchemaImpl>
-    implements _$$CodeWordSchemaImplCopyWith<$Res> {
-  __$$CodeWordSchemaImplCopyWithImpl(
-      _$CodeWordSchemaImpl _value, $Res Function(_$CodeWordSchemaImpl) _then)
+class __$$CodeWordImplCopyWithImpl<$Res>
+    extends _$CodeWordCopyWithImpl<$Res, _$CodeWordImpl>
+    implements _$$CodeWordImplCopyWith<$Res> {
+  __$$CodeWordImplCopyWithImpl(
+      _$CodeWordImpl _value, $Res Function(_$CodeWordImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CodeWordSchema
+  /// Create a copy of CodeWord
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -100,7 +99,7 @@ class __$$CodeWordSchemaImplCopyWithImpl<$Res>
     Object? id = null,
     Object? word = null,
   }) {
-    return _then(_$CodeWordSchemaImpl(
+    return _then(_$CodeWordImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -115,11 +114,11 @@ class __$$CodeWordSchemaImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CodeWordSchemaImpl implements _CodeWordSchema {
-  const _$CodeWordSchemaImpl({required this.id, required this.word});
+class _$CodeWordImpl implements _CodeWord {
+  const _$CodeWordImpl({required this.id, required this.word});
 
-  factory _$CodeWordSchemaImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CodeWordSchemaImplFromJson(json);
+  factory _$CodeWordImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CodeWordImplFromJson(json);
 
   @override
   final int id;
@@ -128,14 +127,14 @@ class _$CodeWordSchemaImpl implements _CodeWordSchema {
 
   @override
   String toString() {
-    return 'CodeWordSchema(id: $id, word: $word)';
+    return 'CodeWord(id: $id, word: $word)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CodeWordSchemaImpl &&
+            other is _$CodeWordImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.word, word) || other.word == word));
   }
@@ -144,40 +143,38 @@ class _$CodeWordSchemaImpl implements _CodeWordSchema {
   @override
   int get hashCode => Object.hash(runtimeType, id, word);
 
-  /// Create a copy of CodeWordSchema
+  /// Create a copy of CodeWord
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CodeWordSchemaImplCopyWith<_$CodeWordSchemaImpl> get copyWith =>
-      __$$CodeWordSchemaImplCopyWithImpl<_$CodeWordSchemaImpl>(
-          this, _$identity);
+  _$$CodeWordImplCopyWith<_$CodeWordImpl> get copyWith =>
+      __$$CodeWordImplCopyWithImpl<_$CodeWordImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CodeWordSchemaImplToJson(
+    return _$$CodeWordImplToJson(
       this,
     );
   }
 }
 
-abstract class _CodeWordSchema implements CodeWordSchema {
-  const factory _CodeWordSchema(
-      {required final int id,
-      required final String word}) = _$CodeWordSchemaImpl;
+abstract class _CodeWord implements CodeWord {
+  const factory _CodeWord({required final int id, required final String word}) =
+      _$CodeWordImpl;
 
-  factory _CodeWordSchema.fromJson(Map<String, dynamic> json) =
-      _$CodeWordSchemaImpl.fromJson;
+  factory _CodeWord.fromJson(Map<String, dynamic> json) =
+      _$CodeWordImpl.fromJson;
 
   @override
   int get id;
   @override
   String get word;
 
-  /// Create a copy of CodeWordSchema
+  /// Create a copy of CodeWord
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CodeWordSchemaImplCopyWith<_$CodeWordSchemaImpl> get copyWith =>
+  _$$CodeWordImplCopyWith<_$CodeWordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -41,7 +41,7 @@ final fileRepositoryProvider = Provider<FileRepository>((ref) {
 });
 
 final codeWordRepositoryProvider = Provider<CodeWordRepository>((ref) {
-  throw UnimplementedError();
+  return CodeWordRepository(ref.read(dioProvider));
 });
 
 final coinsRepositoryProvider = Provider<CoinsRepository>((ref) {

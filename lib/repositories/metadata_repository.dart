@@ -10,9 +10,8 @@ class MetadataRepository {
     try {
       final response = await _dio.get('/api/v2/metadata/');
       return AppMetadata.fromJson(response.data);
-    } catch (e) {
-      print('MetadataRepository: error $e');
-      rethrow;
+    } on DioException catch (e) {
+      throw Exception(e.message ?? 'Произошла ошибка при получении метаданных');
     }
   }
 }

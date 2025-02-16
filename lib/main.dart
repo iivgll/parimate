@@ -17,8 +17,11 @@ import 'repositories/file_repository.dart';
 import 'repositories/code_word_repository.dart';
 import 'repositories/coins_repository.dart';
 import 'repositories/metadata_repository.dart';
+import 'app/code_word_notifier.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final apiClient = ApiClient(baseUrl: 'http://185.112.102.11:8000');
 
   final userRepository = UserRepository(apiClient.dio);
@@ -54,11 +57,14 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Используем watch вместо read для отслеживания состояния
+    final codeWordState = ref.watch(codeWordNotifierProvider);
+
     return AppInitializer(
       userTgId: '44',
       child: MaterialApp.router(

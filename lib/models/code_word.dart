@@ -4,12 +4,12 @@ part 'code_word.freezed.dart';
 part 'code_word.g.dart';
 
 @freezed
-class CodeWordSchema with _$CodeWordSchema {
-  const factory CodeWordSchema({
+class CodeWord with _$CodeWord {
+  const factory CodeWord({
     required int id,
     required String word,
-  }) = _CodeWordSchema;
+  }) = _CodeWord;
 
-  factory CodeWordSchema.fromJson(Map<String, dynamic> json) =>
-      _$CodeWordSchemaFromJson(json);
+  factory CodeWord.fromJson(Map<String, dynamic> json) =>
+      _$CodeWordFromJson(json);
 }

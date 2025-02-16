@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:parimate/repositories/user_repository.dart';
 import '../models/code_word.dart';
 
 class CodeWordRepository {
@@ -7,22 +6,13 @@ class CodeWordRepository {
 
   CodeWordRepository(this._dio);
 
-  Future<List<CodeWordSchema>> getCodeWord() async {
+  Future<CodeWord> getCodeWord() async {
     try {
       final response = await _dio.get('/api/v2/codeword');
-      return (response.data as List)
-          .map((json) => CodeWordSchema.fromJson(json))
-          .toList();
+      return CodeWord.fromJson(response.data);
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      throw Exception(
+          e.message ?? 'Произошла ошибка при получении кодового слова');
     }
-  }
-
-  Exception _handleDioError(DioException error) {
-    if (error.response?.statusCode == 422) {
-      return ValidationException(
-          error.response?.data['detail'] ?? 'Ошибка валидации');
-    }
-    return Exception(error.message ?? 'Произошла ошибка');
   }
 }
