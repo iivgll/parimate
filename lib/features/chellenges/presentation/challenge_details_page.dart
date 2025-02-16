@@ -69,16 +69,22 @@ class ChallengeDetailsPage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              challenge.name,
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Text(
+                challenge.name,
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 8),
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 _buildStatusIcon(),
                 const SizedBox(height: 5),
@@ -87,12 +93,15 @@ class ChallengeDetailsPage extends ConsumerWidget {
           ],
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(0),
-          child: Text(
-            _formatDateRange(),
-            style: const TextStyle(
-              color: AppColors.white,
-              fontSize: 14,
+          preferredSize: const Size.fromHeight(24),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              _formatDateRange(),
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 14,
+              ),
             ),
           ),
         ),

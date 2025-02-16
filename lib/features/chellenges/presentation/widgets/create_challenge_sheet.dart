@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'icon_picker_sheet.dart';
 import 'category_picker_sheet.dart';
-import 'challenge_preview_page.dart';
 import 'package:go_router/go_router.dart';
 
 enum RegularityType { daily, weekly, specificDays }

@@ -5,8 +5,8 @@ import 'package:parimate/models/challenge_model.dart';
 import '../../../app/repository_providers.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/confirmation.dart';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ConfirmationUploadPage extends ConsumerStatefulWidget {
   final ChallengeModel challenge;
@@ -27,6 +27,18 @@ class _ConfirmationUploadPageState
   XFile? _selectedFile;
   bool _isLoading = false;
   bool _shareInChat = true;
+  Uint8List? _videoThumbnail;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _videoThumbnail = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +57,9 @@ class _ConfirmationUploadPageState
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
+          maxLines: 2,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
       ),
@@ -128,7 +143,8 @@ class _ConfirmationUploadPageState
 
     return Column(
       children: [
-        if (_selectedFile != null)
+        if (_selectedFile != null &&
+            widget.challenge.confirmationType == 'VIDEO')
           Stack(
             children: [
               Container(
@@ -140,17 +156,8 @@ class _ConfirmationUploadPageState
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: widget.challenge.confirmationType == 'PHOTO'
-                      ? kIsWeb
-                          ? Image.network(
-                              _selectedFile!.path,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              File(_selectedFile!.path),
-                              fit: BoxFit.cover,
-                            )
-                      : Stack(
+                  child: kIsWeb
+                      ? Stack(
                           alignment: Alignment.center,
                           children: [
                             Container(
@@ -158,17 +165,47 @@ class _ConfirmationUploadPageState
                               width: double.infinity,
                               height: double.infinity,
                             ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.video_file,
+                                  color: AppColors.white,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _selectedFile?.name ?? 'Видео выбрано',
+                                  style: const TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            if (_videoThumbnail != null)
+                              Image.memory(
+                                _videoThumbnail!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              )
+                            else
+                              Container(
+                                color: AppColors.blackMin,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
                             const Icon(
-                              Icons.video_file,
+                              Icons.play_circle_outline,
                               color: AppColors.white,
                               size: 48,
-                            ),
-                            const Text(
-                              'Видео выбрано',
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 16,
-                              ),
                             ),
                           ],
                         ),
@@ -181,6 +218,7 @@ class _ConfirmationUploadPageState
                   onTap: () {
                     setState(() {
                       _selectedFile = null;
+                      _videoThumbnail = null;
                     });
                   },
                   child: Container(
@@ -300,6 +338,10 @@ class _ConfirmationUploadPageState
         setState(() {
           _selectedFile = file;
         });
+
+        if (widget.challenge.confirmationType == 'VIDEO' && file != null) {
+          await _generateVideoThumbnail(file.path);
+        }
       }
     } catch (e, stack) {
       print('Ошибка при выборе файла: $e');
@@ -413,6 +455,26 @@ class _ConfirmationUploadPageState
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _generateVideoThumbnail(String videoPath) async {
+    if (kIsWeb) return; // Пропускаем генерацию превью для веб
+
+    try {
+      final uint8list = await VideoThumbnail.thumbnailData(
+        video: videoPath,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 512,
+        quality: 75,
+      );
+      if (mounted) {
+        setState(() {
+          _videoThumbnail = uint8list;
+        });
+      }
+    } catch (e) {
+      print('Ошибка при создании превью видео: $e');
     }
   }
 }
