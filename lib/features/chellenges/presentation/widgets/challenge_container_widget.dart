@@ -45,14 +45,7 @@ class ChallengeContainer extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: SvgPicture.asset('assets/icons/${challenge.icon}.svg'),
-          ),
+          _buildIcon(),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -84,6 +77,37 @@ class ChallengeContainer extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIcon() {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: AppColors.blackMin,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: challenge.icon.isEmpty
+            ? const Icon(
+                Icons.extension,
+                color: AppColors.white,
+                size: 32,
+              )
+            : SvgPicture.asset(
+                'assets/icons/${challenge.icon}.svg',
+                width: 32,
+                height: 32,
+                colorFilter:
+                    const ColorFilter.mode(AppColors.white, BlendMode.srcIn),
+                placeholderBuilder: (context) => const Icon(
+                  Icons.extension,
+                  color: AppColors.white,
+                  size: 32,
+                ),
+              ),
       ),
     );
   }
