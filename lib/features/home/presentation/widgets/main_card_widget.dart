@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/home/logic/user_statistics_notifier.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../common/utils/colors.dart';
+import '../../../chellenges/logic/challenges_notifier.dart';
 
 class MainCardWidget extends ConsumerStatefulWidget {
   const MainCardWidget({super.key});
@@ -17,16 +19,18 @@ class _MainCardWidgetState extends ConsumerState<MainCardWidget> {
   @override
   void initState() {
     super.initState();
-    Future(() {
-      ref
+    Future(() async {
+      await ref
           .read(userStatisticsNotifierProvider.notifier)
           .loadUserStatistics('44');
+      await ref.read(challengesNotifierProvider.notifier).refreshChallenges();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final statistics = ref.watch(userStatisticsNotifierProvider);
+    final challengesState = ref.watch(challengesNotifierProvider);
 
     return Card(
       color: AppColors.blackMin,
@@ -111,27 +115,41 @@ class _MainCardWidgetState extends ConsumerState<MainCardWidget> {
                 ),
               ),
               const SizedBox(height: 20),
-              ...statistics.challenges.map((challenge) => ListTile(
-                    title: Text(
-                      challenge.challengeName,
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontFamily: AppFontFamily.ubuntu,
-                        fontSize: 14,
+              ...statistics.challenges.map((challenge) => InkWell(
+                    onTap: () {
+                      if (challengesState.hasValue) {
+                        final fullChallenge = challengesState.value?.challenges
+                            .where((c) => c.name == challenge.challengeName)
+                            .firstOrNull;
+
+                        if (fullChallenge != null) {
+                          context.push('/challenge-details',
+                              extra: fullChallenge);
+                        }
+                      }
+                    },
+                    child: ListTile(
+                      title: Text(
+                        challenge.challengeName,
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontFamily: AppFontFamily.ubuntu,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    trailing: Icon(
-                      challenge.confirmed ? Icons.check : Icons.close,
-                      color: challenge.confirmed
-                          ? AppColors.orange
-                          : AppColors.white,
-                      size: 18,
+                      trailing: Icon(
+                        challenge.confirmed ? Icons.check : Icons.close,
+                        color: challenge.confirmed
+                            ? AppColors.orange
+                            : AppColors.white,
+                        size: 18,
+                      ),
                     ),
                   )),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: () {
-                  // Обработка загрузки подтверждений
+                  context.go('/challenges');
                 },
                 icon: const Icon(Icons.add, color: AppColors.white),
                 label: const Text(
