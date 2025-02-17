@@ -17,7 +17,6 @@ import 'repositories/file_repository.dart';
 import 'repositories/code_word_repository.dart';
 import 'repositories/coins_repository.dart';
 import 'repositories/metadata_repository.dart';
-import 'app/code_word_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,9 +61,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Используем watch вместо read для отслеживания состояния
-    final codeWordState = ref.watch(codeWordNotifierProvider);
-
     return AppInitializer(
       userTgId: '44',
       child: MaterialApp.router(

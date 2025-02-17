@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
-import '../../../../common/utils/colors.dart';
+import '../utils/colors.dart';
 
 class PaymentIframePage extends StatefulWidget {
   final String paymentUrl;

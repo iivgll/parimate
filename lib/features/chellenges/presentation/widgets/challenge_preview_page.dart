@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:parimate/features/chellenges/presentation/widgets/payment_iframe_page.dart';
+import 'package:parimate/common/widgets/payment_iframe_page.dart';
 import '../../../../common/utils/colors.dart';
 import '../../../../app/repository_providers.dart';
 import '../../logic/challenges_notifier.dart';

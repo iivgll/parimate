@@ -5,7 +5,7 @@ import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../models/challenge_model.dart';
 import '../../../app/repository_providers.dart';
-import '../presentation/widgets/payment_iframe_page.dart';
+import '../../../common/widgets/payment_iframe_page.dart';
 
 part 'challenges_notifier.g.dart';
 

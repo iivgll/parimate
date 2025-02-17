@@ -7,14 +7,41 @@ import '../../../common/utils/extensions.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/utils/icons.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
-import 'coin_notifier.dart';
+import 'logic/coin_notifier.dart';
 import 'widgets/coin_card.dart';
 
-class CoinsPage extends ConsumerWidget {
+class CoinsPage extends ConsumerStatefulWidget {
   const CoinsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CoinsPage> createState() => _CoinsPageState();
+}
+
+class _CoinsPageState extends ConsumerState<CoinsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Загружаем актуальное количество монет при открытии экрана
+    Future.microtask(
+        () => ref.read(coinNotifierProvider.notifier).loadUserCoins());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final coinState = ref.watch(coinNotifierProvider);
+
+    final userBalance = coinState.balance;
+
+    if (coinState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (coinState.error != null) {
+      return Center(
+          child:
+              Text(coinState.error!, style: TextStyle(color: AppColors.white)));
+    }
+
     final coinOptions = [1, 3, 5, 10];
 
     // Стилевые переменные
@@ -48,7 +75,6 @@ class CoinsPage extends ConsumerWidget {
 
     // Получаем текущий баланс пользователя из CoinNotifier
     final coinNotifier = ref.watch(coinNotifierProvider.notifier);
-    final userBalance = ref.watch(coinNotifierProvider);
 
     return Scaffold(
       backgroundColor: AppColors.black,
@@ -109,35 +135,35 @@ class CoinsPage extends ConsumerWidget {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Обработка просмотра рекламы для получения монеты
-                  coinNotifier.watchAdForCoin();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text(
-                      'Посмотри рекламу - получи монету',
-                      style: TextStyle(color: AppColors.white),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.arrow_forward_outlined,
-                      color: AppColors.white,
-                      size: 18,
-                    ),
-                  ],
-                ),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     // Обработка просмотра рекламы для получения монеты
+              //     coinNotifier.watchAdForCoin();
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: AppColors.black,
+              //     padding: const EdgeInsets.symmetric(vertical: 12.0),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(8.0),
+              //     ),
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: const [
+              //       Text(
+              //         'Посмотри рекламу - получи монету',
+              //         style: TextStyle(color: AppColors.white),
+              //       ),
+              //       SizedBox(width: 8),
+              //       Icon(
+              //         Icons.arrow_forward_outlined,
+              //         color: AppColors.white,
+              //         size: 18,
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),

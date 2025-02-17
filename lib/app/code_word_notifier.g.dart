@@ -6,12 +6,12 @@ part of 'code_word_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$codeWordNotifierHash() => r'3067c6289a7d5c589685f747e19f49e1b48f18d7';
+String _$codeWordNotifierHash() => r'04ad0f3ec7fbb3c4e436a50dc076be2732550a5b';
 
 /// See also [CodeWordNotifier].
 @ProviderFor(CodeWordNotifier)
 final codeWordNotifierProvider =
-    AutoDisposeAsyncNotifierProvider<CodeWordNotifier, CodeWord>.internal(
+    AsyncNotifierProvider<CodeWordNotifier, CodeWord>.internal(
   CodeWordNotifier.new,
   name: r'codeWordNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final codeWordNotifierProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$CodeWordNotifier = AutoDisposeAsyncNotifier<CodeWord>;
+typedef _$CodeWordNotifier = AsyncNotifier<CodeWord>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

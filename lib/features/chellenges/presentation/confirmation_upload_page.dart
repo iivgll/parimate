@@ -450,7 +450,7 @@ class _ConfirmationUploadPageState
           _selectedFile = file;
         });
 
-        if (widget.challenge.confirmationType == 'VIDEO' && file != null) {
+        if (widget.challenge.confirmationType == 'VIDEO') {
           await _generateVideoThumbnail(file.path);
         }
       }

@@ -6,18 +6,19 @@ class CoinsRepository {
 
   CoinsRepository(this._dio);
 
-  Future<void> buyCoins({
+  Future<CoinsResponse> buyCoins({
     required String userTgId,
     required int coins,
   }) async {
     try {
-      await _dio.post(
+      final response = await _dio.post(
         '/api/v2/coins',
         data: {
           'user_tg_id': userTgId,
           'coins': coins,
         },
       );
+      return CoinsResponse.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
@@ -29,5 +30,17 @@ class CoinsRepository {
           error.response?.data['detail'] ?? 'Ошибка валидации');
     }
     return Exception(error.message ?? 'Произошла ошибка');
+  }
+}
+
+class CoinsResponse {
+  final String confirmationLink;
+
+  CoinsResponse({required this.confirmationLink});
+
+  factory CoinsResponse.fromJson(Map<String, dynamic> json) {
+    return CoinsResponse(
+      confirmationLink: json['confirmation_link'] as String,
+    );
   }
 }
