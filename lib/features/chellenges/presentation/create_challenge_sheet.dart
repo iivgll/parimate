@@ -6,8 +6,8 @@ import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/chellenges/logic/challenge_type.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'icon_picker_sheet.dart';
-import 'category_picker_sheet.dart';
+import 'widgets/icon_picker_sheet.dart';
+import 'widgets/category_picker_sheet.dart';
 import 'package:go_router/go_router.dart';
 
 enum RegularityType { daily, weekly, specificDays }
@@ -26,7 +26,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   final TextEditingController descriptionController = TextEditingController();
   DateTime? startDate;
   DateTime? endDate;
-  TimeOfDay? confirmationTime;
+  TimeOfDay? confirmationTime = const TimeOfDay(hour: 23, minute: 59);
   String selectedIcon = '';
   String selectedCategory = '';
   int? maxParticipants;
@@ -483,8 +483,14 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                   ),
                   child: CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.time,
-                    use24hFormat: false,
-                    initialDateTime: DateTime.now(),
+                    use24hFormat: true,
+                    initialDateTime: DateTime(
+                      2024,
+                      1,
+                      1,
+                      confirmationTime?.hour ?? 23,
+                      confirmationTime?.minute ?? 59,
+                    ),
                     backgroundColor: AppColors.blackMin,
                     onDateTimeChanged: (DateTime newTime) {
                       setState(() {
@@ -502,13 +508,17 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   }
 
   void _showDateRangePicker() async {
+    // Получаем завтрашний день как минимальную дату
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    final firstDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+
     final DateTimeRange? dateRange = await showDateRangePicker(
       context: context,
-      firstDate: DateTime.now(),
+      firstDate: firstDate, // Устанавливаем минимальную дату как завтра
       lastDate: DateTime.now().add(const Duration(days: 365)),
       initialDateRange: DateTimeRange(
-        start: startDate ?? DateTime.now(),
-        end: endDate ?? DateTime.now().add(const Duration(days: 7)),
+        start: startDate ?? firstDate,
+        end: endDate ?? firstDate.add(const Duration(days: 6)),
       ),
       locale: const Locale('ru', 'RU'),
       builder: (BuildContext context, Widget? child) {
@@ -530,59 +540,41 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         );
       },
     );
+
     if (dateRange != null) {
-      final regularityType = _getRegularityType(selectedRegularity);
       final durationInDays =
           dateRange.end.difference(dateRange.start).inDays + 1;
 
-      if (regularityType == RegularityType.weekly && durationInDays % 7 != 0) {
+      // Проверяем, кратна ли длительность 7 дням
+      if (durationInDays % 7 != 0) {
         if (mounted) {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
               backgroundColor: AppColors.blackMin,
-              title: Text(
-                'Предупреждение',
+              title: const Text(
+                'Некорректный период',
                 style: TextStyle(
                   color: AppColors.white,
                   fontSize: 18,
-                  fontFamily: AppFontFamily.uncage,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               content: Text(
-                'Для еженедельного челленджа длительность должна быть кратна 7 дням.\n\nТекущая длительность: $durationInDays дней\nРекомендуемая длительность: ${((durationInDays / 7).round() * 7)} дней',
-                style: TextStyle(
+                'Длительность челленджа должна быть кратна 7 дням.\n\nВыберите период, равный целому количеству недель.',
+                style: const TextStyle(
                   color: AppColors.white,
                   fontSize: 16,
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    // Устанавливаем рекомендуемую длительность
-                    final recommendedDays = (durationInDays / 7).round() * 7;
-                    setState(() {
-                      startDate = dateRange.start;
-                      endDate = dateRange.start
-                          .add(Duration(days: recommendedDays - 1));
-                    });
-                  },
-                  child: Text(
-                    'Исправить',
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Понятно',
                     style: TextStyle(
                       color: AppColors.orange,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    'Закрыть',
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -591,6 +583,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
           );
         }
       } else {
+        // Если длительность кратна 7, устанавливаем выбранные даты
         setState(() {
           startDate = dateRange.start;
           endDate = dateRange.end;
@@ -695,6 +688,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   void _showBetPicker() {
     final TextEditingController betController =
         TextEditingController(text: selectedBet.toString());
+    int tempBet = selectedBet;
 
     showModalBottomSheet(
       context: context,
@@ -722,16 +716,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        // Применяем изменения при закрытии
-                        final newBet = int.tryParse(betController.text) ?? 100;
-                        if (newBet >= 100 && newBet <= 10000) {
-                          this.setState(() {
-                            selectedBet = newBet;
-                          });
-                        }
-                        Navigator.pop(context);
-                      },
+                      onTap: () => Navigator.pop(context),
                       child: const Icon(
                         Icons.arrow_back_ios,
                         color: AppColors.white,
@@ -797,6 +782,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                                     const TextPosition(offset: 5),
                                   );
                                 }
+                                tempBet =
+                                    int.tryParse(betController.text) ?? 100;
                               },
                             ),
                           ),
@@ -808,6 +795,31 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (tempBet >= 100 && tempBet <= 10000) {
+                          this.setState(() {
+                            selectedBet = tempBet;
+                          });
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.orange,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Готово',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -905,6 +917,10 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         timesPerDay = 1;
     }
 
+    // Форматируем время в правильный формат HH:mm
+    String formattedTime =
+        '${confirmationTime?.hour.toString().padLeft(2, '0')}:${confirmationTime?.minute.toString().padLeft(2, '0')}';
+
     return {
       'name': nameController.text,
       'participation_type':
@@ -922,8 +938,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       'author_tg_id': '44',
       'price': selectedBet,
       'currency': 'RUB',
-      'confirm_until':
-          confirmationTime?.format(context).split(' ')[0] ?? '23:59',
+      'confirm_until': formattedTime,
       'max_participants': maxParticipants ?? 36,
     };
   }

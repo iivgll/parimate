@@ -37,6 +37,10 @@ class ChallengeRepository {
       );
       return Challenge.fromJson(response.data);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 418 &&
+          e.response?.data['message'] != null) {
+        throw Exception(e.response?.data['message']);
+      }
       throw _handleDioError(e);
     }
   }
@@ -166,10 +170,17 @@ class ChallengeRepository {
   }
 
   Exception _handleDioError(DioException error) {
+    if (error.response?.data != null &&
+        error.response?.data['message'] != null) {
+      // Если есть сообщение об ошибке в ответе, возвращаем его
+      return Exception(error.response?.data['message']);
+    }
+
     if (error.response?.statusCode == 422) {
       return ValidationException(
           error.response?.data['detail'] ?? 'Ошибка валидации');
     }
+
     return Exception(error.message ?? 'Произошла ошибка');
   }
 }

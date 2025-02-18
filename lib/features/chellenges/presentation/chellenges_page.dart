@@ -11,9 +11,9 @@ import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/custom_button.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
 import '../logic/challenges_notifier.dart';
-import '../../../features/chellenges/presentation/widgets/create_challenge_sheet.dart';
+import 'create_challenge_sheet.dart';
 import '../../../features/chellenges/presentation/widgets/join_by_link_dialog.dart';
-import '../../../features/chellenges/presentation/widgets/challenge_preview_page.dart';
+import 'challenge_preview_page.dart';
 
 class ChallengesPage extends ConsumerWidget {
   const ChallengesPage({super.key});
