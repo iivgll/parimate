@@ -34,8 +34,122 @@
 
   <title>parimate</title>
   <link rel="manifest" href="manifest.json">
+  
+  <style>
+    @font-face {
+      font-family: 'Uncage';
+      src: url('uncage-bold.woff') format('woff');
+      font-display: block;
+      font-weight: bold;
+    }
+    
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: black;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    
+    body.visible {
+      opacity: 1;
+    }
+    
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .app-title {
+      font-family: 'Uncage', 'Arial Black', sans-serif;
+      color: white;
+      font-size: 48px;
+      margin-bottom: 48px;
+    }
+    
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FF7D00;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #flutter-app {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  </style>
+
+  <script>
+    const SPLASH_DURATION = 3000;
+
+    async function initApp() {
+      try {
+        // Ждем загрузки шрифта
+        await document.fonts.ready;
+        
+        // Проверяем загрузку шрифта
+        const fontLoaded = await document.fonts.load("bold 16px Uncage");
+        
+        if (!fontLoaded) {
+          console.warn('Шрифт не загрузился, используем системный шрифт');
+        }
+        
+        // Показываем сплэш-скрин
+        document.body.classList.add('visible');
+
+        await new Promise(resolve => setTimeout(resolve, SPLASH_DURATION));
+        
+        document.querySelector('.splash-screen').style.opacity = '0';
+        await new Promise(resolve => setTimeout(resolve, 500));
+        document.getElementById('flutter-app').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Ошибка инициализации:', error);
+        document.getElementById('flutter-app').style.display = 'block';
+      }
+    }
+
+    // Запускаем инициализацию после загрузки страницы
+    window.addEventListener('load', initApp);
+
+    // Предотвращаем прокрутку
+    document.addEventListener("touchmove", function(event) {
+      event.preventDefault();
+    }, {
+      passive: false
+    });
+  </script>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <div class="splash-screen">
+    <div class="app-title">Parimate</div>
+    <span class="loader"></span>
+  </div>
+
+  <div id="flutter-app">
+    <script src="flutter_bootstrap.js" async></script>
+  </div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../app/metadata_notifier.dart';
+import '../common/utils/colors.dart';
 import '../state/app_state.dart';
 
 class AppInitializer extends ConsumerWidget {
@@ -53,8 +54,11 @@ class AppInitializer extends ConsumerWidget {
       return const Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
+          backgroundColor: AppColors.black,
           body: Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: AppColors.orange,
+            ),
           ),
         ),
       );
