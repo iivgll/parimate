@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../common/utils/colors.dart';
 import '../../../../models/chat/chat.dart';
 
 class ChatItemWidget extends StatelessWidget {
   final Chat chat;
+  static const String _defaultImageUrl =
+      'https://upload.wikimedia.org/wikipedia/commons/c/c3/NGC_4414_%28NASA-med%29.jpg';
 
   const ChatItemWidget({super.key, required this.chat});
 
@@ -17,6 +20,63 @@ class ChatItemWidget extends StatelessWidget {
     } catch (e) {
       debugPrint('Ошибка при открытии ссылки: $e');
     }
+  }
+
+  Widget _buildChatImage() {
+    if (chat.photo == null) {
+      return _buildNetworkImage(_defaultImageUrl);
+    }
+
+    return _buildNetworkImage(chat.photo!);
+  }
+
+  Widget _buildNetworkImage(String imageUrl) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Stack(
+        children: [
+          Shimmer.fromColors(
+            baseColor: AppColors.grey.withOpacity(0.3),
+            highlightColor: AppColors.grey.withOpacity(0.5),
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.grey,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          Image.network(
+            imageUrl,
+            width: 48,
+            height: 48,
+            fit: BoxFit.cover,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded) return child;
+              return AnimatedOpacity(
+                opacity: frame != null ? 1 : 0,
+                duration: const Duration(milliseconds: 300),
+                child: child,
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              if (imageUrl != _defaultImageUrl) {
+                return _buildNetworkImage(_defaultImageUrl);
+              }
+              return Container(
+                decoration: BoxDecoration(
+                  color: AppColors.grey,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                width: 48,
+                height: 48,
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -32,26 +92,7 @@ class ChatItemWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            if (chat.photo != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  chat.photo!,
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                      width: 48,
-                      height: 48,
-                    );
-                  },
-                ),
-              ),
+            _buildChatImage(),
             const SizedBox(width: 20),
             Expanded(
               child: Column(

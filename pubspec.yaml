@@ -37,6 +37,7 @@ dependencies:
   webview_flutter: ^4.7.0
   webview_flutter_web: ^0.2.2
   video_thumbnail: ^0.5.3
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
