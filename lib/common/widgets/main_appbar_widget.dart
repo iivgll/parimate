@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/utils/icons.dart';
+import 'package:parimate/services/telegram_service.dart';
 import 'package:parimate/state/app_state.dart';
 
 import '../../../../common/utils/colors.dart';
@@ -15,41 +17,69 @@ class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-
-    if (user == null) {
-      return AppBar(
-        backgroundColor: AppColors.black,
+  Widget _buildAvatar() {
+    if (TelegramService.instance.photoUrl != null) {
+      return CircleAvatar(
+        backgroundColor: AppColors.orange,
+        radius: 20,
+        child: ClipOval(
+          child: Image.network(
+            TelegramService.instance.photoUrl,
+            width: 40,
+            height: 40,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Shimmer.fromColors(
+                baseColor: AppColors.orange.withOpacity(0.3),
+                highlightColor: AppColors.orange,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  color: AppColors.orange,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return Text(
+                TelegramService.instance.firstName.toUpperCase(),
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
+          ),
+        ),
       );
     }
 
+    return CircleAvatar(
+      backgroundColor: AppColors.orange,
+      radius: 20,
+      child: Text(
+        TelegramService.instance.firstName.toUpperCase(),
+        style: const TextStyle(
+          color: AppColors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       backgroundColor: AppColors.black,
       title: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: AppColors.orange,
-            radius: 20,
-            backgroundImage:
-                user.photo != null ? NetworkImage(user.photo!) : null,
-            child: user.photo == null
-                ? Text(
-                    user.name[0].toUpperCase(),
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                : null,
-          ),
+          _buildAvatar(),
           const SizedBox(width: 10),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                user.name,
+                TelegramService.instance.firstName,
                 style: TextStyle(
                   fontFamily: AppFontFamily.ubuntu,
                   fontSize: 14,
