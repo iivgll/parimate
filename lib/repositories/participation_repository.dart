@@ -94,6 +94,10 @@ class ParticipationRepository {
       return ValidationException(
           error.response?.data['detail'] ?? 'Ошибка валидации');
     }
+    if (error.response?.statusCode == 418) {
+      // Пробрасываем DioException дальше для обработки в UI
+      return error;
+    }
     return Exception(error.message ?? 'Произошла ошибка');
   }
 }

@@ -6,7 +6,6 @@ import '../../../app/repository_providers.dart';
 import '../logic/challenges_notifier.dart';
 import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:convert';
 
 class ChallengePreviewPage extends ConsumerWidget {
   final Map<String, dynamic> challenge;
@@ -203,15 +202,11 @@ class ChallengePreviewPage extends ConsumerWidget {
         );
       }
     } catch (e) {
-      print('ttest1');
       if (context.mounted) {
-        print('ttest2');
-
         // Проверяем наличие сообщения об ошибке в тексте исключения
         final errorText = e.toString();
         if (errorText.contains(
             'На балансе недостаточно монеток для создания челленджа')) {
-          print('ttest4');
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -294,11 +289,64 @@ class ChallengePreviewPage extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        String errorMessage = 'Не удалось присоединиться к челленджу';
-        if (e is DioException && e.response?.data != null) {
-          errorMessage = e.response?.data['message'] ?? errorMessage;
+        if (e is DioException && e.response?.statusCode == 418) {
+          final responseData = e.response?.data;
+          if (responseData is Map<String, dynamic> &&
+              responseData['message'] != null &&
+              responseData['message']
+                  .toString()
+                  .contains('недостаточно монеток')) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: AppColors.blackMin,
+                title: const Text(
+                  'Недостаточно монет',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: const Text(
+                  'У вас недостаточно монет для участия в челлендже.\n\nПополните баланс, чтобы продолжить.',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'Закрыть',
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.go('/coins');
+                    },
+                    child: const Text(
+                      'Пополнить баланс',
+                      style: TextStyle(
+                        color: AppColors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+            return;
+          }
         }
-        _showErrorDialog(context, errorMessage);
+        _showErrorDialog(
+            context, 'Произошла ошибка при присоединении к челленджу');
       }
     }
   }
