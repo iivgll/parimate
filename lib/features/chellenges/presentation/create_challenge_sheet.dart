@@ -961,6 +961,13 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       return false;
     }
 
+    if (descriptionController.text.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Заполните описание челленджа')),
+      );
+      return false;
+    }
+
     if (selectedIcon.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Выберите иконку челленджа')),
