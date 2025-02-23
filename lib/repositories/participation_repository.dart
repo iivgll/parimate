@@ -44,8 +44,18 @@ class ParticipationRepository {
           'challenge_id': challengeId,
         },
       );
-      return ParticipationSchema.fromJson(response.data);
+
+      // Оборачиваем ответ в нужную структуру
+      return ParticipationSchema.fromJson(
+          {'participation': response.data, 'confirmation_url': null});
     } on DioException catch (e) {
+      if (e.response?.statusCode == 418 &&
+          e.response?.data['message']
+                  ?.toString()
+                  .contains('недостаточно монеток') ==
+              true) {
+        throw InsufficientCoinsException(e.response?.data['message']);
+      }
       throw _handleDioError(e);
     }
   }
@@ -100,4 +110,12 @@ class ParticipationRepository {
     }
     return Exception(error.message ?? 'Произошла ошибка');
   }
+}
+
+class InsufficientCoinsException implements Exception {
+  final String? message;
+  InsufficientCoinsException([this.message]);
+
+  @override
+  String toString() => message ?? 'Недостаточно монет';
 }

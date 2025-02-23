@@ -13,20 +13,33 @@ import '../../../features/chellenges/presentation/confirmation_upload_page.dart'
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 
-class ChallengeDetailsPage extends ConsumerWidget {
+import '../../../repositories/participation_repository.dart';
+
+final userActiveStateProvider = StateProvider.autoDispose<bool>((ref) => true);
+
+class ChallengeDetailsPage extends ConsumerStatefulWidget {
   final ChallengeModel challenge;
 
   const ChallengeDetailsPage({super.key, required this.challenge});
 
+  @override
+  ConsumerState<ChallengeDetailsPage> createState() =>
+      _ChallengeDetailsPageState();
+}
+
+class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
+  bool? _isUserInactive;
+
   String _formatDateRange() {
     final DateFormat formatter = DateFormat('dd.MM.yy');
-    final startDate = formatter.format(DateTime.parse(challenge.startDate));
-    final endDate = formatter.format(DateTime.parse(challenge.endDate));
+    final startDate =
+        formatter.format(DateTime.parse(widget.challenge.startDate));
+    final endDate = formatter.format(DateTime.parse(widget.challenge.endDate));
     return '$startDate - $endDate';
   }
 
   Widget _buildStatusIcon() {
-    if (challenge.isArchived) {
+    if (widget.challenge.isArchived) {
       return Icon(
         Icons.verified,
         color: AppColors.green,
@@ -44,8 +57,8 @@ class ChallengeDetailsPage extends ConsumerWidget {
       WidgetRef ref) async {
     final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
     final futures = await Future.wait([
-      challengesNotifier.getChallengeStatistics(challenge.id),
-      challengesNotifier.getUserChallengeStatistics(challenge.id),
+      challengesNotifier.getChallengeStatistics(widget.challenge.id),
+      challengesNotifier.getUserChallengeStatistics(widget.challenge.id),
     ]);
 
     return (
@@ -55,7 +68,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.black,
       appBar: AppBar(
@@ -71,7 +84,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                challenge.name,
+                widget.challenge.name,
                 style: const TextStyle(
                   color: AppColors.white,
                   fontSize: 18,
@@ -147,7 +160,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 const SizedBox(height: 24),
                 _buildParticipantsBlockContent(statistics),
                 const SizedBox(height: 32),
-                _buildExitButton(context, ref),
+                _buildExitButton(context),
               ],
             ),
           );
@@ -172,7 +185,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${challenge.price} ₽',
+                    '${widget.challenge.price} ₽',
                     style: const TextStyle(
                       color: AppColors.white,
                       fontSize: 24,
@@ -190,7 +203,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
               ),
             ),
           ),
-          if (!challenge.isArchived) ...[
+          if (!widget.challenge.isArchived) ...[
             const SizedBox(width: 16),
             Container(
               padding: const EdgeInsets.only(
@@ -205,7 +218,8 @@ class ChallengeDetailsPage extends ConsumerWidget {
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.link, color: AppColors.white),
                   onPressed: () {
-                    Clipboard.setData(ClipboardData(text: challenge.link));
+                    Clipboard.setData(
+                        ClipboardData(text: widget.challenge.link));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Ссылка скопирована')),
                     );
@@ -240,7 +254,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            challenge.confirmationDescription,
+            widget.challenge.confirmationDescription,
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 14,
@@ -266,7 +280,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            if (!challenge.isArchived) ...[
+            if (!widget.challenge.isArchived) ...[
               const SizedBox(width: 8),
               IconButton(
                 onPressed: () {
@@ -274,7 +288,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          ConfirmationUploadPage(challenge: challenge),
+                          ConfirmationUploadPage(challenge: widget.challenge),
                     ),
                   );
                 },
@@ -362,7 +376,7 @@ class ChallengeDetailsPage extends ConsumerWidget {
                     ],
                   ),
                 ),
-                if (!challenge.isArchived) ...[
+                if (!widget.challenge.isArchived) ...[
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
@@ -371,8 +385,8 @@ class ChallengeDetailsPage extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ConfirmationUploadPage(challenge: challenge),
+                            builder: (context) => ConfirmationUploadPage(
+                                challenge: widget.challenge),
                           ),
                         );
                       },
@@ -555,129 +569,240 @@ class ChallengeDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildExitButton(BuildContext context, WidgetRef ref) {
-    if (challenge.isArchived) {
+  Widget _buildExitButton(BuildContext context) {
+    if (widget.challenge.isArchived) {
       return const SizedBox.shrink();
     }
 
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: AppColors.blackMin,
-              title: const Text(
-                'Выход из челленджа',
-                style: TextStyle(color: AppColors.white),
-              ),
-              content: const Text(
-                'Вы точно хотите покинуть челлендж?',
-                style: TextStyle(color: AppColors.white),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Нет',
-                    style: TextStyle(color: AppColors.white),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    try {
-                      await ref
-                          .read(participationRepositoryProvider)
-                          .leaveChallenge(
-                            userTgId: '44',
-                            challengeId: challenge.id,
-                          );
+    return FutureBuilder<ChallengeStatistics>(
+      future: ref
+          .read(challengesNotifierProvider.notifier)
+          .getChallengeStatistics(widget.challenge.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+              child: CircularProgressIndicator(color: AppColors.orange));
+        }
 
-                      if (context.mounted) {
-                        await ref
-                            .read(challengesNotifierProvider.notifier)
-                            .refreshChallenges();
-                        ref
-                            .read(challengesNotifierProvider.notifier)
-                            .setView(ChallengesView.mine);
+        final statistics = snapshot.data;
+        final currentUser = statistics?.participants.firstWhere(
+          (p) => p.name == "Ivan",
+          orElse: () =>
+              const UserStatistics(name: "", active: true, approved: 0),
+        );
 
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          context.go('/challenges');
-                        }
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        Navigator.pop(
-                            context); // Закрываем диалог подтверждения
+        // Используем локальное состояние, если оно установлено, иначе берем из API
+        final isUserInactive = _isUserInactive ?? currentUser?.active == false;
 
-                        String errorMessage = 'Не удалось покинуть челлендж';
-                        if (e is DioException && e.response?.data != null) {
-                          errorMessage =
-                              e.response?.data['message'] ?? errorMessage;
-                        }
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () async {
+              if (isUserInactive) {
+                try {
+                  await ref
+                      .read(participationRepositoryProvider)
+                      .returnToChallenge(
+                        userTgId: '44',
+                        challengeId: widget.challenge.id,
+                      );
 
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            backgroundColor: AppColors.blackMin,
-                            title: const Text(
-                              'Ошибка',
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  if (mounted) {
+                    setState(() {
+                      _isUserInactive = false; // Немедленно обновляем UI
+                    });
+                    await ref
+                        .read(challengesNotifierProvider.notifier)
+                        .refreshChallenges();
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    if (e is InsufficientCoinsException) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: AppColors.blackMin,
+                          title: const Text(
+                            'Недостаточно монет',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            content: Text(
-                              errorMessage,
-                              style: const TextStyle(
-                                color: AppColors.white,
-                                fontSize: 16,
-                              ),
+                          ),
+                          content: const Text(
+                            'У вас недостаточно монет для возврата в челлендж.\n\nПополните баланс, чтобы продолжить.',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 16,
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text(
-                                  'OK',
-                                  style: TextStyle(
-                                    color: AppColors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Закрыть',
+                                style: TextStyle(
+                                  color: AppColors.grey,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ],
-                          ),
-                        );
-                      }
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                context.go('/coins');
+                              },
+                              child: const Text(
+                                'Пополнить баланс',
+                                style: TextStyle(
+                                  color: AppColors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Ошибка при возвращении в челлендж: $e'),
+                        ),
+                      );
                     }
-                  },
-                  child: const Text(
-                    'Да',
-                    style: TextStyle(color: AppColors.orange),
+                  }
+                }
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: AppColors.blackMin,
+                    title: const Text(
+                      'Выход из челленджа',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    content: const Text(
+                      'Вы точно хотите покинуть челлендж?',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          'Нет',
+                          style: TextStyle(
+                            color: AppColors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context); // Закрываем диалог
+                          try {
+                            await ref
+                                .read(participationRepositoryProvider)
+                                .leaveChallenge(
+                                  userTgId: '44',
+                                  challengeId: widget.challenge.id,
+                                );
+
+                            if (mounted) {
+                              setState(() {
+                                _isUserInactive = true;
+                              });
+                              await ref
+                                  .read(challengesNotifierProvider.notifier)
+                                  .refreshChallenges();
+                              ref
+                                  .read(challengesNotifierProvider.notifier)
+                                  .setView(ChallengesView.mine);
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              String errorMessage =
+                                  'Не удалось покинуть челлендж';
+                              if (e is DioException &&
+                                  e.response?.data != null) {
+                                errorMessage =
+                                    e.response?.data['message'] ?? errorMessage;
+                              }
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  backgroundColor: AppColors.blackMin,
+                                  title: const Text(
+                                    'Ошибка',
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    errorMessage,
+                                    style: const TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text(
+                                        'OK',
+                                        style: TextStyle(
+                                          color: AppColors.orange,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        child: const Text(
+                          'Да',
+                          style: TextStyle(
+                            color: AppColors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  isUserInactive ? AppColors.orange : AppColors.black,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.black,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            child: Text(
+              isUserInactive ? 'Вернуться в челлендж' : 'Выйти из челленджа',
+              style: const TextStyle(
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        ),
-        child: const Text(
-          'Выйти из челленджа',
-          style: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

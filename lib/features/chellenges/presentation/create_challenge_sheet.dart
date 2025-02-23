@@ -64,21 +64,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         .add(const Duration(days: 6)); // 6 дней + 1 день начала = 7 дней
   }
 
-  RegularityType _getRegularityType(String selectedRegularity) {
-    switch (selectedRegularity) {
-      case 'Каждый день':
-        return RegularityType.daily;
-      case 'Раз в неделю':
-      case '2 раза в неделю':
-      case '3 раза в неделю':
-        return RegularityType.weekly;
-      case 'Конкретные дни':
-        return RegularityType.specificDays;
-      default:
-        return RegularityType.daily;
-    }
-  }
-
   String _formatRegularityText(String regularity) {
     if (regularity == '2 раз(а) в неделю') {
       return '$selectedDaysPerWeek раз(а) в неделю';
