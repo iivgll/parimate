@@ -13,9 +13,8 @@ class UserStatisticsNotifier extends _$UserStatisticsNotifier {
   Future<void> loadUserStatistics(String userTgId) async {
     try {
       state = state.copyWith(isLoading: true);
-      final statistics = await ref
-          .read(userRepositoryProvider)
-          .getUserStatistics(userTgId: userTgId);
+      final statistics =
+          await ref.read(userRepositoryProvider).getUserStatistics();
 
       final challenges = statistics.userStatistics
           .map((stat) => UserStatisticsItem(

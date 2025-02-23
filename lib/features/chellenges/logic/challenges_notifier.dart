@@ -41,7 +41,6 @@ class ChallengesNotifier extends _$ChallengesNotifier {
     try {
       final result =
           await ref.read(challengeRepositoryProvider).getChallengeStatistics(
-                userTgId: '44',
                 challengeId: challengeId,
               );
       return result;
@@ -57,7 +56,6 @@ class ChallengesNotifier extends _$ChallengesNotifier {
     try {
       final result =
           await ref.read(userRepositoryProvider).getUserChallengeStatistics(
-                userTgId: '44',
                 challengeId: challengeId,
               );
       print('User Challenge Statistics Response: $result'); // Для отладки
@@ -129,7 +127,6 @@ class ChallengesNotifier extends _$ChallengesNotifier {
 
       final result =
           await ref.read(participationRepositoryProvider).registerToChallenge(
-                userTgId: '44',
                 challengeId: challengeId,
                 accepted: true,
                 payed: false,

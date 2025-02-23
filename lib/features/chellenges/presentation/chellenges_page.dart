@@ -135,8 +135,6 @@ class ChallengesPage extends ConsumerWidget {
                       final challenge = await ref
                           .read(challengeRepositoryProvider)
                           .getChallengeByLink(
-                            userTgId:
-                                '44', // TODO: Получать реальный ID пользователя
                             link: link,
                           );
 

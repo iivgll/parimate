@@ -603,7 +603,6 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   await ref
                       .read(participationRepositoryProvider)
                       .returnToChallenge(
-                        userTgId: '44',
                         challengeId: widget.challenge.id,
                       );
 
@@ -712,7 +711,6 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                             await ref
                                 .read(participationRepositoryProvider)
                                 .leaveChallenge(
-                                  userTgId: '44',
                                   challengeId: widget.challenge.id,
                                 );
 

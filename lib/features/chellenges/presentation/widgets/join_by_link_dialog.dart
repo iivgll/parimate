@@ -60,7 +60,6 @@ class _JoinByLinkDialogState extends ConsumerState<JoinByLinkDialog> {
                           await ref
                               .read(challengeRepositoryProvider)
                               .getChallengeByLink(
-                                userTgId: '44',
                                 link: _linkController.text,
                               );
                           if (context.mounted) {

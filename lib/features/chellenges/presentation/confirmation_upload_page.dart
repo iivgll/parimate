@@ -497,7 +497,6 @@ class _ConfirmationUploadPageState
         try {
           value = await ref.read(fileRepositoryProvider).uploadFile(
                 _selectedFile!,
-                userTgId: '44', // TODO: Получить реальный ID пользователя
                 challengeId: widget.challenge.id,
               );
         } catch (e) {
@@ -532,7 +531,6 @@ class _ConfirmationUploadPageState
 
       final success =
           await ref.read(confirmationRepositoryProvider).postConfirmation(
-                userTgId: '44',
                 challengeId: widget.challenge.id,
                 data: ConfirmationData(
                   type: widget.challenge.confirmationType,

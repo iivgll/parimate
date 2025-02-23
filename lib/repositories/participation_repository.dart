@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 import '../models/participation.dart';
+import '../services/telegram_service.dart';
 
 class ParticipationRepository {
   final Dio _dio;
@@ -8,7 +9,6 @@ class ParticipationRepository {
   ParticipationRepository(this._dio);
 
   Future<ParticipationSchema> registerToChallenge({
-    required String userTgId,
     required int challengeId,
     required bool accepted,
     required bool payed,
@@ -18,7 +18,7 @@ class ParticipationRepository {
       final response = await _dio.post(
         '/api/v2/participation',
         data: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
           'accepted': accepted,
           'payed': payed,
@@ -33,14 +33,13 @@ class ParticipationRepository {
   }
 
   Future<ParticipationSchema> returnToChallenge({
-    required String userTgId,
     required int challengeId,
   }) async {
     try {
       final response = await _dio.post(
         '/api/v2/participation/return',
         data: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
         },
       );
@@ -62,7 +61,6 @@ class ParticipationRepository {
 
   Future<ParticipationSchema> joinToChallengeViaLink({
     required String link,
-    required String userTgId,
     required bool accepted,
     required bool payed,
   }) async {
@@ -71,7 +69,7 @@ class ParticipationRepository {
         '/api/v2/participation/join',
         data: {
           'link': link,
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'accepted': accepted,
           'payed': payed,
         },
@@ -83,14 +81,13 @@ class ParticipationRepository {
   }
 
   Future<void> leaveChallenge({
-    required String userTgId,
     required int challengeId,
   }) async {
     try {
       await _dio.delete(
         '/api/v2/participation',
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
         },
       );

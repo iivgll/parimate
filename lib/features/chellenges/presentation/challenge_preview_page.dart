@@ -266,7 +266,6 @@ class ChallengePreviewPage extends ConsumerWidget {
           .read(participationRepositoryProvider)
           .joinToChallengeViaLink(
             link: joinLink!,
-            userTgId: '44',
             accepted: true,
             payed: false,
           );

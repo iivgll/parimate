@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:http_parser/http_parser.dart';
 
+import '../services/telegram_service.dart';
+
 class FileRepository {
   final Dio _dio;
 
@@ -10,7 +12,6 @@ class FileRepository {
 
   Future<String> uploadFile(
     XFile file, {
-    required String userTgId,
     required int challengeId,
   }) async {
     try {
@@ -37,7 +38,7 @@ class FileRepository {
         '/api/v2/file',
         data: formData,
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
         },
         options: Options(

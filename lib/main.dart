@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/widgets/app_initializer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'services/telegram_service.dart';
 
 import 'app/repository_providers.dart';
 import 'app/routes.dart';
@@ -34,6 +35,9 @@ void main() async {
   final coinsRepository = CoinsRepository(apiClient.dio);
   final metadataRepository = MetadataRepository(apiClient.dio);
 
+  // Сообщаем Telegram что приложение готово
+  TelegramService.instance.ready();
+
   runApp(
     ProviderScope(
       overrides: [
@@ -51,18 +55,20 @@ void main() async {
         coinsRepositoryProvider.overrideWithValue(coinsRepository),
         metadataRepositoryProvider.overrideWithValue(metadataRepository),
       ],
-      child: const MyApp(),
+      child: MyApp(userTgId: TelegramService.instance.id),
     ),
   );
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  final String userTgId;
+
+  const MyApp({required this.userTgId, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppInitializer(
-      userTgId: '44',
+      userTgId: userTgId, // Передаем ID из Telegram
       child: MaterialApp.router(
         title: 'Parimate',
         debugShowCheckedModeBanner: false,

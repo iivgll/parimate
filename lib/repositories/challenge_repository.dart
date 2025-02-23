@@ -5,6 +5,7 @@ import '../models/challenge/challenge_creation.dart';
 import '../models/challenge_statistics.dart';
 import '../models/challenge_action_price.dart';
 import '../models/challenge_model.dart';
+import '../services/telegram_service.dart';
 
 class ChallengeRepository {
   final Dio _dio;
@@ -12,14 +13,13 @@ class ChallengeRepository {
   ChallengeRepository(this._dio);
 
   Future<Challenge> getChallenge({
-    required String userTgId,
     required int challengeId,
   }) async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge',
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
         },
       );
@@ -60,14 +60,13 @@ class ChallengeRepository {
 
   Future<void> deleteChallenge({
     required int challengeId,
-    required String userTgId,
   }) async {
     try {
       await _dio.delete(
         '/api/v2/challenge',
         queryParameters: {
           'challenge_id': challengeId,
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
         },
       );
     } on DioException catch (e) {
@@ -76,14 +75,13 @@ class ChallengeRepository {
   }
 
   Future<Challenge> getChallengeByLink({
-    required String userTgId,
     required String link,
   }) async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/by-link',
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'link': link,
         },
       );
@@ -93,11 +91,11 @@ class ChallengeRepository {
     }
   }
 
-  Future<List<Challenge>> getUserChallenges({required String userTgId}) async {
+  Future<List<Challenge>> getUserChallenges() async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/my',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return (response.data as List)
           .map((json) => Challenge.fromJson(json))
@@ -111,7 +109,7 @@ class ChallengeRepository {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/new',
-        queryParameters: {'user_tg_id': '44'}, // TODO: получать реальный tg_id
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return (response.data as List)
           .map((json) => ChallengeModel.fromJson(json))
@@ -122,14 +120,13 @@ class ChallengeRepository {
   }
 
   Future<ChallengeStatistics> getChallengeStatistics({
-    required String userTgId,
     required int challengeId,
   }) async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/statistics',
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
         },
       );
@@ -139,13 +136,11 @@ class ChallengeRepository {
     }
   }
 
-  Future<ChallengeActionPriceSchema> getCreationPrice({
-    required String userTgId,
-  }) async {
+  Future<ChallengeActionPriceSchema> getCreationPrice() async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/creation-price',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return ChallengeActionPriceSchema.fromJson(response.data);
     } on DioException catch (e) {
@@ -153,13 +148,11 @@ class ChallengeRepository {
     }
   }
 
-  // Аналогичные методы для return-price и registration-price...
-
   Future<List<ChallengeModel>> getMyChallenges() async {
     try {
       final response = await _dio.get(
         '/api/v2/challenge/my',
-        queryParameters: {'user_tg_id': '44'},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return (response.data as List)
           .map((json) => ChallengeModel.fromJson(json))

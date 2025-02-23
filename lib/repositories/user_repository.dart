@@ -2,17 +2,18 @@ import 'package:dio/dio.dart';
 import '../models/user/user.dart';
 import '../models/user_statistics.dart';
 import '../models/user_challenge_statistics.dart';
+import '../services/telegram_service.dart';
 
 class UserRepository {
   final Dio _dio;
 
   UserRepository(this._dio);
 
-  Future<User> getUser({required String userTgId}) async {
+  Future<User> getUser() async {
     try {
       final response = await _dio.get(
         '/api/v2/user',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return User.fromJson(response.data);
     } on DioException catch (e) {
@@ -30,9 +31,9 @@ class UserRepository {
       final response = await _dio.post(
         '/api/v2/user',
         data: {
-          'username': username,
-          'tg_id': tgId,
-          'name': name,
+          'username': TelegramService.instance.username,
+          'tg_id': TelegramService.instance.id,
+          'name': TelegramService.instance.firstName,
           if (photo != null) 'photo': photo,
         },
       );
@@ -42,13 +43,11 @@ class UserRepository {
     }
   }
 
-  Future<UserStatistics> getUserStatistics({
-    required String userTgId,
-  }) async {
+  Future<UserStatistics> getUserStatistics() async {
     try {
       final response = await _dio.get(
         '/api/v2/user/statistics',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return UserStatistics.fromJson(response.data);
     } on DioException catch (e) {
@@ -57,14 +56,13 @@ class UserRepository {
   }
 
   Future<UserChallengeStatisticsSchema> getUserChallengeStatistics({
-    required String userTgId,
     required int challengeId,
   }) async {
     try {
       final response = await _dio.get(
         '/api/v2/user/challenge/statistics',
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'challenge_id': challengeId,
         },
       );

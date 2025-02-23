@@ -12,9 +12,7 @@ class ChatsNotifier extends _$ChatsNotifier {
   Future<void> loadChats(String userTgId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final chats = await ref
-          .read(chatRepositoryProvider)
-          .getUserChats(userTgId: userTgId);
+      final chats = await ref.read(chatRepositoryProvider).getUserChats();
       state = state.copyWith(chats: chats, isLoading: false);
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);

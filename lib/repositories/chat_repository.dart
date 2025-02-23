@@ -1,17 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 import '../models/chat/chat.dart';
+import '../services/telegram_service.dart';
 
 class ChatRepository {
   final Dio _dio;
 
   ChatRepository(this._dio);
 
-  Future<List<Chat>> getUserChats({required String userTgId}) async {
+  Future<List<Chat>> getUserChats() async {
     try {
       final response = await _dio.get(
         '/api/v2/chat/my',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return (response.data as List)
           .map((json) => Chat.fromJson(json))

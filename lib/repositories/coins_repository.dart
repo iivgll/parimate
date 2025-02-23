@@ -1,20 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 
+import '../services/telegram_service.dart';
+
 class CoinsRepository {
   final Dio _dio;
 
   CoinsRepository(this._dio);
 
   Future<CoinsResponse> buyCoins({
-    required String userTgId,
     required int coins,
   }) async {
     try {
       final response = await _dio.post(
         '/api/v2/coins',
         data: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'coins': coins,
         },
       );

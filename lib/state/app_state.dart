@@ -43,9 +43,8 @@ class AppStateNotifier extends StateNotifier<AppState> {
       final userRepo = ref.read(userRepositoryProvider);
       final challengeRepo = ref.read(challengeRepositoryProvider);
 
-      final user = await userRepo.getUser(userTgId: userTgId);
-      final challenges =
-          await challengeRepo.getUserChallenges(userTgId: userTgId);
+      final user = await userRepo.getUser();
+      final challenges = await challengeRepo.getUserChallenges();
 
       state = state.copyWith(
         user: user,

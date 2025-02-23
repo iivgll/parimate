@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 import '../models/notification.dart';
+import '../services/telegram_service.dart';
 
 class NotificationRepository {
   final Dio _dio;
@@ -10,7 +11,6 @@ class NotificationRepository {
   Future<void> createNotification({
     required int hours,
     required int minutes,
-    required String userTgId,
   }) async {
     try {
       await _dio.post(
@@ -18,7 +18,7 @@ class NotificationRepository {
         data: {
           'hours': hours,
           'minutes': minutes,
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
         },
       );
     } on DioException catch (e) {
@@ -26,13 +26,11 @@ class NotificationRepository {
     }
   }
 
-  Future<List<NotificationSchema>> getNotifications({
-    required String userTgId,
-  }) async {
+  Future<List<NotificationSchema>> getNotifications() async {
     try {
       final response = await _dio.get(
         '/api/v2/notification',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
       return (response.data as List)
           .map((json) => NotificationSchema.fromJson(json))
@@ -43,14 +41,13 @@ class NotificationRepository {
   }
 
   Future<void> deleteNotification({
-    required String userTgId,
     required int notificationId,
   }) async {
     try {
       await _dio.delete(
         '/api/v2/notification',
         queryParameters: {
-          'user_tg_id': userTgId,
+          'user_tg_id': TelegramService.instance.id,
           'notification_id': notificationId,
         },
       );
@@ -59,26 +56,22 @@ class NotificationRepository {
     }
   }
 
-  Future<void> activateNotifications({
-    required String userTgId,
-  }) async {
+  Future<void> activateNotifications() async {
     try {
       await _dio.post(
         '/api/v2/notification/activate',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
   }
 
-  Future<void> disableNotifications({
-    required String userTgId,
-  }) async {
+  Future<void> disableNotifications() async {
     try {
       await _dio.delete(
         '/api/v2/notification/disable',
-        queryParameters: {'user_tg_id': userTgId},
+        queryParameters: {'user_tg_id': TelegramService.instance.id},
       );
     } on DioException catch (e) {
       throw _handleDioError(e);

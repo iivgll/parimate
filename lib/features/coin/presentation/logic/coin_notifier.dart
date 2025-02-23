@@ -20,7 +20,7 @@ class CoinNotifier extends _$CoinNotifier {
       }
 
       final userRepo = ref.read(userRepositoryProvider);
-      final user = await userRepo.getUser(userTgId: userTgId);
+      final user = await userRepo.getUser();
 
       state = state.copyWith(
         balance: user.coins,
@@ -43,7 +43,6 @@ class CoinNotifier extends _$CoinNotifier {
 
       final coinsRepo = ref.read(coinsRepositoryProvider);
       final response = await coinsRepo.buyCoins(
-        userTgId: userTgId,
         coins: amount,
       );
 

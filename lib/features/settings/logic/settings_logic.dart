@@ -22,9 +22,7 @@ class SettingsNotifier extends _$SettingsNotifier {
       final user = ref.read(userProvider);
       if (user == null) return;
 
-      final notifications = await _notificationRepository.getNotifications(
-        userTgId: user.tgId,
-      );
+      final notifications = await _notificationRepository.getNotifications();
 
       if (notifications.any((n) => !n.archived)) {
         final reminderTimes = {
@@ -49,12 +47,8 @@ class SettingsNotifier extends _$SettingsNotifier {
       if (user == null) return;
 
       if (value) {
-        await _notificationRepository.activateNotifications(
-          userTgId: user.tgId,
-        );
-        final notifications = await _notificationRepository.getNotifications(
-          userTgId: user.tgId,
-        );
+        await _notificationRepository.activateNotifications();
+        final notifications = await _notificationRepository.getNotifications();
 
         final reminderTimes = {
           for (var i = 0; i < notifications.length; i++)
@@ -66,9 +60,7 @@ class SettingsNotifier extends _$SettingsNotifier {
           reminderTimes: reminderTimes,
         );
       } else {
-        await _notificationRepository.disableNotifications(
-          userTgId: user.tgId,
-        );
+        await _notificationRepository.disableNotifications();
         state = state.copyWith(
           isEnabled: false,
           reminderTimes: {},
@@ -85,13 +77,10 @@ class SettingsNotifier extends _$SettingsNotifier {
       if (user == null) return;
 
       // Удаляем старое уведомление если оно есть
-      final notifications = await _notificationRepository.getNotifications(
-        userTgId: user.tgId,
-      );
+      final notifications = await _notificationRepository.getNotifications();
 
       if (reminderNumber <= notifications.length) {
         await _notificationRepository.deleteNotification(
-          userTgId: user.tgId,
           notificationId: notifications[reminderNumber - 1].id,
         );
       }
@@ -100,7 +89,6 @@ class SettingsNotifier extends _$SettingsNotifier {
       await _notificationRepository.createNotification(
         hours: minutes ~/ 60,
         minutes: minutes % 60,
-        userTgId: user.tgId,
       );
 
       final newTimes = Map<int, int>.from(state.reminderTimes);
