@@ -376,7 +376,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                     ],
                   ),
                 ),
-                if (!widget.challenge.isArchived) ...[
+                if (!widget.challenge.isArchived &&
+                    !(widget.challenge.status == 'REGISTERED')) ...[
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,

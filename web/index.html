@@ -106,27 +106,36 @@
 
     async function initApp() {
       try {
-        // Ждем загрузки шрифта
-        await document.fonts.ready;
-        
-        // Проверяем загрузку шрифта
-        const fontLoaded = await document.fonts.load("bold 16px Uncage");
-        
-        if (!fontLoaded) {
-          console.warn('Шрифт не загрузился, используем системный шрифт');
-        }
-        
-        // Показываем сплэш-скрин
+        // Сразу показываем сплэш-скрин
         document.body.classList.add('visible');
 
-        await new Promise(resolve => setTimeout(resolve, SPLASH_DURATION));
+        // Параллельно загружаем шрифт и ждем минимальное время показа
+        await Promise.all([
+          (async () => {
+            try {
+              await document.fonts.ready;
+              const fontLoaded = await document.fonts.load("bold 16px Uncage");
+              if (!fontLoaded) {
+                console.warn('Шрифт не загрузился, используем системный шрифт');
+              }
+            } catch (error) {
+              console.warn('Ошибка загрузки шрифта:', error);
+            }
+          })(),
+          new Promise(resolve => setTimeout(resolve, SPLASH_DURATION))
+        ]);
         
+        // Плавно скрываем сплэш-скрин
         document.querySelector('.splash-screen').style.opacity = '0';
         await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Показываем Flutter приложение
         document.getElementById('flutter-app').style.display = 'block';
         
       } catch (error) {
         console.error('Ошибка инициализации:', error);
+        // Даже в случае ошибки ждем минимальное время
+        await new Promise(resolve => setTimeout(resolve, SPLASH_DURATION));
         document.getElementById('flutter-app').style.display = 'block';
       }
     }
