@@ -6,7 +6,7 @@ import 'user_repository.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://185.112.102.11:8000',
+    baseUrl: 'https://test.parimate.ru',
   ));
 
   // Добавляем Talker интерцептор
