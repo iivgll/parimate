@@ -1,5 +1,5 @@
 import 'package:parimate/app/repository_providers.dart';
-import 'package:parimate/state/app_state.dart';
+import 'package:parimate/features/initializer/app_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/settings_state.dart';
 import '../../../repositories/notification_repository.dart';

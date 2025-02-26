@@ -7,7 +7,7 @@ part of 'user_statistics_notifier.dart';
 // **************************************************************************
 
 String _$userStatisticsNotifierHash() =>
-    r'dfd1cd72e23f01db28f224f15ef84658376bae75';
+    r'3d7b74cb1673ef069d9ee08782bddfa83afd0239';
 
 /// See also [UserStatisticsNotifier].
 @ProviderFor(UserStatisticsNotifier)

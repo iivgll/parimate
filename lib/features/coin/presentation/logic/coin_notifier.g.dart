@@ -6,7 +6,7 @@ part of 'coin_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$coinNotifierHash() => r'57be1aa0e4e67926f552b82a9a7c049df94c9af0';
+String _$coinNotifierHash() => r'fa6183a5380a756d9cce37eeb29f922d1cddf86b';
 
 /// See also [CoinNotifier].
 @ProviderFor(CoinNotifier)

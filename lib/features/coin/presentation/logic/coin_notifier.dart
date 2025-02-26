@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../app/repository_providers.dart';
-import '../../../../state/app_state.dart';
+import '../../../initializer/app_state.dart';
 import '../state/coin_state.dart';
 
 part 'coin_notifier.g.dart';

@@ -36,8 +36,8 @@ class ChatItemWidget extends StatelessWidget {
       child: Stack(
         children: [
           Shimmer.fromColors(
-            baseColor: AppColors.grey.withOpacity(0.3),
-            highlightColor: AppColors.grey.withOpacity(0.5),
+            baseColor: AppColors.grey.withValues(alpha: 0.3),
+            highlightColor: AppColors.grey.withValues(alpha: 0.5),
             child: Container(
               width: 48,
               height: 48,

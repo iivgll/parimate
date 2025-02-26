@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../app/metadata_notifier.dart';
-import '../common/utils/colors.dart';
-import '../state/app_state.dart';
+import '../../../app/metadata_notifier.dart';
+import '../../../common/utils/colors.dart';
+import '../logic/app_state.dart';
+import '../model/app_state_model.dart';
 
 class AppInitializer extends ConsumerWidget {
   final String userTgId;
@@ -24,11 +25,11 @@ class AppInitializer extends ConsumerWidget {
     // Принудительно инициализируем провайдер метаданных
     ref.watch(metadataProvider);
 
-    final appState = ref.watch(appStateProvider);
+    final appState = ref.watch(appInitialazerProvider);
     final metadataState = ref.watch(metadataProvider);
 
-    // Инициализируем приложение при первой загрузке
-    ref.listen<AppState>(appStateProvider, (previous, next) {
+    // Инициализируем приложение при первой загрузке и отслеживаем ошибки
+    ref.listen<AppInitialazerModel>(appInitialazerProvider, (previous, next) {
       if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -43,7 +44,7 @@ class AppInitializer extends ConsumerWidget {
     if (!appState.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (appState.user == null) {
-          ref.read(appStateProvider.notifier).initializeApp(userTgId);
+          ref.read(appInitialazerProvider.notifier).initializeApp(userTgId);
           ref.read(metadataProvider.notifier).refresh();
         }
       });
@@ -77,7 +78,9 @@ class AppInitializer extends ConsumerWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    ref.read(appStateProvider.notifier).initializeApp(userTgId);
+                    ref
+                        .read(appInitialazerProvider.notifier)
+                        .initializeApp(userTgId);
                     ref.read(metadataProvider.notifier).refresh();
                   },
                   child: const Text('Повторить'),

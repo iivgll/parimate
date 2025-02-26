@@ -6,7 +6,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/utils/icons.dart';
 import 'package:parimate/services/telegram_service.dart';
-import 'package:parimate/state/app_state.dart';
 
 import '../../../../common/utils/colors.dart';
 import '../../../../common/utils/font_family.dart';
@@ -18,50 +17,36 @@ class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   Widget _buildAvatar() {
-    if (TelegramService.instance.photoUrl != null) {
-      return CircleAvatar(
-        backgroundColor: AppColors.orange,
-        radius: 20,
-        child: ClipOval(
-          child: Image.network(
-            TelegramService.instance.photoUrl,
-            width: 40,
-            height: 40,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Shimmer.fromColors(
-                baseColor: AppColors.orange.withOpacity(0.3),
-                highlightColor: AppColors.orange,
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  color: AppColors.orange,
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Text(
-                TelegramService.instance.firstName.toUpperCase(),
-                style: const TextStyle(
-                  color: AppColors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    }
-
     return CircleAvatar(
       backgroundColor: AppColors.orange,
       radius: 20,
-      child: Text(
-        TelegramService.instance.firstName.toUpperCase(),
-        style: const TextStyle(
-          color: AppColors.white,
-          fontWeight: FontWeight.bold,
+      child: ClipOval(
+        child: Image.network(
+          TelegramService.instance.photoUrl,
+          width: 40,
+          height: 40,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Shimmer.fromColors(
+              baseColor: AppColors.orange.withValues(alpha: 0.3),
+              highlightColor: AppColors.orange,
+              child: Container(
+                width: 40,
+                height: 40,
+                color: AppColors.orange,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return Text(
+              TelegramService.instance.firstName.toUpperCase(),
+              style: const TextStyle(
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          },
         ),
       ),
     );
