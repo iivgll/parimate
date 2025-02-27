@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../app/app_logger.dart';
 import '../../../app/metadata_notifier.dart';
 import '../../../common/utils/colors.dart';
+import '../../../services/telegram_service.dart';
 import '../logic/app_state.dart';
 import '../model/app_state_model.dart';
 
@@ -19,7 +21,7 @@ class AppInitializer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Добавляем слушатель для метаданных
     ref.listen(metadataProvider, (previous, next) {
-      print('Metadata state changed: $next');
+      AppLogger.log('Metadata state changed: $next');
     });
 
     // Принудительно инициализируем провайдер метаданных
@@ -28,25 +30,25 @@ class AppInitializer extends ConsumerWidget {
     final appState = ref.watch(appInitialazerProvider);
     final metadataState = ref.watch(metadataProvider);
 
+    // Получаем ID пользователя из Telegram
+    final String tgId = TelegramService.instance.id.isNotEmpty
+        ? TelegramService.instance.id
+        : userTgId;
+
     // Инициализируем приложение при первой загрузке и отслеживаем ошибки
     ref.listen<AppInitialazerModel>(appInitialazerProvider, (previous, next) {
       if (next.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: Colors.red,
-          ),
-        );
+        AppLogger.error(next.error);
       }
     });
 
     // Инициализируем приложение при первой загрузке
-    if (!appState.isLoading) {
+    if (!appState.isLoading &&
+        appState.user == null &&
+        !appState.hasInitialized) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (appState.user == null) {
-          ref.read(appInitialazerProvider.notifier).initializeApp(userTgId);
-          ref.read(metadataProvider.notifier).refresh();
-        }
+        ref.read(appInitialazerProvider.notifier).initializeApp(tgId);
+        ref.read(metadataProvider.notifier).refresh();
       });
     }
 
@@ -70,17 +72,21 @@ class AppInitializer extends ConsumerWidget {
       return Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
+          backgroundColor: AppColors.black,
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Произошла ошибка при загрузке данных'),
+                const Text(
+                  'Произошла ошибка при загрузке данных',
+                  style: TextStyle(color: AppColors.white),
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     ref
                         .read(appInitialazerProvider.notifier)
-                        .initializeApp(userTgId);
+                        .initializeApp(tgId);
                     ref.read(metadataProvider.notifier).refresh();
                   },
                   child: const Text('Повторить'),

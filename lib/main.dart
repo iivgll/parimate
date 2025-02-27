@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/initializer/presentation/app_initializer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:talker_flutter/talker_flutter.dart';
+import 'app/app_logger.dart';
 import 'services/telegram_service.dart';
 
 import 'app/repository_providers.dart';
@@ -18,6 +20,8 @@ import 'repositories/file_repository.dart';
 import 'repositories/code_word_repository.dart';
 import 'repositories/coins_repository.dart';
 import 'repositories/metadata_repository.dart';
+
+final talker = TalkerFlutter.init();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +42,7 @@ void main() async {
   // Сообщаем Telegram что приложение готово
   TelegramService.instance.ready();
 
+  TelegramService.instance.getLaunchInfo();
   runApp(
     ProviderScope(
       overrides: [
@@ -55,7 +60,6 @@ void main() async {
         coinsRepositoryProvider.overrideWithValue(coinsRepository),
         metadataRepositoryProvider.overrideWithValue(metadataRepository),
       ],
-      // Заменяем основное приложение на страницу с информацией о запуске
       child: MyApp(
         userTgId: TelegramService.instance.id,
       ),

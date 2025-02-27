@@ -9,6 +9,7 @@ import 'package:parimate/services/telegram_service.dart';
 
 import '../../../../common/utils/colors.dart';
 import '../../../../common/utils/font_family.dart';
+import '../../app/app_logger.dart';
 
 class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   const MainAppbarWidget({super.key});
@@ -17,39 +18,91 @@ class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   Widget _buildAvatar() {
-    return CircleAvatar(
-      backgroundColor: AppColors.orange,
-      radius: 20,
-      child: ClipOval(
-        child: Image.network(
-          TelegramService.instance.photoUrl,
-          width: 40,
-          height: 40,
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Shimmer.fromColors(
-              baseColor: AppColors.orange.withValues(alpha: 0.3),
-              highlightColor: AppColors.orange,
-              child: Container(
-                width: 40,
-                height: 40,
-                color: AppColors.orange,
-              ),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return Text(
-              TelegramService.instance.firstName.toUpperCase(),
-              style: const TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            );
-          },
+    // Логируем URL изображения для проверки
+    AppLogger.log('Photo URL: ${TelegramService.instance.photoUrl}');
+    AppLogger.log('Is SVG: ${TelegramService.instance.photoUrl.endsWith('.svg')}');
+
+    if (TelegramService.instance.photoUrl.endsWith('.svg')) {
+      try {
+        return CircleAvatar(
+          backgroundColor: AppColors.orange,
+          radius: 20,
+          child: ClipOval(
+            child: SvgPicture.network(
+              TelegramService.instance.photoUrl,
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+              placeholderBuilder: (BuildContext context) {
+                AppLogger.error('SVG Placeholder is shown');
+                return Shimmer.fromColors(
+                  baseColor: AppColors.orange.withValues(alpha: 0.3),
+                  highlightColor: AppColors.orange,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    color: AppColors.orange,
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      } catch (e) {
+        AppLogger.error('SVG Error: $e');
+        // Возвращаем аватар с инициалами при ошибке
+        return CircleAvatar(
+          backgroundColor: AppColors.orange,
+          radius: 20,
+          child: Text(
+            TelegramService.instance.firstName.toUpperCase(),
+            style: const TextStyle(
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      }
+    } else {
+      return CircleAvatar(
+        backgroundColor: AppColors.orange,
+        radius: 20,
+        child: ClipOval(
+          child: Image.network(
+            TelegramService.instance.photoUrl,
+            width: 40,
+            height: 40,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) {
+                print('Image loaded successfully');
+                return child;
+              }
+              print('Image is loading: ${loadingProgress.expectedTotalBytes}');
+              return Shimmer.fromColors(
+                baseColor: AppColors.orange.withValues(alpha: 0.3),
+                highlightColor: AppColors.orange,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  color: AppColors.orange,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              AppLogger.error('Image error: $error');
+              return Text(
+                TelegramService.instance.firstName.toUpperCase(),
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override

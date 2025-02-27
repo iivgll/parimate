@@ -5,6 +5,7 @@ import 'package:parimate/app/repository_providers.dart';
 import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
+import '../../../app/app_logger.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -305,7 +306,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              print('Error details: ${snapshot.error}'); // Для отладки
+              AppLogger.error(
+                  'Error details: ${snapshot.error}'); // Для отладки
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(

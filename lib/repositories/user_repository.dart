@@ -31,9 +31,9 @@ class UserRepository {
       final response = await _dio.post(
         '/api/v2/user',
         data: {
-          'username': TelegramService.instance.username,
-          'tg_id': TelegramService.instance.id,
-          'name': TelegramService.instance.firstName,
+          'username': username,
+          'tg_id': tgId,
+          'name': name,
           if (photo != null) 'photo': photo,
         },
       );

@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/app_metadata.dart';
 import '../repositories/providers.dart';
+import 'app_logger.dart';
 
 part 'metadata_notifier.g.dart';
 
@@ -23,20 +24,20 @@ class Metadata extends _$Metadata {
       final result = await repository.getMetadata();
       return result;
     } catch (e) {
-      print('Error loading metadata: $e');
+      AppLogger.error('Error loading metadata: $e');
       rethrow;
     }
   }
 
   Future<void> refresh() async {
-    print('Metadata refresh called');
+    AppLogger.log('Metadata refresh called');
     state = const AsyncValue.loading();
     try {
       final metadata = await _loadMetadata();
       state = AsyncValue.data(metadata);
-      print('Metadata refresh succeeded');
+      AppLogger.log('Metadata refresh succeeded');
     } catch (error, stackTrace) {
-      print('Metadata refresh failed: $error');
+      AppLogger.error('Metadata refresh failed: $error');
       state = AsyncValue.error(error, stackTrace);
     }
   }

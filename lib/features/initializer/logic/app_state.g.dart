@@ -6,7 +6,7 @@ part of 'app_state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appInitialazerHash() => r'520bfee79682ca937fd68e12cee1d60f56cb77b7';
+String _$appInitialazerHash() => r'd3388287bee09453af5d41e58db6d266132e4c27';
 
 /// See also [AppInitialazer].
 @ProviderFor(AppInitialazer)

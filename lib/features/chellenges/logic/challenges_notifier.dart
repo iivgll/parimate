@@ -3,6 +3,7 @@ import 'package:parimate/features/chellenges/state/challenges_state.dart';
 import 'package:parimate/models/challenge_statistics.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../app/app_logger.dart';
 import '../../../models/challenge_model.dart';
 import '../../../app/repository_providers.dart';
 import '../../../common/widgets/payment_iframe_page.dart';
@@ -45,7 +46,7 @@ class ChallengesNotifier extends _$ChallengesNotifier {
               );
       return result;
     } catch (e, stackTrace) {
-      print(
+      AppLogger.error(
           'Error getting challenge statistics: $e\n$stackTrace'); // Для отладки
       throw Exception('Failed to load challenge statistics: $e');
     }
@@ -58,10 +59,12 @@ class ChallengesNotifier extends _$ChallengesNotifier {
           await ref.read(userRepositoryProvider).getUserChallengeStatistics(
                 challengeId: challengeId,
               );
-      print('User Challenge Statistics Response: $result'); // Для отладки
+      AppLogger.log(
+          'User Challenge Statistics Response: $result'); // Для отладки
       return result;
     } catch (e, stackTrace) {
-      print('Error getting user statistics: $e\n$stackTrace'); // Для отладки
+      AppLogger.error(
+          'Error getting user statistics: $e\n$stackTrace'); // Для отладки
       throw Exception('Failed to load user statistics: $e');
     }
   }
@@ -150,7 +153,7 @@ class ChallengesNotifier extends _$ChallengesNotifier {
 
       await refreshChallenges();
     } catch (e) {
-      print('Error joining challenge: $e');
+      AppLogger.error('Error joining challenge: $e');
       rethrow;
     }
   }

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:parimate/main.dart';
 import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 class ApiClient {
@@ -15,6 +16,7 @@ class ApiClient {
       ),
     )..interceptors.add(
         TalkerDioLogger(
+          talker: talker,
           settings: const TalkerDioLoggerSettings(
             printRequestHeaders: true,
             printResponseHeaders: true,

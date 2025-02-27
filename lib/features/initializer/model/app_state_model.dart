@@ -12,5 +12,6 @@ class AppInitialazerModel with _$AppInitialazerModel {
     @Default([]) List<Challenge> challenges,
     @Default(false) bool isLoading,
     String? error,
+    @Default(false) bool hasInitialized,
   }) = _AppInitialazerModel;
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parimate/models/challenge_model.dart';
+import '../../../app/app_logger.dart';
 import '../../../app/repository_providers.dart';
 import '../../../common/utils/colors.dart';
 import '../../../models/confirmation.dart';
@@ -455,8 +456,8 @@ class _ConfirmationUploadPageState
         }
       }
     } catch (e, stack) {
-      print('Ошибка при выборе файла: $e');
-      print('Stack trace: $stack');
+      AppLogger.error('Ошибка при выборе файла: $e');
+      AppLogger.error('Stack trace: $stack');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка при выборе файла: $e')),
@@ -552,7 +553,7 @@ class _ConfirmationUploadPageState
         }
       }
     } catch (e) {
-      print('Ошибка при отправке: $e');
+      AppLogger.error('Ошибка при отправке: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка при отправке: $e')),
@@ -583,7 +584,7 @@ class _ConfirmationUploadPageState
         });
       }
     } catch (e) {
-      print('Ошибка при создании превью видео: $e');
+      AppLogger.error('Ошибка при создании превью видео: $e');
     }
   }
 }

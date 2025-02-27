@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/code_word.dart';
 import '../app/repository_providers.dart';
+import 'app_logger.dart';
 
 part 'code_word_notifier.g.dart';
 
@@ -36,7 +37,7 @@ class CodeWordNotifier extends _$CodeWordNotifier {
       final result = await repository.getCodeWord();
       return result;
     } catch (e) {
-      print('Error loading code word: $e');
+      AppLogger.error('Error loading code word: $e');
       rethrow;
     }
   }

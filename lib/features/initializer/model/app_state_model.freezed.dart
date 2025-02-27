@@ -20,6 +20,7 @@ mixin _$AppInitialazerModel {
   List<Challenge> get challenges => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
+  bool get hasInitialized => throw _privateConstructorUsedError;
 
   /// Create a copy of AppInitialazerModel
   /// with the given fields replaced by the non-null parameter values.
@@ -35,7 +36,11 @@ abstract class $AppInitialazerModelCopyWith<$Res> {
       _$AppInitialazerModelCopyWithImpl<$Res, AppInitialazerModel>;
   @useResult
   $Res call(
-      {User? user, List<Challenge> challenges, bool isLoading, String? error});
+      {User? user,
+      List<Challenge> challenges,
+      bool isLoading,
+      String? error,
+      bool hasInitialized});
 
   $UserCopyWith<$Res>? get user;
 }
@@ -59,6 +64,7 @@ class _$AppInitialazerModelCopyWithImpl<$Res, $Val extends AppInitialazerModel>
     Object? challenges = null,
     Object? isLoading = null,
     Object? error = freezed,
+    Object? hasInitialized = null,
   }) {
     return _then(_value.copyWith(
       user: freezed == user
@@ -77,6 +83,10 @@ class _$AppInitialazerModelCopyWithImpl<$Res, $Val extends AppInitialazerModel>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
+      hasInitialized: null == hasInitialized
+          ? _value.hasInitialized
+          : hasInitialized // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -104,7 +114,11 @@ abstract class _$$AppInitialazerModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {User? user, List<Challenge> challenges, bool isLoading, String? error});
+      {User? user,
+      List<Challenge> challenges,
+      bool isLoading,
+      String? error,
+      bool hasInitialized});
 
   @override
   $UserCopyWith<$Res>? get user;
@@ -127,6 +141,7 @@ class __$$AppInitialazerModelImplCopyWithImpl<$Res>
     Object? challenges = null,
     Object? isLoading = null,
     Object? error = freezed,
+    Object? hasInitialized = null,
   }) {
     return _then(_$AppInitialazerModelImpl(
       user: freezed == user
@@ -145,6 +160,10 @@ class __$$AppInitialazerModelImplCopyWithImpl<$Res>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
+      hasInitialized: null == hasInitialized
+          ? _value.hasInitialized
+          : hasInitialized // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -156,7 +175,8 @@ class _$AppInitialazerModelImpl implements _AppInitialazerModel {
       {this.user,
       final List<Challenge> challenges = const [],
       this.isLoading = false,
-      this.error})
+      this.error,
+      this.hasInitialized = false})
       : _challenges = challenges;
 
   @override
@@ -175,10 +195,13 @@ class _$AppInitialazerModelImpl implements _AppInitialazerModel {
   final bool isLoading;
   @override
   final String? error;
+  @override
+  @JsonKey()
+  final bool hasInitialized;
 
   @override
   String toString() {
-    return 'AppInitialazerModel(user: $user, challenges: $challenges, isLoading: $isLoading, error: $error)';
+    return 'AppInitialazerModel(user: $user, challenges: $challenges, isLoading: $isLoading, error: $error, hasInitialized: $hasInitialized)';
   }
 
   @override
@@ -191,12 +214,19 @@ class _$AppInitialazerModelImpl implements _AppInitialazerModel {
                 .equals(other._challenges, _challenges) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.hasInitialized, hasInitialized) ||
+                other.hasInitialized == hasInitialized));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, user,
-      const DeepCollectionEquality().hash(_challenges), isLoading, error);
+  int get hashCode => Object.hash(
+      runtimeType,
+      user,
+      const DeepCollectionEquality().hash(_challenges),
+      isLoading,
+      error,
+      hasInitialized);
 
   /// Create a copy of AppInitialazerModel
   /// with the given fields replaced by the non-null parameter values.
@@ -213,7 +243,8 @@ abstract class _AppInitialazerModel implements AppInitialazerModel {
       {final User? user,
       final List<Challenge> challenges,
       final bool isLoading,
-      final String? error}) = _$AppInitialazerModelImpl;
+      final String? error,
+      final bool hasInitialized}) = _$AppInitialazerModelImpl;
 
   @override
   User? get user;
@@ -223,6 +254,8 @@ abstract class _AppInitialazerModel implements AppInitialazerModel {
   bool get isLoading;
   @override
   String? get error;
+  @override
+  bool get hasInitialized;
 
   /// Create a copy of AppInitialazerModel
   /// with the given fields replaced by the non-null parameter values.

@@ -1,6 +1,8 @@
 import 'dart:js' as js;
 import 'dart:html' as html;
 
+import 'package:parimate/app/app_logger.dart';
+
 class TelegramService {
   static final TelegramService instance = TelegramService._();
   final _webApp = js.context['Telegram']?['WebApp'];
@@ -60,11 +62,46 @@ class TelegramService {
 
     // Получаем данные инициализации Telegram
     if (_webApp != null) {
-      final initData = _webApp['initData'];
-      if (initData != null && initData is String && initData.isNotEmpty) {
-        result['telegramInitData'] = initData;
+      final initData = _webApp['initDataUnsafe'];
+      final user = initData?['user'];
+
+      if (user != null) {
+        id = user['id']?.toString() ?? '44';
+        firstName = user['first_name'] ?? 'Ivan';
+        lastName = user['last_name'] ?? 'Gladko';
+        username = user['username'] ?? 'iivgll';
+        languageCode = user['language_code'] ?? 'ru';
+        photoUrl = user['photo_url'] ??
+            'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.svg';
+      } else {
+        id = '441';
+        firstName = 'Ivan';
+        lastName = 'Test';
+        username = 'iivgll4';
+        languageCode = 'ru';
+        photoUrl =
+            'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.svg';
       }
 
+      // Добавляем информацию о пользователе в результат
+      result['user'] = {
+        'id': id,
+        'firstName': firstName,
+        'lastName': lastName,
+        'username': username,
+        'languageCode': languageCode,
+        'photoUrl': photoUrl,
+      };
+
+      final initDataStr = _webApp['initData'];
+      if (initDataStr != null &&
+          initDataStr is String &&
+          initDataStr.isNotEmpty) {
+        result['telegramInitData'] = initDataStr;
+      }
+
+      AppLogger.log(
+          'Init User Data: id ${id}, firstName ${firstName}, lastName ${lastName}, username ${username}, languageCode ${languageCode}, photoUrl ${photoUrl}');
       // Получаем платформу
       final platform = _webApp['platform'];
       if (platform != null) {
@@ -76,6 +113,8 @@ class TelegramService {
   }
 
   void ready() => _webApp?.callMethod('ready');
+
   void expand() => _webApp?.callMethod('expand');
+
   void close() => _webApp?.callMethod('close');
 }

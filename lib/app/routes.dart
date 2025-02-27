@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parimate/features/settings/presentation/settings_page.dart';
+import 'package:talker_flutter/talker_flutter.dart';
+import '../main.dart'; // Для доступа к talker
 
 import '../common/widgets/bottom_navigation_bar.dart';
 import '../features/chellenges/presentation/challenge_details_page.dart';
@@ -131,5 +133,34 @@ final router = GoRouter(
         );
       },
     ),
+    // Добавляем новый маршрут для TalkerScreen
+    GoRoute(
+      path: '/talker',
+      name: 'talker',
+      pageBuilder: (BuildContext context, GoRouterState state) {
+        return CustomTransitionPage(
+          child: TalkerScreen(talker: talker),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        );
+      },
+    ),
   ],
+  redirect: (context, state) {
+    if (state.uri.toString().contains('tgWebAppData=')) {
+      return '/';
+    }
+    return null;
+  },
+  errorBuilder: (context, state) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  },
 );
