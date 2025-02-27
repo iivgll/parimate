@@ -74,10 +74,10 @@ class TelegramService {
         photoUrl = user['photo_url'] ??
             'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.svg';
       } else {
-        id = '441';
+        id = '4455';
         firstName = 'Ivan';
         lastName = 'Test';
-        username = 'iivgll4';
+        username = 'iivgll55';
         languageCode = 'ru';
         photoUrl =
             'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.png';

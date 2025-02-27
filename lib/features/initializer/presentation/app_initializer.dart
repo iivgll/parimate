@@ -74,24 +74,62 @@ class AppInitializer extends ConsumerWidget {
         child: Scaffold(
           backgroundColor: AppColors.black,
           body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Произошла ошибка при загрузке данных',
-                  style: TextStyle(color: AppColors.white),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    ref
-                        .read(appInitialazerProvider.notifier)
-                        .initializeApp(tgId);
-                    ref.read(metadataProvider.notifier).refresh();
-                  },
-                  child: const Text('Повторить'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    color: AppColors.orange,
+                    size: 64,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Упс! Что-то пошло не так',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Не удалось загрузить необходимые данные. Наша команда уже работает над устранением проблемы. Пожалуйста, попробуйте позже.',
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(appInitialazerProvider.notifier)
+                          .initializeApp(tgId);
+                      ref.read(metadataProvider.notifier).refresh();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.orange,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Попробовать снова',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

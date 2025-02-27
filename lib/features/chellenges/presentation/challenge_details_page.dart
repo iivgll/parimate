@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:parimate/app/repository_providers.dart';
 import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
+import 'package:parimate/models/enums/confirmation_type.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../app/app_logger.dart';
 import '../../../common/utils/colors.dart';
@@ -56,18 +57,28 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
     );
   }
 
-  Future<(ChallengeStatistics, UserChallengeStatisticsSchema)> _loadData(
+  Future<(ChallengeStatistics?, UserChallengeStatisticsSchema?)> _loadData(
       WidgetRef ref) async {
     final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
-    final futures = await Future.wait([
-      challengesNotifier.getChallengeStatistics(widget.challenge.id),
-      challengesNotifier.getUserChallengeStatistics(widget.challenge.id),
-    ]);
 
-    return (
-      futures[0] as ChallengeStatistics,
-      futures[1] as UserChallengeStatisticsSchema
-    );
+    try {
+      final challengeStatistics =
+          await challengesNotifier.getChallengeStatistics(widget.challenge.id);
+
+      try {
+        final userStatistics = await challengesNotifier
+            .getUserChallengeStatistics(widget.challenge.id);
+        return (challengeStatistics, userStatistics);
+      } catch (e) {
+        // Если получение статистики пользователя завершилось с ошибкой (500),
+        // возвращаем только статистику челленджа
+        AppLogger.error('Ошибка при загрузке статистики пользователя: $e');
+        return (challengeStatistics, null);
+      }
+    } catch (e) {
+      AppLogger.error('Ошибка при загрузке статистики челленджа: $e');
+      return (null, null);
+    }
   }
 
   @override
@@ -75,7 +86,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
     return Scaffold(
       backgroundColor: AppColors.black,
       appBar: const MainAppbarWidget(automaticallyImplyLeading: false),
-      body: FutureBuilder<(ChallengeStatistics, UserChallengeStatisticsSchema)>(
+      body:
+          FutureBuilder<(ChallengeStatistics?, UserChallengeStatisticsSchema?)>(
         future: _loadData(ref),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -86,17 +98,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
             );
           }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Ошибка загрузки данных: ${snapshot.error}',
-                style: const TextStyle(color: AppColors.grey),
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          final (statistics, userStatistics) = snapshot.data!;
+          final (statistics, userStatistics) = snapshot.data ?? (null, null);
+          final bool isUserParticipant = userStatistics != null;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.only(
@@ -114,11 +117,17 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 const SizedBox(height: 24),
                 _buildRulesBlock(),
                 const SizedBox(height: 24),
-                _buildConfirmationBlockContent(userStatistics, context),
+                if (isUserParticipant)
+                  _buildConfirmationBlockContent(userStatistics!, context)
+                else
+                  _buildJoinChallengeBlock(context),
                 const SizedBox(height: 24),
-                _buildParticipantsBlockContent(statistics),
+                if (statistics != null)
+                  _buildParticipantsBlockContent(statistics)
+                else
+                  _buildParticipantsPlaceholder(),
                 const SizedBox(height: 32),
-                _buildExitButton(context),
+                if (isUserParticipant) _buildExitButton(context),
               ],
             ),
           );
@@ -271,6 +280,29 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
 
   Widget _buildConfirmationBlockContent(
       UserChallengeStatisticsSchema statistics, BuildContext context) {
+    final confirmationType = fromString(widget.challenge.confirmationType);
+    String confirmationTypeText;
+    IconData confirmationIcon;
+
+    switch (confirmationType) {
+      case ConfirmationType.photo:
+        confirmationTypeText = 'ФОТО';
+        confirmationIcon = Icons.photo_camera;
+        break;
+      case ConfirmationType.video:
+        confirmationTypeText = 'ВИДЕО';
+        confirmationIcon = Icons.videocam;
+        break;
+      case ConfirmationType.text:
+        confirmationTypeText = 'ТЕКСТ';
+        confirmationIcon = Icons.text_fields;
+        break;
+      case ConfirmationType.geo:
+        confirmationTypeText = 'ГЕО';
+        confirmationIcon = Icons.location_on;
+        break;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -383,7 +415,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   ),
                 ),
                 if (!widget.challenge.isArchived &&
-                    !(widget.challenge.status == 'REGISTERED')) ...[
+                    (widget.challenge.status == 'REGISTERED')) ...[
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
@@ -573,6 +605,127 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 }),
               ],
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildJoinChallengeBlock(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'ПРИСОЕДИНИТЬСЯ',
+          style: TextStyle(
+            fontFamily: AppFontFamily.uncage,
+            color: AppColors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Вы еще не участвуете в этом челлендже',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              _buildConfirmationTypeInfo(),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await ref
+                        .read(challengesNotifierProvider.notifier)
+                        .joinChallenge(widget.challenge.id, context);
+
+                    if (mounted) {
+                      // Обновляем страницу после успешного присоединения
+                      setState(() {});
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Ошибка при присоединении к челленджу: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.orange,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Присоединиться',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildParticipantsPlaceholder() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'УЧАСТНИКИ',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 24,
+            fontFamily: AppFontFamily.uncage,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Center(
+            child: Text(
+              'Информация об участниках недоступна',
+              style: TextStyle(
+                color: AppColors.grey,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ],
@@ -811,6 +964,56 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildConfirmationTypeInfo() {
+    final confirmationType = fromString(widget.challenge.confirmationType);
+
+    IconData icon;
+    String typeText;
+
+    switch (confirmationType) {
+      case ConfirmationType.photo:
+        icon = Icons.photo_camera;
+        typeText = 'Фото';
+        break;
+      case ConfirmationType.video:
+        icon = Icons.videocam;
+        typeText = 'Видео';
+        break;
+      case ConfirmationType.text:
+        icon = Icons.text_fields;
+        typeText = 'Текст';
+        break;
+      case ConfirmationType.geo:
+        icon = Icons.location_on;
+        typeText = 'Геолокация';
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: AppColors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: AppColors.orange, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            'Тип подтверждения: $typeText',
+            style: const TextStyle(
+              color: AppColors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -10,3 +10,16 @@ enum ConfirmationType {
   @JsonValue('TEXT')
   text,
 }
+
+ConfirmationType fromString(String value) {
+  switch (value) {
+    case 'TEXT':
+      return ConfirmationType.text;
+    case 'PHOTO':
+      return ConfirmationType.photo;
+    case 'VIDEO':
+      return ConfirmationType.video;
+    default:
+      return ConfirmationType.photo;
+  }
+}
