@@ -131,15 +131,11 @@ class IconPickerSheet extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColors.orange : AppColors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
                     padding: const EdgeInsets.all(12),
                     child: SvgPicture.asset(
                       'assets/icons/$iconName.svg',
                       colorFilter: ColorFilter.mode(
-                        isSelected ? AppColors.white : AppColors.grey,
+                        isSelected ? AppColors.orange : AppColors.white,
                         BlendMode.srcIn,
                       ),
                     ),

@@ -80,7 +80,7 @@ class TelegramService {
         username = 'iivgll4';
         languageCode = 'ru';
         photoUrl =
-            'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.svg';
+            'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.png';
       }
 
       // Добавляем информацию о пользователе в результат

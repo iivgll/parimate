@@ -63,7 +63,7 @@ class ChallengeContainer extends StatelessWidget {
                 Text(
                   _formatDateRange(challenge),
                   style: const TextStyle(
-                    color: AppColors.grey,
+                    color: AppColors.white,
                     fontSize: 14,
                   ),
                 ),
@@ -71,7 +71,11 @@ class ChallengeContainer extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.arrow_forward, color: AppColors.white),
+            icon: const Icon(
+              Icons.arrow_circle_right_outlined,
+              color: AppColors.white,
+              size: 35,
+            ),
             onPressed: () {
               context.push('/challenge-details', extra: challenge);
             },

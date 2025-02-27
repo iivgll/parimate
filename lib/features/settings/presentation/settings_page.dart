@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/settings/logic/settings_logic.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/utils/colors.dart';
 
@@ -178,9 +179,40 @@ class SettingsPage extends ConsumerWidget {
               ),
             ),
           ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: InkWell(
+              onTap: () {
+                _launchSupportUrl(context);
+              },
+              child: Text(
+                'Поддержка',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: AppColors.orange,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void _launchSupportUrl(BuildContext context) async {
+    final Uri url = Uri.parse('https://t.me/NikitaGirman');
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не удалось открыть ссылку поддержки')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка при открытии ссылки: $e')),
+      );
+    }
   }
 
   Widget _buildReminderItem(

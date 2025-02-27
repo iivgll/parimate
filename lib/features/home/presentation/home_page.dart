@@ -6,7 +6,6 @@ import 'package:parimate/features/home/presentation/widgets/main_card_widget.dar
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
-import '../../../main.dart'; // Для доступа к talker
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -97,6 +96,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.black,
       appBar: const MainAppbarWidget(),
       body: SingleChildScrollView(
         child: Padding(

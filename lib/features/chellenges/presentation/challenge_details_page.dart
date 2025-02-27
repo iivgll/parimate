@@ -7,12 +7,14 @@ import 'package:parimate/features/chellenges/state/challenges_state.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../app/app_logger.dart';
 import '../../../common/utils/colors.dart';
+import '../../../common/utils/font_family.dart';
 import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/challenge_statistics.dart';
 import '../../../features/chellenges/presentation/confirmation_upload_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
+import '../../../common/widgets/main_appbar_widget.dart';
 
 import '../../../repositories/participation_repository.dart';
 
@@ -44,13 +46,13 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
       return Icon(
         Icons.verified,
         color: AppColors.green,
-        size: 20,
+        size: 30,
       );
     }
     return const Icon(
       Icons.schedule,
       color: AppColors.grey,
-      size: 20,
+      size: 30,
     );
   }
 
@@ -72,54 +74,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.black,
-      appBar: AppBar(
-        backgroundColor: AppColors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Text(
-                widget.challenge.name,
-                style: const TextStyle(
-                  color: AppColors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildStatusIcon(),
-                const SizedBox(height: 5),
-              ],
-            ),
-          ],
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(24),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              _formatDateRange(),
-              style: const TextStyle(
-                color: AppColors.white,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-      ),
+      appBar: const MainAppbarWidget(automaticallyImplyLeading: false),
       body: FutureBuilder<(ChallengeStatistics, UserChallengeStatisticsSchema)>(
         future: _loadData(ref),
         builder: (context, snapshot) {
@@ -153,6 +108,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildChallengeHeader(context),
+                const SizedBox(height: 24),
                 _buildPrizeBlock(context),
                 const SizedBox(height: 24),
                 _buildRulesBlock(),
@@ -167,6 +124,52 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildChallengeHeader(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      widget.challenge.name,
+                      style: TextStyle(
+                        fontFamily: AppFontFamily.uncage,
+                        color: AppColors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  _buildStatusIcon(),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _formatDateRange(),
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -273,9 +276,10 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
       children: [
         Row(
           children: [
-            const Text(
+            Text(
               'ПОДТВЕРЖДЕНИЯ',
               style: TextStyle(
+                fontFamily: AppFontFamily.uncage,
                 color: AppColors.white,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -419,6 +423,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
   }
 
   Widget _buildProgressRow(String title, int current, int total) {
+    final bool isComplete = current >= total;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -433,8 +439,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           ),
           Text(
             '$current/$total',
-            style: const TextStyle(
-              color: AppColors.white,
+            style: TextStyle(
+              color: isComplete ? AppColors.orange : AppColors.white,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -465,9 +471,10 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           children: [
             Text(
               'УЧАСТНИКИ $activeParticipants/$totalParticipants',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.white,
                 fontSize: 24,
+                fontFamily: AppFontFamily.uncage,
                 fontWeight: FontWeight.bold,
               ),
             ),

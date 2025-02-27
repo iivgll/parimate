@@ -304,17 +304,18 @@ class ChallengesPage extends ConsumerWidget {
                             .toList();
 
                     if (filteredChallenges.isEmpty) {
-                      return const Center(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 20,
+                      return SizedBox(
+                        height:
+                            300, // Задаем высоту, чтобы текст был ближе к центру
+                        child: Center(
+                          child: Text(
+                            'Здесь будут отображаться доступные челленджи. Создайте новый челлендж или присоединитесь к существующему!',
+                            style: const TextStyle(
+                              color: AppColors.grey,
+                              fontSize: 16,
                             ),
-                            Text(
-                              'Нет доступных челленджей',
-                              style: TextStyle(color: AppColors.grey),
-                            ),
-                          ],
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       );
                     }
@@ -355,10 +356,17 @@ class ChallengesPage extends ConsumerWidget {
       ),
       data: (state) {
         if (state.challenges.isEmpty) {
-          return const Center(
-            child: Text(
-              'У вас пока нет челленджей',
-              style: TextStyle(color: AppColors.grey),
+          return SizedBox(
+            height: 300, // Задаем высоту, чтобы текст был ближе к центру
+            child: Center(
+              child: Text(
+                'Здесь будут отображаться ваши челленджи. Создайте новый челлендж или присоединитесь к существующему!',
+                style: const TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
           );
         }

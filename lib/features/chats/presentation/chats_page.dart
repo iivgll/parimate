@@ -26,6 +26,7 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
     final state = ref.watch(chatsNotifierProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.black,
       appBar: const MainAppbarWidget(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -54,6 +55,22 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
               Center(
                   child: Text(state.error!,
                       style: TextStyle(color: AppColors.white)))
+            else if (state.chats.isEmpty)
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Здесь будут отображаться ваши чаты. Создайте челлендж или присоединитесь к существующему, чтобы начать общение!',
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              )
             else
               Expanded(
                 child: ListView.separated(

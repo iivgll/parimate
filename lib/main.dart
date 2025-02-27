@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/initializer/presentation/app_initializer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'app/app_logger.dart';
 import 'services/telegram_service.dart';
 
 import 'app/repository_providers.dart';
@@ -87,6 +86,12 @@ class MyApp extends ConsumerWidget {
           canvasColor: AppColors.orange,
           progressIndicatorTheme: const ProgressIndicatorThemeData(
             color: AppColors.orange,
+          ),
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: AppColors.orange,
+            selectionColor:
+                Color(0x40FF5C00), // Полупрозрачный оранжевый для выделения
+            selectionHandleColor: AppColors.orange,
           ),
           fontFamily: 'UbuntuSans',
           appBarTheme: const AppBarTheme(

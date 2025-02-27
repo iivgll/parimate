@@ -12,7 +12,9 @@ import '../../../../common/utils/font_family.dart';
 import '../../app/app_logger.dart';
 
 class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
-  const MainAppbarWidget({super.key});
+  final bool automaticallyImplyLeading;
+
+  const MainAppbarWidget({super.key, this.automaticallyImplyLeading = true});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -20,7 +22,8 @@ class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   Widget _buildAvatar() {
     // Логируем URL изображения для проверки
     AppLogger.log('Photo URL: ${TelegramService.instance.photoUrl}');
-    AppLogger.log('Is SVG: ${TelegramService.instance.photoUrl.endsWith('.svg')}');
+    AppLogger.log(
+        'Is SVG: ${TelegramService.instance.photoUrl.endsWith('.svg')}');
 
     if (TelegramService.instance.photoUrl.endsWith('.svg')) {
       try {
@@ -75,10 +78,8 @@ class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
             fit: BoxFit.cover,
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) {
-                print('Image loaded successfully');
                 return child;
               }
-              print('Image is loading: ${loadingProgress.expectedTotalBytes}');
               return Shimmer.fromColors(
                 baseColor: AppColors.orange.withValues(alpha: 0.3),
                 highlightColor: AppColors.orange,
@@ -109,6 +110,7 @@ class MainAppbarWidget extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       backgroundColor: AppColors.black,
+      automaticallyImplyLeading: automaticallyImplyLeading,
       title: Row(
         children: [
           _buildAvatar(),

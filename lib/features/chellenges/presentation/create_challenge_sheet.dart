@@ -906,10 +906,18 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     String formattedTime =
         '${confirmationTime?.hour.toString().padLeft(2, '0')}:${confirmationTime?.minute.toString().padLeft(2, '0')}';
 
+    // Определяем тип участия в зависимости от выбранного типа и настроек доступа
+    String participationType;
+    if (selectedType == ChallengeType.personal) {
+      participationType = 'PERSONAL';
+    } else {
+      // Для группового челленджа проверяем настройку доступа
+      participationType = isPublic ? 'PRIVATE_GROUP' : 'GROUP';
+    }
+
     return {
       'name': nameController.text,
-      'participation_type':
-          selectedType == ChallengeType.personal ? 'PERSONAL' : 'PRIVATE_GROUP',
+      'participation_type': participationType,
       'icon': selectedIcon,
       'category': selectedCategory,
       'confirmation_type': confirmationType,
@@ -1057,7 +1065,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     ),
                     _buildSelectField(
                       'Иконка',
-                      selectedIcon.isEmpty ? 'Выбрать' : selectedIcon,
+                      selectedIcon.isEmpty ? 'Выбрать' : '',
                       onTap: _showIconPicker,
                       icon: selectedIcon.isNotEmpty
                           ? SvgPicture.asset(
@@ -1441,53 +1449,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
             setState(() {
               isPublic = newValue;
             });
-            if (!newValue) {
-              showDialog(
-                context: context,
-                barrierColor: Colors.black.withValues(alpha: 0.8),
-                builder: (context) => Dialog(
-                  backgroundColor: Colors.transparent,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.blackMin,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Челлендж будет доступен\nвсем пользователям',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.black,
-                            minimumSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            'Понятно',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
           },
           activeColor: AppColors.orange,
         ),

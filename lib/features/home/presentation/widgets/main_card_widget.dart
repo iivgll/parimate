@@ -140,8 +140,8 @@ class _MainCardWidgetState extends ConsumerState<MainCardWidget> {
                       trailing: Icon(
                         challenge.confirmed ? Icons.check : Icons.close,
                         color: challenge.confirmed
-                            ? AppColors.orange
-                            : AppColors.white,
+                            ? AppColors.white
+                            : AppColors.orange,
                         size: 18,
                       ),
                     ),
