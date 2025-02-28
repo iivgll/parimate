@@ -224,6 +224,7 @@ class ChallengePreviewPage extends ConsumerWidget {
 
       await ref
           .read(challengesNotifierProvider.notifier)
+          // ignore: use_build_context_synchronously
           .joinChallenge(createdChallenge.id, context);
 
       if (context.mounted) {
@@ -274,6 +275,7 @@ class ChallengePreviewPage extends ConsumerWidget {
           await ref
               .read(challengesNotifierProvider.notifier)
               .refreshChallenges();
+          // ignore: use_build_context_synchronously
           context.go('/challenges');
         }
       }

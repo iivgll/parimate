@@ -68,7 +68,7 @@ Map<String, dynamic> _$$ChallengeModelImplToJson(
 _$AuthorImpl _$$AuthorImplFromJson(Map<String, dynamic> json) => _$AuthorImpl(
       id: (json['id'] as num).toInt(),
       username: json['username'] as String,
-      tg_id: json['tg_id'] as String,
+      tgId: json['tg_id'] as String,
       name: json['name'] as String,
       coins: (json['coins'] as num).toInt(),
       photo: json['photo'] as String?,
@@ -78,7 +78,7 @@ Map<String, dynamic> _$$AuthorImplToJson(_$AuthorImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'username': instance.username,
-      'tg_id': instance.tg_id,
+      'tg_id': instance.tgId,
       'name': instance.name,
       'coins': instance.coins,
       'photo': instance.photo,

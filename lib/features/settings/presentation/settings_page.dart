@@ -204,11 +204,13 @@ class SettingsPage extends ConsumerWidget {
     final Uri url = Uri.parse('https://t.me/NikitaGirman');
     try {
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Не удалось открыть ссылку поддержки')),
         );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка при открытии ссылки: $e')),
       );

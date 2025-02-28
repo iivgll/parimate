@@ -45,7 +45,7 @@ class Author with _$Author {
   const factory Author({
     required int id,
     required String username,
-    required String tg_id,
+    @JsonKey(name: 'tg_id') required String tgId,
     required String name,
     required int coins,
     String? photo,

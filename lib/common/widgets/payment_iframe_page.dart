@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import '../utils/colors.dart';
 
@@ -26,6 +27,7 @@ class _PaymentIframePageState extends State<PaymentIframePage> {
     html.window.onPopState.listen((event) {
       if (html.window.location.href
           .contains('yoomoney.ru/checkout/payments/v2/success')) {
+        // ignore: use_build_context_synchronously
         Navigator.of(context).pop(true);
       }
     });
