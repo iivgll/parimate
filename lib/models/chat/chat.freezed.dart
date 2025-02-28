@@ -24,7 +24,7 @@ mixin _$Chat {
   String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'link')
   String get link => throw _privateConstructorUsedError;
-  @JsonKey(name: 'photo')
+  @JsonKey(name: 'icon')
   String? get photo => throw _privateConstructorUsedError;
 
   /// Serializes this Chat to a JSON map.
@@ -44,7 +44,7 @@ abstract class $ChatCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'link') String link,
-      @JsonKey(name: 'photo') String? photo});
+      @JsonKey(name: 'icon') String? photo});
 }
 
 /// @nodoc
@@ -93,7 +93,7 @@ abstract class _$$ChatImplCopyWith<$Res> implements $ChatCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'link') String link,
-      @JsonKey(name: 'photo') String? photo});
+      @JsonKey(name: 'icon') String? photo});
 }
 
 /// @nodoc
@@ -135,7 +135,7 @@ class _$ChatImpl implements _Chat {
   const _$ChatImpl(
       {@JsonKey(name: 'id') required this.id,
       @JsonKey(name: 'link') required this.link,
-      @JsonKey(name: 'photo') this.photo});
+      @JsonKey(name: 'icon') this.photo});
 
   factory _$ChatImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatImplFromJson(json);
@@ -147,7 +147,7 @@ class _$ChatImpl implements _Chat {
   @JsonKey(name: 'link')
   final String link;
   @override
-  @JsonKey(name: 'photo')
+  @JsonKey(name: 'icon')
   final String? photo;
 
   @override
@@ -189,7 +189,7 @@ abstract class _Chat implements Chat {
   const factory _Chat(
       {@JsonKey(name: 'id') required final String id,
       @JsonKey(name: 'link') required final String link,
-      @JsonKey(name: 'photo') final String? photo}) = _$ChatImpl;
+      @JsonKey(name: 'icon') final String? photo}) = _$ChatImpl;
 
   factory _Chat.fromJson(Map<String, dynamic> json) = _$ChatImpl.fromJson;
 
@@ -200,7 +200,7 @@ abstract class _Chat implements Chat {
   @JsonKey(name: 'link')
   String get link;
   @override
-  @JsonKey(name: 'photo')
+  @JsonKey(name: 'icon')
   String? get photo;
 
   /// Create a copy of Chat

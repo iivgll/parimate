@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/widgets/payment_iframe_page.dart';
 import '../../../common/utils/colors.dart';
 import '../../../app/repository_providers.dart';
+import '../../../common/utils/icons.dart';
 import '../../../common/widgets/insufficient_coins_dialog.dart';
 import '../logic/challenges_notifier.dart';
 import 'package:dio/dio.dart';
@@ -77,7 +80,18 @@ class ChallengePreviewPage extends ConsumerWidget {
                     'Начало/конец:',
                     '${challenge['start_date']} - ${challenge['end_date']}',
                   ),
-                  _buildInfoRow('Взнос:', '${challenge['price']} ₽'),
+                  _buildInfoRow(
+                    'Взнос:',
+                    _formatPrice(challenge['price'], challenge['currency']),
+                    extraWidget: challenge['currency'] == 'COINS'
+                        ? SvgPicture.asset(
+                            AppIcons.coin,
+                            colorFilter: AppColors.orange.toColorFilter,
+                            width: 24,
+                            height: 24,
+                          )
+                        : null,
+                  ),
                 ],
               ),
             ),
@@ -127,7 +141,7 @@ class ChallengePreviewPage extends ConsumerWidget {
     }
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, {Widget? extraWidget}) {
     String displayValue = value;
     if (label.contains('Начало/конец')) {
       final dates = value.split(' - ');
@@ -150,12 +164,20 @@ class ChallengePreviewPage extends ConsumerWidget {
               fontSize: 14,
             ),
           ),
-          Text(
-            displayValue,
-            style: const TextStyle(
-              color: AppColors.grey,
-              fontSize: 14,
-            ),
+          Row(
+            children: [
+              Text(
+                displayValue,
+                style: const TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 14,
+                ),
+              ),
+              if (extraWidget != null) ...[
+                const SizedBox(width: 4),
+                extraWidget,
+              ],
+            ],
           ),
         ],
       ),
@@ -184,6 +206,14 @@ class ChallengePreviewPage extends ConsumerWidget {
   String _getDayName(int day) {
     const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     return days[day - 1];
+  }
+
+  String _formatPrice(dynamic price, String? currency) {
+    if (currency == 'COINS') {
+      return price.toString();
+    } else {
+      return '$price ₽';
+    }
   }
 
   Future<void> _createChallenge(BuildContext context, WidgetRef ref) async {

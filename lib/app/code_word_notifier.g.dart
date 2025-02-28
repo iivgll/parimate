@@ -6,7 +6,7 @@ part of 'code_word_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$codeWordNotifierHash() => r'04ad0f3ec7fbb3c4e436a50dc076be2732550a5b';
+String _$codeWordNotifierHash() => r'f706fab6fc4cad9a065525c5c15a0d24b728d1cc';
 
 /// See also [CodeWordNotifier].
 @ProviderFor(CodeWordNotifier)

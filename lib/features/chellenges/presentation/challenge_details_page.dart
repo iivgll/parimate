@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:parimate/app/repository_providers.dart';
+import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 import 'package:parimate/models/enums/confirmation_type.dart';
@@ -9,6 +11,7 @@ import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../app/app_logger.dart';
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
+import '../../../common/utils/icons.dart';
 import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/challenge_statistics.dart';
@@ -204,14 +207,39 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '${widget.challenge.price} ₽',
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  if (widget.challenge.currency == 'COINS') ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${widget.challenge.price}',
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        SvgPicture.asset(
+                          AppIcons.coin,
+                          colorFilter: AppColors.orange.toColorFilter,
+                          width: 24,
+                          height: 24,
+                        ),
+                      ],
                     ),
-                  ),
+                  ] else ...[
+                    Text(
+                      '${widget.challenge.price} ₽',
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                   const Text(
                     'Сумма возврата',
                     style: TextStyle(

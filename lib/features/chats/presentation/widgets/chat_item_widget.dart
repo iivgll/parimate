@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:parimate/common/utils/extensions.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../common/utils/colors.dart';
@@ -23,58 +25,16 @@ class ChatItemWidget extends StatelessWidget {
   }
 
   Widget _buildChatImage() {
-    if (chat.photo == null) {
-      return _buildNetworkImage(_defaultImageUrl);
-    }
-
-    return _buildNetworkImage(chat.photo!);
-  }
-
-  Widget _buildNetworkImage(String imageUrl) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Stack(
-        children: [
-          Shimmer.fromColors(
-            baseColor: AppColors.grey.withValues(alpha: 0.3),
-            highlightColor: AppColors.grey.withValues(alpha: 0.5),
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.grey,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-          Image.network(
-            imageUrl,
-            width: 48,
-            height: 48,
-            fit: BoxFit.cover,
-            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-              if (wasSynchronouslyLoaded) return child;
-              return AnimatedOpacity(
-                opacity: frame != null ? 1 : 0,
-                duration: const Duration(milliseconds: 300),
-                child: child,
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              if (imageUrl != _defaultImageUrl) {
-                return _buildNetworkImage(_defaultImageUrl);
-              }
-              return Container(
-                decoration: BoxDecoration(
-                  color: AppColors.grey,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                width: 48,
-                height: 48,
-              );
-            },
-          ),
-        ],
+    print('asdfdafadf ${chat.photo}');
+    return SvgPicture.asset(
+      'assets/icons/${chat.photo ?? 'alien'}.svg',
+      width: 50,
+      height: 50,
+      colorFilter: AppColors.white.toColorFilter,
+      placeholderBuilder: (context) => const Icon(
+        Icons.extension,
+        color: AppColors.white,
+        size: 50,
       ),
     );
   }

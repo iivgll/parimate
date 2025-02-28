@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/colors.dart';
+import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/chellenges/logic/challenge_type.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:parimate/services/telegram_service.dart';
+import '../../../common/utils/icons.dart';
 import 'widgets/icon_picker_sheet.dart';
 import 'widgets/category_picker_sheet.dart';
 import 'package:go_router/go_router.dart';
@@ -53,6 +55,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   final List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
   int selectedBet = 100;
+  String selectedCurrency = 'RUB';
 
   @override
   void initState() {
@@ -676,6 +679,13 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     final TextEditingController betController =
         TextEditingController(text: selectedBet.toString());
     int tempBet = selectedBet;
+    String tempCurrency = selectedCurrency;
+
+    // Устанавливаем значение по умолчанию для монет
+    if (tempCurrency == 'COINS' && selectedBet == 100) {
+      tempBet = 1;
+      betController.text = '1';
+    }
 
     showModalBottomSheet(
       context: context,
@@ -727,9 +737,51 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Введите сумму от 100₽ до 10000₽',
-                      style: TextStyle(
+                    // Показываем выбор валюты только для персонального челленджа
+                    if (selectedType == ChallengeType.personal) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildCurrencyOption(
+                            'Рубли',
+                            'RUB',
+                            tempCurrency,
+                            (value) {
+                              setState(() {
+                                tempCurrency = value;
+                                // Если переключаемся на рубли, устанавливаем минимум 100
+                                if (value == 'RUB' && tempBet < 100) {
+                                  tempBet = 100;
+                                  betController.text = '100';
+                                }
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 16),
+                          _buildCurrencyOption(
+                            'Монеты',
+                            'COINS',
+                            tempCurrency,
+                            (value) {
+                              setState(() {
+                                tempCurrency = value;
+                                // Если переключаемся на монеты и значение 100 (по умолчанию для рублей)
+                                if (value == 'COINS' && tempBet == 100) {
+                                  tempBet = 1;
+                                  betController.text = '1';
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    Text(
+                      tempCurrency == 'RUB'
+                          ? 'Введите сумму от 100₽ до 10000₽'
+                          : 'Введите количество монет от 1 до 10000',
+                      style: const TextStyle(
                         color: AppColors.grey,
                         fontSize: 14,
                       ),
@@ -774,22 +826,37 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                               },
                             ),
                           ),
-                          const Text(
-                            '₽',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 16,
+                          if (tempCurrency == 'RUB') ...[
+                            Text(
+                              '₽',
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
+                          ] else ...[
+                            SvgPicture.asset(
+                              AppIcons.coin,
+                              colorFilter: AppColors.orange.toColorFilter,
+                              width: 24,
+                              height: 24,
+                            ),
+                          ]
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        if (tempBet >= 100 && tempBet <= 10000) {
+                        // Проверяем валидность значения в зависимости от валюты
+                        bool isValid = tempCurrency == 'RUB'
+                            ? (tempBet >= 100 && tempBet <= 10000)
+                            : (tempBet >= 1 && tempBet <= 10000);
+
+                        if (isValid) {
                           this.setState(() {
                             selectedBet = tempBet;
+                            selectedCurrency = tempCurrency;
                           });
                         }
                         Navigator.pop(context);
@@ -813,6 +880,33 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrencyOption(String label, String value, String currentValue,
+      Function(String) onChanged) {
+    final isSelected = value == currentValue;
+
+    return GestureDetector(
+      onTap: () => onChanged(value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.orange : AppColors.black,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.orange : AppColors.grey,
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.white : AppColors.grey,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),
@@ -932,7 +1026,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       'confirmation_description': descriptionController.text,
       'author_tg_id': TelegramService.instance.id,
       'price': selectedBet,
-      'currency': 'RUB',
+      'currency': selectedCurrency,
       'confirm_until': formattedTime,
       'max_participants': maxParticipants ?? 36,
     };
@@ -989,6 +1083,39 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // При переключении на групповой челлендж, принудительно устанавливаем валюту в рубли
+    if (selectedType == ChallengeType.group && selectedCurrency == 'COINS') {
+      selectedCurrency = 'RUB';
+      // Если ставка была минимальной для монет (1), устанавливаем минимальную для рублей (100)
+      if (selectedBet < 100) {
+        selectedBet = 100;
+      }
+    }
+
+    // Получаем правильный текст для отображения ставки
+    String betText = 'Проиграю $selectedBet';
+    Widget currencyWidget;
+
+    if (selectedCurrency == 'RUB') {
+      betText += ' ₽';
+      currencyWidget = const SizedBox.shrink();
+    } else {
+      currencyWidget = SvgPicture.asset(
+        AppIcons.coin,
+        colorFilter: AppColors.orange.toColorFilter,
+        width: 16,
+        height: 16,
+      );
+    }
+
+    // Определяем текст для кнопки создания челленджа
+    String createButtonText = 'Создать челлендж';
+    if (selectedCurrency == 'COINS') {
+      createButtonText += ' $selectedBet';
+    } else {
+      createButtonText += ' 1';
+    }
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: const BoxDecoration(
@@ -1182,8 +1309,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                   ]),
                   const SizedBox(height: 16),
                   _buildInputSection([
-                    _buildSelectField('Или', 'Проиграю $selectedBet ₽',
-                        onTap: _showBetPicker),
+                    _buildSelectField('Или', betText,
+                        onTap: _showBetPicker, extraWidget: currencyWidget),
                   ]),
                   if (selectedType == ChallengeType.group) ...[
                     const SizedBox(height: 16),
@@ -1196,7 +1323,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                   ElevatedButton(
                     onPressed: _createChallenge,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.orange,
+                      backgroundColor: AppColors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -1205,30 +1332,19 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Создать челлендж',
+                        Text(
+                          createButtonText,
                           style: TextStyle(
                             color: AppColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            '1',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        SvgPicture.asset(
+                          AppIcons.coin,
+                          colorFilter: AppColors.orange.toColorFilter,
+                          width: 24,
+                          height: 24,
                         ),
                       ],
                     ),
@@ -1261,6 +1377,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     String value, {
     required VoidCallback onTap,
     Widget? icon,
+    Widget? extraWidget,
   }) {
     return InkWell(
       onTap: onTap,
@@ -1288,6 +1405,10 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     color: AppColors.grey,
                   ),
                 ),
+                if (extraWidget != null) ...[
+                  const SizedBox(width: 4),
+                  extraWidget,
+                ],
                 const Icon(
                   Icons.chevron_right,
                   color: AppColors.grey,
@@ -1338,7 +1459,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                         color: AppColors.orange,
                         fontWeight: FontWeight.bold,
                       ),
-                    )
+                    ),
                 ],
               ),
               if (value != null)
