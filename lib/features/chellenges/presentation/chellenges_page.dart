@@ -4,6 +4,7 @@ import 'package:parimate/features/chellenges/logic/selected_category_provider.da
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
 
+import '../../../app/app_logger.dart';
 import '../../../app/metadata_notifier.dart';
 import '../../../app/repository_providers.dart';
 import '../../../common/utils/colors.dart';
@@ -20,7 +21,15 @@ class ChallengesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Явно вызываем провайдер для инициализации
     final challengesState = ref.watch(challengesNotifierProvider);
+
+    // Добавим логирование для отладки
+    if (challengesState.hasValue) {
+      AppLogger.log(
+          'Челленджи загружены: ${challengesState.value?.challenges.length} моих, ${challengesState.value?.newChallenges.length} новых');
+    }
+
     final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
 
     // Показываем загрузчик на весь экран, пока данные не загрузились

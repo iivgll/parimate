@@ -14,15 +14,20 @@ part 'challenges_notifier.g.dart';
 class ChallengesNotifier extends _$ChallengesNotifier {
   @override
   Future<ChallengesState> build() async {
+    AppLogger.log('ChallengesNotifier.build() вызван');
     return _loadChallenges();
   }
 
   Future<ChallengesState> _loadChallenges() async {
     try {
+      AppLogger.log('Загрузка челленджей...');
       final challenges =
           await ref.read(challengeRepositoryProvider).getMyChallenges();
       final newChallenges =
           await ref.read(challengeRepositoryProvider).getNewChallenges();
+
+      AppLogger.log(
+          'Челленджи загружены: ${challenges.length} моих, ${newChallenges.length} новых');
 
       return const ChallengesState(
         view: ChallengesView.mine,
@@ -30,8 +35,9 @@ class ChallengesNotifier extends _$ChallengesNotifier {
         challenges: challenges,
         newChallenges: newChallenges,
       );
-    } catch (e) {
-      // В реальном приложении здесь должна быть обработка ошибок
+    } catch (e, stack) {
+      AppLogger.error('Ошибка при загрузке челленджей: $e');
+      AppLogger.error('Stack trace: $stack');
       return const ChallengesState(
         view: ChallengesView.mine,
       );

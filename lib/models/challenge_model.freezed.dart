@@ -455,8 +455,8 @@ class _$ChallengeModelImpl extends _ChallengeModel {
       {required this.id,
       required this.name,
       @JsonKey(name: 'participation_type') required this.participationType,
-      required this.icon,
-      required this.category,
+      this.icon = "",
+      this.category = "",
       @JsonKey(name: 'confirmation_type') required this.confirmationType,
       @JsonKey(name: 'start_date') required this.startDate,
       @JsonKey(name: 'end_date') required this.endDate,
@@ -468,13 +468,13 @@ class _$ChallengeModelImpl extends _ChallengeModel {
       required this.price,
       required this.currency,
       @JsonKey(name: 'confirmation_description')
-      required this.confirmationDescription,
-      required this.status,
+      this.confirmationDescription = "",
+      this.status = "",
       @JsonKey(name: 'max_participants') required this.maxParticipants,
-      @JsonKey(name: 'confirm_until') required this.confirmUntil,
+      @JsonKey(name: 'confirm_until') this.confirmUntil = "",
       @JsonKey(name: 'created_at') required this.createdAt,
       required this.chat,
-      required this.link,
+      this.link = "",
       @JsonKey(name: 'admin_chat') this.adminChat})
       : _confirmationDays = confirmationDays,
         super._();
@@ -490,8 +490,10 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   @JsonKey(name: 'participation_type')
   final String participationType;
   @override
+  @JsonKey()
   final String icon;
   @override
+  @JsonKey()
   final String category;
   @override
   @JsonKey(name: 'confirmation_type')
@@ -533,6 +535,7 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   @JsonKey(name: 'confirmation_description')
   final String confirmationDescription;
   @override
+  @JsonKey()
   final String status;
   @override
   @JsonKey(name: 'max_participants')
@@ -546,6 +549,7 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   @override
   final Chat chat;
   @override
+  @JsonKey()
   final String link;
   @override
   @JsonKey(name: 'admin_chat')
@@ -653,8 +657,8 @@ abstract class _ChallengeModel extends ChallengeModel {
       required final String name,
       @JsonKey(name: 'participation_type')
       required final String participationType,
-      required final String icon,
-      required final String category,
+      final String icon,
+      final String category,
       @JsonKey(name: 'confirmation_type')
       required final String confirmationType,
       @JsonKey(name: 'start_date') required final String startDate,
@@ -667,13 +671,13 @@ abstract class _ChallengeModel extends ChallengeModel {
       required final int price,
       required final String currency,
       @JsonKey(name: 'confirmation_description')
-      required final String confirmationDescription,
-      required final String status,
+      final String confirmationDescription,
+      final String status,
       @JsonKey(name: 'max_participants') required final int maxParticipants,
-      @JsonKey(name: 'confirm_until') required final String confirmUntil,
+      @JsonKey(name: 'confirm_until') final String confirmUntil,
       @JsonKey(name: 'created_at') required final String createdAt,
       required final Chat chat,
-      required final String link,
+      final String link,
       @JsonKey(name: 'admin_chat')
       final Chat? adminChat}) = _$ChallengeModelImpl;
   const _ChallengeModel._() : super._();

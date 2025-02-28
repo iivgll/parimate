@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
+import '../app/app_logger.dart';
 import '../models/challenge/challenge.dart';
 import '../models/challenge_statistics.dart';
 import '../models/challenge_action_price.dart';
@@ -136,13 +137,24 @@ class ChallengeRepository {
 
   Future<List<ChallengeModel>> getMyChallenges() async {
     try {
-      final response = await _dio.get(
-        '/api/v2/challenge/my',
-        queryParameters: {'user_tg_id': TelegramService.instance.id},
-      );
-      return (response.data as List)
-          .map((json) => ChallengeModel.fromJson(json))
-          .toList();
+      final response = await _dio.get('/challenge/my',
+          queryParameters: {'user_tg_id': TelegramService.instance.id});
+
+      // Отладка: проверяем каждый элемент
+      final List<dynamic> data = response.data;
+      final challenges = <ChallengeModel>[];
+
+      for (var i = 0; i < data.length; i++) {
+        try {
+          final challenge = ChallengeModel.fromJson(data[i]);
+          challenges.add(challenge);
+        } catch (e) {
+          AppLogger.error('Ошибка при парсинге челленджа #$i: $e');
+          AppLogger.error('Данные челленджа: ${data[i]}');
+        }
+      }
+
+      return challenges;
     } catch (e) {
       throw Exception('Failed to load challenges: $e');
     }
