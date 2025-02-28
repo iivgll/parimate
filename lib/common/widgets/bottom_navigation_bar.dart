@@ -32,69 +32,78 @@ class CustomBottomNavigationBar extends StatelessWidget {
       print('Current location: $currentLocation, currentIndex: $currentIndex');
     }
 
-    return BottomNavigationBar(
-      backgroundColor: AppColors.blackMin,
-      currentIndex: currentIndex,
-      onTap: (index) {
-        switch (index) {
-          case 0:
-            if (currentLocation != '/') {
-              context.go('/');
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        BottomNavigationBar(
+          backgroundColor: AppColors.blackMin,
+          currentIndex: currentIndex,
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                if (currentLocation != '/') {
+                  context.go('/');
+                }
+                break;
+              case 1:
+                if (currentLocation != '/challenges') {
+                  context.go('/challenges');
+                }
+                break;
+              case 2:
+                if (currentLocation != '/chats') {
+                  context.go('/chats');
+                }
+                break;
+              case 3:
+                if (currentLocation != '/coins') {
+                  context.go('/coins');
+                }
+                break;
             }
-            break;
-          case 1:
-            if (currentLocation != '/challenges') {
-              context.go('/challenges');
-            }
-            break;
-          case 2:
-            if (currentLocation != '/chats') {
-              context.go('/chats');
-            }
-            break;
-          case 3:
-            if (currentLocation != '/coins') {
-              context.go('/coins');
-            }
-            break;
-        }
-      },
-      type: BottomNavigationBarType.fixed,
-      items: [
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppIcons.activity,
-            colorFilter: currentIndex == 0
-                ? AppColors.orange.toColorFilter
-                : AppColors.grey.toColorFilter,
-          ),
-          label: 'Активность',
+          },
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                AppIcons.activity,
+                colorFilter: currentIndex == 0
+                    ? AppColors.orange.toColorFilter
+                    : AppColors.grey.toColorFilter,
+              ),
+              label: 'Активность',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(AppIcons.chellenges,
+                  colorFilter: currentIndex == 1
+                      ? AppColors.orange.toColorFilter
+                      : AppColors.grey.toColorFilter),
+              label: 'Челленджи',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                AppIcons.chat,
+                colorFilter: currentIndex == 2
+                    ? AppColors.orange.toColorFilter
+                    : AppColors.grey.toColorFilter,
+              ),
+              label: 'Чаты',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                AppIcons.coin,
+                colorFilter: currentIndex == 3
+                    ? AppColors.orange.toColorFilter
+                    : AppColors.grey.toColorFilter,
+              ),
+              label: 'Монеты',
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(AppIcons.chellenges,
-              colorFilter: currentIndex == 1
-                  ? AppColors.orange.toColorFilter
-                  : AppColors.grey.toColorFilter),
-          label: 'Челленджи',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppIcons.chat,
-            colorFilter: currentIndex == 2
-                ? AppColors.orange.toColorFilter
-                : AppColors.grey.toColorFilter,
-          ),
-          label: 'Чаты',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppIcons.coin,
-            colorFilter: currentIndex == 3
-                ? AppColors.orange.toColorFilter
-                : AppColors.grey.toColorFilter,
-          ),
-          label: 'Монеты',
-        ),
+        Container(
+          height: 20,
+          color: AppColors.blackMin,
+        )
       ],
     );
   }

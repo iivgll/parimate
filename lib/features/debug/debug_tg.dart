@@ -98,8 +98,7 @@ class LaunchInfoScreen extends StatelessWidget {
                         'Имя: ${TelegramService.instance.firstName}\n'
                         'Фамилия: ${TelegramService.instance.lastName}\n'
                         'Имя пользователя: ${TelegramService.instance.username}\n'
-                        'Язык: ${TelegramService.instance.languageCode}\n'
-                        'URL фото: ${TelegramService.instance.photoUrl}',
+                        'Язык: ${TelegramService.instance.languageCode}\n',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,
@@ -107,45 +106,6 @@ class LaunchInfoScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Отображаем фото пользователя
-                      if (TelegramService.instance.photoUrl.isNotEmpty)
-                        Center(
-                          child: Column(
-                            children: [
-                              const Text(
-                                'Фото пользователя:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  TelegramService.instance.photoUrl,
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      width: 100,
-                                      height: 100,
-                                      color: Colors.grey[800],
-                                      child: const Center(
-                                        child: Text(
-                                          'Ошибка загрузки',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                     ],
                   ),
                 ),

@@ -118,7 +118,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 _buildRulesBlock(),
                 const SizedBox(height: 24),
                 if (isUserParticipant)
-                  _buildConfirmationBlockContent(userStatistics!, context)
+                  _buildConfirmationBlockContent(userStatistics, context)
                 else
                   _buildJoinChallengeBlock(context),
                 const SizedBox(height: 24),
