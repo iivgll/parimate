@@ -7,7 +7,7 @@ class SelectedCategory extends _$SelectedCategory {
   @override
   String? build() => null;
 
-  void setCategory(String? category) {
-    state = category;
+  void update(String? Function(String?) callback) {
+    state = callback(state);
   }
 }

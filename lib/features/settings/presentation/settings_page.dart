@@ -201,21 +201,19 @@ class SettingsPage extends ConsumerWidget {
   }
 
   void _launchSupportUrl(BuildContext context) async {
-    final Uri url = Uri.parse('https://t.me/PariMateBot');
+    final Uri url = Uri.parse('https://t.me/NikitaGirman');
     try {
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Не удалось открыть ссылку поддержки')),
-          );
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка при открытии ссылки: $e')),
+          SnackBar(content: Text('Не удалось открыть ссылку поддержки')),
         );
       }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка при открытии ссылки: $e')),
+      );
     }
   }
 

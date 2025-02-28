@@ -27,6 +27,7 @@ class _PaymentIframePageState extends State<PaymentIframePage> {
     html.window.onPopState.listen((event) {
       if (html.window.location.href
           .contains('yoomoney.ru/checkout/payments/v2/success')) {
+        // ignore: use_build_context_synchronously
         Navigator.of(context).pop(true);
       }
     });

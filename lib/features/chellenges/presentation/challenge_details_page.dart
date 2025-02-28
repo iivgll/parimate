@@ -315,6 +315,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
 
   Widget _buildConfirmationBlockContent(
       UserChallengeStatisticsSchema statistics, BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

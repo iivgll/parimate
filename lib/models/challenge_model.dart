@@ -11,8 +11,8 @@ class ChallengeModel with _$ChallengeModel {
     required int id,
     required String name,
     @JsonKey(name: 'participation_type') required String participationType,
-    @Default("") String icon,
-    @Default("") String category,
+    required String icon,
+    required String category,
     @JsonKey(name: 'confirmation_type') required String confirmationType,
     @JsonKey(name: 'start_date') required String startDate,
     @JsonKey(name: 'end_date') required String endDate,
@@ -24,14 +24,13 @@ class ChallengeModel with _$ChallengeModel {
     required int price,
     required String currency,
     @JsonKey(name: 'confirmation_description')
-    @Default("")
-    String confirmationDescription,
-    @Default("") String status,
+    required String confirmationDescription,
+    required String status,
     @JsonKey(name: 'max_participants') required int maxParticipants,
-    @JsonKey(name: 'confirm_until') @Default("") String confirmUntil,
+    @JsonKey(name: 'confirm_until') required String confirmUntil,
     @JsonKey(name: 'created_at') required String createdAt,
     required Chat chat,
-    @Default("") String link,
+    required String link,
     @JsonKey(name: 'admin_chat') Chat? adminChat,
   }) = _ChallengeModel;
 
@@ -46,7 +45,7 @@ class Author with _$Author {
   const factory Author({
     required int id,
     required String username,
-    required String tgId,
+    @JsonKey(name: 'tg_id') required String tgId,
     required String name,
     required int coins,
     String? photo,

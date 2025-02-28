@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'confirmation.freezed.dart';
