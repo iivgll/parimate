@@ -74,10 +74,10 @@ class TelegramService {
         photoUrl = user['photo_url'] ??
             'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.svg';
       } else {
-        id = '4455';
+        id = '44551';
         firstName = 'Ivan';
         lastName = 'Test';
-        username = 'iivgll55';
+        username = 'iivgll551';
         languageCode = 'ru';
         photoUrl =
             'https://t.me/i/userpic/320/AuC2ESWo7RRi53GbvgI8hyj17TL0jSCl4YT4M9Hnt_4.png';
@@ -101,7 +101,7 @@ class TelegramService {
       }
 
       AppLogger.log(
-          'Init User Data: id ${id}, firstName ${firstName}, lastName ${lastName}, username ${username}, languageCode ${languageCode}, photoUrl ${photoUrl}');
+          'Init User Data: id $id, firstName $firstName, lastName $lastName, username $username, languageCode $languageCode, photoUrl $photoUrl');
       // Получаем платформу
       final platform = _webApp['platform'];
       if (platform != null) {

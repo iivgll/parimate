@@ -13,9 +13,9 @@ import '../../../models/challenge_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/challenge_statistics.dart';
 import '../../../features/chellenges/presentation/confirmation_upload_page.dart';
-import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
+import '../../../common/widgets/insufficient_coins_dialog.dart';
 
 import '../../../repositories/participation_repository.dart';
 
@@ -660,13 +660,26 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                              Text('Ошибка при присоединении к челленджу: $e'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+                      if (e is DioException && e.response?.statusCode == 418) {
+                        // Получаем сообщение об ошибке из ответа сервера
+                        final errorMessage = e.response?.data['message'] ??
+                            'На балансе недостаточно монеток для регистрации на челлендж';
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => InsufficientCoinsDialog(
+                            message: errorMessage,
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Ошибка при присоединении к челленджу: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     }
                   }
                 },
@@ -779,51 +792,20 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    if (e is InsufficientCoinsException) {
+                    if (e is InsufficientCoinsException ||
+                        (e is DioException && e.response?.statusCode == 418)) {
+                      // Получаем сообщение об ошибке из ответа сервера
+                      String errorMessage =
+                          'У вас недостаточно монет для возврата в челлендж.';
+                      if (e is DioException && e.response?.data != null) {
+                        errorMessage =
+                            e.response?.data['message'] ?? errorMessage;
+                      }
+
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: AppColors.blackMin,
-                          title: const Text(
-                            'Недостаточно монет',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          content: const Text(
-                            'У вас недостаточно монет для возврата в челлендж.\n\nПополните баланс, чтобы продолжить.',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                'Закрыть',
-                                style: TextStyle(
-                                  color: AppColors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                context.go('/coins');
-                              },
-                              child: const Text(
-                                'Пополнить баланс',
-                                style: TextStyle(
-                                  color: AppColors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+                        builder: (context) => InsufficientCoinsDialog(
+                          message: errorMessage,
                         ),
                       );
                     } else {

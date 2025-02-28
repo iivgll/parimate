@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/widgets/payment_iframe_page.dart';
 import '../../../common/utils/colors.dart';
 import '../../../app/repository_providers.dart';
+import '../../../common/widgets/insufficient_coins_dialog.dart';
 import '../logic/challenges_notifier.dart';
 import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
@@ -209,48 +210,8 @@ class ChallengePreviewPage extends ConsumerWidget {
             'На балансе недостаточно монеток для создания челленджа')) {
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: AppColors.blackMin,
-              title: const Text(
-                'Недостаточно монет',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              content: const Text(
-                'У вас недостаточно монет для создания челленджа.\n\nПополните баланс, чтобы продолжить.',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 16,
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Закрыть',
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    context.go('/coins');
-                  },
-                  child: const Text(
-                    'Пополнить баланс',
-                    style: TextStyle(
-                      color: AppColors.orange,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+            builder: (context) => InsufficientCoinsDialog(
+              message: errorText,
             ),
           );
         } else {
