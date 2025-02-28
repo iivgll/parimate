@@ -18,6 +18,7 @@ import '../../../common/widgets/main_appbar_widget.dart';
 import '../../../common/widgets/insufficient_coins_dialog.dart';
 
 import '../../../repositories/participation_repository.dart';
+import '../../../services/telegram_service.dart';
 
 final userActiveStateProvider = StateProvider.autoDispose<bool>((ref) => true);
 
@@ -101,6 +102,11 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           final (statistics, userStatistics) = snapshot.data ?? (null, null);
           final bool isUserParticipant = userStatistics != null;
 
+          // Проверяем, есть ли пользователь в списке участников
+          final bool isUserInStatistics = statistics != null &&
+              statistics.participants
+                  .any((p) => p.name == TelegramService.instance.firstName);
+
           return SingleChildScrollView(
             padding: const EdgeInsets.only(
               left: 24,
@@ -117,8 +123,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 const SizedBox(height: 24),
                 _buildRulesBlock(),
                 const SizedBox(height: 24),
-                if (isUserParticipant)
-                  _buildConfirmationBlockContent(userStatistics, context)
+                if (isUserInStatistics)
+                  _buildConfirmationBlockContent(userStatistics!, context)
                 else
                   _buildJoinChallengeBlock(context),
                 const SizedBox(height: 24),
@@ -127,7 +133,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 else
                   _buildParticipantsPlaceholder(),
                 const SizedBox(height: 32),
-                if (isUserParticipant) _buildExitButton(context),
+                if (isUserParticipant && isUserInStatistics)
+                  _buildExitButton(context),
               ],
             ),
           );
@@ -414,8 +421,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                     ],
                   ),
                 ),
-                if (!widget.challenge.isArchived &&
-                    (widget.challenge.status == 'REGISTERED')) ...[
+                if (widget.challenge.status == 'IN_PROGRESS') ...[
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
@@ -445,7 +451,47 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                       ),
                     ),
                   ),
-                ],
+                ] else if (widget.challenge.status == 'REGISTERED') ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.blackMin,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Челлендж еще не начался',
+                          style: TextStyle(
+                            color: AppColors.orange,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Начало: ${DateFormat('dd.MM.yyyy').format(DateTime.parse(widget.challenge.startDate))}',
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Окончание: ${DateFormat('dd.MM.yyyy').format(DateTime.parse(widget.challenge.endDate))}',
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]
               ],
             );
           },
@@ -633,72 +679,93 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Вы еще не участвуете в этом челлендже',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              _buildConfirmationTypeInfo(),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await ref
-                        .read(challengesNotifierProvider.notifier)
-                        .joinChallenge(widget.challenge.id, context);
-
-                    if (mounted) {
-                      // Обновляем страницу после успешного присоединения
-                      setState(() {});
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      if (e is DioException && e.response?.statusCode == 418) {
-                        // Получаем сообщение об ошибке из ответа сервера
-                        final errorMessage = e.response?.data['message'] ??
-                            'На балансе недостаточно монеток для регистрации на челлендж';
-
-                        showDialog(
-                          context: context,
-                          builder: (context) => InsufficientCoinsDialog(
-                            message: errorMessage,
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Ошибка при присоединении к челленджу: $e'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.orange,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Присоединиться',
+              const Center(
+                child: Text(
+                  'Вы еще не участвуете в этом челлендже',
                   style: TextStyle(
                     color: AppColors.white,
-                    fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Center(child: _buildConfirmationTypeInfo()),
+              const SizedBox(height: 12),
+              Text(
+                'Начало: ${DateFormat('dd.MM.yyyy').format(DateTime.parse(widget.challenge.startDate))}',
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Окончание: ${DateFormat('dd.MM.yyyy').format(DateTime.parse(widget.challenge.endDate))}',
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await ref
+                          .read(challengesNotifierProvider.notifier)
+                          .joinChallenge(widget.challenge.id, context);
+
+                      if (mounted) {
+                        // Обновляем страницу после успешного присоединения
+                        setState(() {});
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        if (e is DioException &&
+                            e.response?.statusCode == 418) {
+                          // Получаем сообщение об ошибке из ответа сервера
+                          final errorMessage = e.response?.data['message'] ??
+                              'На балансе недостаточно монеток для регистрации на челлендж';
+
+                          showDialog(
+                            context: context,
+                            builder: (context) => InsufficientCoinsDialog(
+                              message: errorMessage,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Ошибка при присоединении к челленджу: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.orange,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Присоединиться',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -760,15 +827,30 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
               child: CircularProgressIndicator(color: AppColors.orange));
         }
 
-        final statistics = snapshot.data;
-        final currentUser = statistics?.participants.firstWhere(
-          (p) => p.name == "Ivan",
+        if (!snapshot.hasData) {
+          return const SizedBox
+              .shrink(); // Не показываем кнопку, если нет данных
+        }
+
+        final statistics = snapshot.data!;
+
+        // Проверяем, есть ли пользователь в списке участников
+        final userInStatistics = statistics.participants
+            .any((p) => p.name == TelegramService.instance.firstName);
+
+        // Если пользователя нет в списке, не показываем кнопку
+        if (!userInStatistics) {
+          return const SizedBox.shrink();
+        }
+
+        final currentUser = statistics.participants.firstWhere(
+          (p) => p.name == TelegramService.instance.firstName,
           orElse: () =>
               const UserStatistics(name: "", active: true, approved: 0),
         );
 
         // Используем локальное состояние, если оно установлено, иначе берем из API
-        final isUserInactive = _isUserInactive ?? currentUser?.active == false;
+        final isUserInactive = _isUserInactive ?? !currentUser.active;
 
         return SizedBox(
           width: double.infinity,

@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:parimate/repositories/user_repository.dart';
 import '../models/challenge/challenge.dart';
-import '../models/challenge/challenge_creation.dart';
 import '../models/challenge_statistics.dart';
 import '../models/challenge_action_price.dart';
 import '../models/challenge_model.dart';
@@ -41,19 +40,6 @@ class ChallengeRepository {
           e.response?.data['message'] != null) {
         throw Exception(e.response?.data['message']);
       }
-      throw _handleDioError(e);
-    }
-  }
-
-  Future<Challenge> createChallengeFromSchema(
-      ChallengeCreationSchema challenge) async {
-    try {
-      final response = await _dio.post(
-        '/api/v2/challenge',
-        data: challenge.toJson(),
-      );
-      return Challenge.fromJson(response.data);
-    } on DioException catch (e) {
       throw _handleDioError(e);
     }
   }

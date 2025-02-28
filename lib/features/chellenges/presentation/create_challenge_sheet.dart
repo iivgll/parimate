@@ -6,6 +6,7 @@ import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/chellenges/logic/challenge_type.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:parimate/services/telegram_service.dart';
 import 'widgets/icon_picker_sheet.dart';
 import 'widgets/category_picker_sheet.dart';
 import 'package:go_router/go_router.dart';
@@ -499,7 +500,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
 
     final DateTimeRange? dateRange = await showDateRangePicker(
       context: context,
-      firstDate: firstDate, // Устанавливаем минимальную дату как завтра
+      firstDate: firstDate,
+      // Устанавливаем минимальную дату как завтра
       lastDate: DateTime.now().add(const Duration(days: 365)),
       initialDateRange: DateTimeRange(
         start: startDate ?? firstDate,
@@ -928,7 +930,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       'times_per_week': timesPerWeek,
       'confirmation_days': confirmationDays,
       'confirmation_description': descriptionController.text,
-      'author_tg_id': '44',
+      'author_tg_id': TelegramService.instance.id,
       'price': selectedBet,
       'currency': 'RUB',
       'confirm_until': formattedTime,
@@ -1057,12 +1059,11 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildInputSection([
-                    _buildTextField(
-                      'Название',
-                      controller: nameController,
-                      hint: 'Введите название челленджа',
-                      isRequired: true,
-                    ),
+                    _buildTextField('Название',
+                        controller: nameController,
+                        hint: 'Введите название челленджа',
+                        isRequired: true,
+                        customTitle: 'Введите название челленджа'),
                     _buildSelectField(
                       'Иконка',
                       selectedIcon.isEmpty ? 'Выбрать' : '',
@@ -1307,6 +1308,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     String? value,
     bool isRequired = false,
     VoidCallback? onTap,
+    String? customTitle,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1367,7 +1369,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
               controller: controller,
               style: const TextStyle(color: AppColors.white),
               decoration: InputDecoration(
-                hintText: _getHintText(),
+                hintText: customTitle ?? _getHintText(),
                 hintStyle:
                     TextStyle(color: AppColors.grey.withValues(alpha: 0.5)),
                 border: InputBorder.none,
