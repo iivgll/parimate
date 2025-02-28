@@ -41,6 +41,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     'Отправлять фото',
     'Отправлять видео',
     'Отправлять текст',
+    'Отправлять геолокацию',
   ];
 
   final List<String> regularityOptions = [
@@ -921,6 +922,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         return 'Что нужно снять на видео';
       case 'Отправлять текст':
         return 'Что нужно написать';
+      case 'Отправлять геолокацию':
+        return 'Куда нужно прийти';
       default:
         return '';
     }
@@ -966,6 +969,9 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         break;
       case 'Отправлять видео':
         confirmationType = 'VIDEO';
+        break;
+      case 'Отправлять геолокацию':
+        confirmationType = 'GEO';
         break;
       case 'Отправлять фото':
       default:

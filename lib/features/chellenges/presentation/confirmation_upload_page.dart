@@ -144,6 +144,74 @@ class _ConfirmationUploadPageState
       );
     }
 
+    if (widget.challenge.confirmationType == 'GEO') {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.white),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.location_on,
+              color: AppColors.orange,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Отправить текущую геолокацию',
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Нажмите кнопку "Отправить на проверку", чтобы отправить вашу текущую геолокацию',
+              style: TextStyle(
+                color: AppColors.grey,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.blackMin,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.orange),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: AppColors.orange,
+                    size: 20,
+                  ),
+                  SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      'Убедитесь, что вы находитесь в нужном месте',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       children: [
         if (widget.challenge.confirmationType == 'VIDEO')
@@ -469,7 +537,9 @@ class _ConfirmationUploadPageState
   Future<void> _handleUpload() async {
     if (_isLoading) return;
 
-    if (widget.challenge.confirmationType != 'TEXT' && _selectedFile == null) {
+    if (widget.challenge.confirmationType != 'TEXT' &&
+        widget.challenge.confirmationType != 'GEO' &&
+        _selectedFile == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Пожалуйста, выберите файл')),
@@ -494,6 +564,10 @@ class _ConfirmationUploadPageState
 
       if (widget.challenge.confirmationType == 'TEXT') {
         value = _textController.text.trim();
+      } else if (widget.challenge.confirmationType == 'GEO') {
+        // Здесь будет логика получения геолокации
+        // Для примера используем фиксированные координаты
+        value = '55.7558,37.6173'; // Москва, Красная площадь
       } else {
         try {
           value = await ref.read(fileRepositoryProvider).uploadFile(

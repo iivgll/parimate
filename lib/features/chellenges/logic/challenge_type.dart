@@ -15,7 +15,8 @@ enum ChallengeType {
 enum ConfirmationType {
   text('TEXT'),
   photo('PHOTO'),
-  video('VIDEO');
+  video('VIDEO'),
+  geo('GEO');
 
   final String value;
   const ConfirmationType(this.value);

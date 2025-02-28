@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:parimate/common/utils/extensions.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../common/utils/colors.dart';
 import '../../../../models/chat/chat.dart';
 
 class ChatItemWidget extends StatelessWidget {
   final Chat chat;
-  static const String _defaultImageUrl =
-      'https://upload.wikimedia.org/wikipedia/commons/c/c3/NGC_4414_%28NASA-med%29.jpg';
 
   const ChatItemWidget({super.key, required this.chat});
 
@@ -25,7 +22,6 @@ class ChatItemWidget extends StatelessWidget {
   }
 
   Widget _buildChatImage() {
-    print('asdfdafadf ${chat.photo}');
     return SvgPicture.asset(
       'assets/icons/${chat.photo ?? 'alien'}.svg',
       width: 50,

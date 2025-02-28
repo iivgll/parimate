@@ -42,7 +42,7 @@ void main() async {
   TelegramService.instance.ready();
 
   TelegramService.instance.getLaunchInfo();
-  talker.log("Version 1");
+  talker.log("Version prod v.1");
   runApp(
     ProviderScope(
       overrides: [

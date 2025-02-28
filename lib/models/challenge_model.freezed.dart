@@ -757,7 +757,7 @@ Author _$AuthorFromJson(Map<String, dynamic> json) {
 mixin _$Author {
   int get id => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
-  String get tg_id => throw _privateConstructorUsedError;
+  String get tgId => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get coins => throw _privateConstructorUsedError;
   String? get photo => throw _privateConstructorUsedError;
@@ -779,7 +779,7 @@ abstract class $AuthorCopyWith<$Res> {
   $Res call(
       {int id,
       String username,
-      String tg_id,
+      String tgId,
       String name,
       int coins,
       String? photo});
@@ -802,7 +802,7 @@ class _$AuthorCopyWithImpl<$Res, $Val extends Author>
   $Res call({
     Object? id = null,
     Object? username = null,
-    Object? tg_id = null,
+    Object? tgId = null,
     Object? name = null,
     Object? coins = null,
     Object? photo = freezed,
@@ -816,9 +816,9 @@ class _$AuthorCopyWithImpl<$Res, $Val extends Author>
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
-      tg_id: null == tg_id
-          ? _value.tg_id
-          : tg_id // ignore: cast_nullable_to_non_nullable
+      tgId: null == tgId
+          ? _value.tgId
+          : tgId // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -846,7 +846,7 @@ abstract class _$$AuthorImplCopyWith<$Res> implements $AuthorCopyWith<$Res> {
   $Res call(
       {int id,
       String username,
-      String tg_id,
+      String tgId,
       String name,
       int coins,
       String? photo});
@@ -867,7 +867,7 @@ class __$$AuthorImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? username = null,
-    Object? tg_id = null,
+    Object? tgId = null,
     Object? name = null,
     Object? coins = null,
     Object? photo = freezed,
@@ -881,9 +881,9 @@ class __$$AuthorImplCopyWithImpl<$Res>
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
-      tg_id: null == tg_id
-          ? _value.tg_id
-          : tg_id // ignore: cast_nullable_to_non_nullable
+      tgId: null == tgId
+          ? _value.tgId
+          : tgId // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -907,7 +907,7 @@ class _$AuthorImpl implements _Author {
   const _$AuthorImpl(
       {required this.id,
       required this.username,
-      required this.tg_id,
+      required this.tgId,
       required this.name,
       required this.coins,
       this.photo});
@@ -920,7 +920,7 @@ class _$AuthorImpl implements _Author {
   @override
   final String username;
   @override
-  final String tg_id;
+  final String tgId;
   @override
   final String name;
   @override
@@ -930,7 +930,7 @@ class _$AuthorImpl implements _Author {
 
   @override
   String toString() {
-    return 'Author(id: $id, username: $username, tg_id: $tg_id, name: $name, coins: $coins, photo: $photo)';
+    return 'Author(id: $id, username: $username, tgId: $tgId, name: $name, coins: $coins, photo: $photo)';
   }
 
   @override
@@ -941,7 +941,7 @@ class _$AuthorImpl implements _Author {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.username, username) ||
                 other.username == username) &&
-            (identical(other.tg_id, tg_id) || other.tg_id == tg_id) &&
+            (identical(other.tgId, tgId) || other.tgId == tgId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.coins, coins) || other.coins == coins) &&
             (identical(other.photo, photo) || other.photo == photo));
@@ -950,7 +950,7 @@ class _$AuthorImpl implements _Author {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, username, tg_id, name, coins, photo);
+      Object.hash(runtimeType, id, username, tgId, name, coins, photo);
 
   /// Create a copy of Author
   /// with the given fields replaced by the non-null parameter values.
@@ -972,7 +972,7 @@ abstract class _Author implements Author {
   const factory _Author(
       {required final int id,
       required final String username,
-      required final String tg_id,
+      required final String tgId,
       required final String name,
       required final int coins,
       final String? photo}) = _$AuthorImpl;
@@ -984,7 +984,7 @@ abstract class _Author implements Author {
   @override
   String get username;
   @override
-  String get tg_id;
+  String get tgId;
   @override
   String get name;
   @override

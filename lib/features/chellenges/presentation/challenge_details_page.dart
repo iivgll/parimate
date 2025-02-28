@@ -315,29 +315,6 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
 
   Widget _buildConfirmationBlockContent(
       UserChallengeStatisticsSchema statistics, BuildContext context) {
-    final confirmationType = fromString(widget.challenge.confirmationType);
-    String confirmationTypeText;
-    IconData confirmationIcon;
-
-    switch (confirmationType) {
-      case ConfirmationType.photo:
-        confirmationTypeText = 'ФОТО';
-        confirmationIcon = Icons.photo_camera;
-        break;
-      case ConfirmationType.video:
-        confirmationTypeText = 'ВИДЕО';
-        confirmationIcon = Icons.videocam;
-        break;
-      case ConfirmationType.text:
-        confirmationTypeText = 'ТЕКСТ';
-        confirmationIcon = Icons.text_fields;
-        break;
-      case ConfirmationType.geo:
-        confirmationTypeText = 'ГЕО';
-        confirmationIcon = Icons.location_on;
-        break;
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1089,7 +1066,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
       decoration: BoxDecoration(
         color: AppColors.black,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+        border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

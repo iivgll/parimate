@@ -243,8 +243,9 @@ class ChallengesPage extends ConsumerWidget {
                           label: const Text('Все'),
                           selected: selectedCategory == null,
                           onSelected: (_) {
-                            ref.read(selectedCategoryProvider.notifier).state =
-                                null;
+                            ref
+                                .read(selectedCategoryProvider.notifier)
+                                .setCategory(null);
                           },
                           backgroundColor: AppColors.black,
                           selectedColor: AppColors.orange,
@@ -267,7 +268,7 @@ class ChallengesPage extends ConsumerWidget {
                               onSelected: (_) {
                                 ref
                                     .read(selectedCategoryProvider.notifier)
-                                    .state = category;
+                                    .setCategory(category);
                               },
                               backgroundColor: AppColors.black,
                               selectedColor: AppColors.orange,

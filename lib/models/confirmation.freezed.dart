@@ -190,18 +190,14 @@ ConfirmationSchemaInput _$ConfirmationSchemaInputFromJson(
 /// @nodoc
 mixin _$ConfirmationSchemaInput {
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(nullable: true)
   bool? get approved => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(nullable: true)
   String? get approvedAt => throw _privateConstructorUsedError;
   ConfirmationData get data => throw _privateConstructorUsedError;
-  @JsonKey(nullable: true)
   String? get rejectReason => throw _privateConstructorUsedError;
   bool get share => throw _privateConstructorUsedError;
   String get userTgId => throw _privateConstructorUsedError;
   int get challengeId => throw _privateConstructorUsedError;
-  @JsonKey(nullable: true)
   String? get url => throw _privateConstructorUsedError;
 
   /// Serializes this ConfirmationSchemaInput to a JSON map.
@@ -222,15 +218,15 @@ abstract class $ConfirmationSchemaInputCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      @JsonKey(nullable: true) bool? approved,
+      bool? approved,
       String createdAt,
-      @JsonKey(nullable: true) String? approvedAt,
+      String? approvedAt,
       ConfirmationData data,
-      @JsonKey(nullable: true) String? rejectReason,
+      String? rejectReason,
       bool share,
       String userTgId,
       int challengeId,
-      @JsonKey(nullable: true) String? url});
+      String? url});
 
   $ConfirmationDataCopyWith<$Res> get data;
 }
@@ -328,15 +324,15 @@ abstract class _$$ConfirmationSchemaInputImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      @JsonKey(nullable: true) bool? approved,
+      bool? approved,
       String createdAt,
-      @JsonKey(nullable: true) String? approvedAt,
+      String? approvedAt,
       ConfirmationData data,
-      @JsonKey(nullable: true) String? rejectReason,
+      String? rejectReason,
       bool share,
       String userTgId,
       int challengeId,
-      @JsonKey(nullable: true) String? url});
+      String? url});
 
   @override
   $ConfirmationDataCopyWith<$Res> get data;
@@ -418,15 +414,15 @@ class __$$ConfirmationSchemaInputImplCopyWithImpl<$Res>
 class _$ConfirmationSchemaInputImpl implements _ConfirmationSchemaInput {
   const _$ConfirmationSchemaInputImpl(
       {required this.id,
-      @JsonKey(nullable: true) this.approved,
+      this.approved,
       required this.createdAt,
-      @JsonKey(nullable: true) this.approvedAt,
+      this.approvedAt,
       required this.data,
-      @JsonKey(nullable: true) this.rejectReason,
+      this.rejectReason,
       required this.share,
       required this.userTgId,
       required this.challengeId,
-      @JsonKey(nullable: true) this.url});
+      this.url});
 
   factory _$ConfirmationSchemaInputImpl.fromJson(Map<String, dynamic> json) =>
       _$$ConfirmationSchemaInputImplFromJson(json);
@@ -434,17 +430,14 @@ class _$ConfirmationSchemaInputImpl implements _ConfirmationSchemaInput {
   @override
   final int id;
   @override
-  @JsonKey(nullable: true)
   final bool? approved;
   @override
   final String createdAt;
   @override
-  @JsonKey(nullable: true)
   final String? approvedAt;
   @override
   final ConfirmationData data;
   @override
-  @JsonKey(nullable: true)
   final String? rejectReason;
   @override
   final bool share;
@@ -453,7 +446,6 @@ class _$ConfirmationSchemaInputImpl implements _ConfirmationSchemaInput {
   @override
   final int challengeId;
   @override
-  @JsonKey(nullable: true)
   final String? url;
 
   @override
@@ -508,17 +500,16 @@ class _$ConfirmationSchemaInputImpl implements _ConfirmationSchemaInput {
 
 abstract class _ConfirmationSchemaInput implements ConfirmationSchemaInput {
   const factory _ConfirmationSchemaInput(
-          {required final int id,
-          @JsonKey(nullable: true) final bool? approved,
-          required final String createdAt,
-          @JsonKey(nullable: true) final String? approvedAt,
-          required final ConfirmationData data,
-          @JsonKey(nullable: true) final String? rejectReason,
-          required final bool share,
-          required final String userTgId,
-          required final int challengeId,
-          @JsonKey(nullable: true) final String? url}) =
-      _$ConfirmationSchemaInputImpl;
+      {required final int id,
+      final bool? approved,
+      required final String createdAt,
+      final String? approvedAt,
+      required final ConfirmationData data,
+      final String? rejectReason,
+      required final bool share,
+      required final String userTgId,
+      required final int challengeId,
+      final String? url}) = _$ConfirmationSchemaInputImpl;
 
   factory _ConfirmationSchemaInput.fromJson(Map<String, dynamic> json) =
       _$ConfirmationSchemaInputImpl.fromJson;
@@ -526,17 +517,14 @@ abstract class _ConfirmationSchemaInput implements ConfirmationSchemaInput {
   @override
   int get id;
   @override
-  @JsonKey(nullable: true)
   bool? get approved;
   @override
   String get createdAt;
   @override
-  @JsonKey(nullable: true)
   String? get approvedAt;
   @override
   ConfirmationData get data;
   @override
-  @JsonKey(nullable: true)
   String? get rejectReason;
   @override
   bool get share;
@@ -545,7 +533,6 @@ abstract class _ConfirmationSchemaInput implements ConfirmationSchemaInput {
   @override
   int get challengeId;
   @override
-  @JsonKey(nullable: true)
   String? get url;
 
   /// Create a copy of ConfirmationSchemaInput
