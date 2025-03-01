@@ -1042,7 +1042,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     };
   }
 
-  void _createChallenge() {
+  void _createChallenge(BuildContext context) {
     if (_validateForm()) {
       final challengeData = _buildChallengeData();
       context.push('/challenge-preview', extra: {
@@ -1119,7 +1119,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     }
 
     // Определяем текст для кнопки создания челленджа
-    String createButtonText = 'Создать челлендж';
+    String createButtonText = 'Создать челлендж (+1 монета)';
     if (selectedCurrency == 'COINS') {
       createButtonText += ' $selectedBet';
     } else {
@@ -1330,35 +1330,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     ]),
                   ],
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _createChallenge,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          createButtonText,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        SvgPicture.asset(
-                          AppIcons.coin,
-                          colorFilter: AppColors.orange.toColorFilter,
-                          width: 24,
-                          height: 24,
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildCreateButton(context),
                 ],
               ),
             ),
@@ -1585,6 +1557,81 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
           },
           activeColor: AppColors.orange,
         ),
+      ],
+    );
+  }
+
+  Widget _buildCreateButton(BuildContext context) {
+    // Определяем текст кнопки в зависимости от выбранной валюты
+    String createButtonText;
+    bool showCoinIcon = true;
+
+    if (selectedCurrency == 'COINS') {
+      // Для монет показываем общую сумму (ставка + комиссия)
+      int totalCoins = selectedBet + 1; // Ставка + 1 монета комиссии
+      createButtonText = 'Создать челлендж $totalCoins';
+    } else {
+      // Для рублей показываем только комиссию в монетах
+      createButtonText = 'Создать челлендж 1';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            _createChallenge(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.black,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                createButtonText,
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 8),
+              SvgPicture.asset(
+                AppIcons.coin,
+                colorFilter: AppColors.orange.toColorFilter,
+                width: 24,
+                height: 24,
+              ),
+            ],
+          ),
+        ),
+
+        // Показываем пояснение о комиссии
+        const SizedBox(height: 8),
+        if (selectedCurrency == 'COINS')
+          Text(
+            'При создании челленджа с монетами взимается комиссия 1 монета. Указанная вами ставка ($selectedBet монет) идёт в призовой фонд челленджа.',
+            style: const TextStyle(
+              color: AppColors.grey,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          )
+        else
+          Text(
+            'При создании челленджа взимается комиссия 1 монета.',
+            style: const TextStyle(
+              color: AppColors.grey,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          ),
       ],
     );
   }
