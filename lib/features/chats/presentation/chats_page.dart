@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:parimate/services/telegram_service.dart';
 import '../../../common/utils/colors.dart';
 import '../../../common/utils/font_family.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
@@ -18,7 +19,10 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
   void initState() {
     super.initState();
     Future.microtask(
-        () => ref.read(chatsNotifierProvider.notifier).loadChats("44"));
+      () => ref
+          .read(chatsNotifierProvider.notifier)
+          .loadChats(TelegramService.instance.id),
+    );
   }
 
   @override

@@ -535,8 +535,18 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       final durationInDays =
           dateRange.end.difference(dateRange.start).inDays + 1;
 
-      // Проверяем, кратна ли длительность 7 дням
-      if (durationInDays % 7 != 0) {
+      // Проверяем, нужна ли проверка на кратность неделе
+      bool needsWeeklyCheck = false;
+
+      // Проверяем только для TIMES_PER_WEEK и CONCRETE_DAYS
+      if (selectedRegularity == 'Каждую неделю' ||
+          selectedRegularity == '2 раз(а) в неделю' ||
+          selectedRegularity == 'Свой период') {
+        needsWeeklyCheck = true;
+      }
+
+      // Проверяем кратность неделе только если это необходимо
+      if (needsWeeklyCheck && durationInDays % 7 != 0) {
         if (mounted) {
           showDialog(
             context: context,
@@ -573,7 +583,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
           );
         }
       } else {
-        // Если длительность кратна 7, устанавливаем выбранные даты
+        // Если длительность кратна 7 или проверка не требуется, устанавливаем выбранные даты
         setState(() {
           startDate = dateRange.start;
           endDate = dateRange.end;

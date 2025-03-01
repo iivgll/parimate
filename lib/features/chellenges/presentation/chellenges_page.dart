@@ -97,7 +97,7 @@ class ChallengesPage extends ConsumerWidget {
           onPressed: () {
             challengesNotifier.setView(ChallengesView.newChallenges);
           },
-          text: 'Новый',
+          text: 'Новые',
           backgroundColor:
               challengesState.value?.view == ChallengesView.newChallenges
                   ? AppColors.blackMin
