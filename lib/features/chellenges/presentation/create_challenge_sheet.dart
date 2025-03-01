@@ -1236,28 +1236,24 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                             onTap: _showConfirmationTypePicker,
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextField(
-                              controller: descriptionController,
-                              style: const TextStyle(color: AppColors.white),
-                              decoration: InputDecoration(
-                                hintText: selectedConfirmationType ==
-                                        'Отправлять фото'
-                                    ? 'Что должно быть на фото'
-                                    : selectedConfirmationType ==
-                                            'Отправлять видео'
-                                        ? 'Что должно быть на видео'
-                                        : selectedConfirmationType ==
-                                                'Отправлять текст'
-                                            ? 'Что нужно написать'
-                                            : '',
-                                hintStyle: TextStyle(
-                                    color:
-                                        AppColors.grey.withValues(alpha: 0.5)),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                              ),
+                          TextField(
+                            controller: descriptionController,
+                            style: const TextStyle(color: AppColors.white),
+                            decoration: InputDecoration(
+                              hintText:
+                                  selectedConfirmationType == 'Отправлять фото'
+                                      ? 'Что должно быть на фото'
+                                      : selectedConfirmationType ==
+                                              'Отправлять видео'
+                                          ? 'Что должно быть на видео'
+                                          : selectedConfirmationType ==
+                                                  'Отправлять текст'
+                                              ? 'Что нужно написать'
+                                              : '',
+                              hintStyle: TextStyle(
+                                  color: AppColors.grey.withValues(alpha: 0.5)),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ],
@@ -1273,28 +1269,24 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                             onTap: _showConfirmationTypePicker,
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextField(
-                              controller: descriptionController,
-                              style: const TextStyle(color: AppColors.white),
-                              decoration: InputDecoration(
-                                hintText: selectedConfirmationType ==
-                                        'Отправлять фото'
-                                    ? 'Что должно быть на фото'
-                                    : selectedConfirmationType ==
-                                            'Отправлять видео'
-                                        ? 'Что должно быть на видео'
-                                        : selectedConfirmationType ==
-                                                'Отправлять текст'
-                                            ? 'Что нужно написать'
-                                            : '',
-                                hintStyle: TextStyle(
-                                    color:
-                                        AppColors.grey.withValues(alpha: 0.5)),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                              ),
+                          TextField(
+                            controller: descriptionController,
+                            style: const TextStyle(color: AppColors.white),
+                            decoration: InputDecoration(
+                              hintText:
+                                  selectedConfirmationType == 'Отправлять фото'
+                                      ? 'Что должно быть на фото'
+                                      : selectedConfirmationType ==
+                                              'Отправлять видео'
+                                          ? 'Что должно быть на видео'
+                                          : selectedConfirmationType ==
+                                                  'Отправлять текст'
+                                              ? 'Что нужно написать'
+                                              : '',
+                              hintStyle: TextStyle(
+                                  color: AppColors.grey.withValues(alpha: 0.5)),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ],
@@ -1414,7 +1406,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     String? customTitle,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.blackMin,
         borderRadius: BorderRadius.circular(8),
