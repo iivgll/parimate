@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:parimate/app/repository_providers.dart';
 import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
-import 'package:parimate/features/chellenges/state/challenges_state.dart';
+import 'package:parimate/features/chellenges/presentation/widgets/return_challenge_dialog.dart';
 import 'package:parimate/models/enums/confirmation_type.dart';
 import 'package:parimate/models/user_challenge_statistics.dart';
 import '../../../app/app_logger.dart';
@@ -20,8 +19,8 @@ import 'package:dio/dio.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
 import '../../../common/widgets/insufficient_coins_dialog.dart';
 
-import '../../../repositories/participation_repository.dart';
 import '../../../services/telegram_service.dart';
+import '../../../features/chellenges/presentation/widgets/exit_challenge_dialog.dart';
 
 final userActiveStateProvider = StateProvider.autoDispose<bool>((ref) => true);
 
@@ -856,8 +855,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
         }
 
         if (!snapshot.hasData) {
-          return const SizedBox
-              .shrink(); // Не показываем кнопку, если нет данных
+          return const SizedBox.shrink();
         }
 
         final statistics = snapshot.data!;
@@ -885,173 +883,68 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           child: ElevatedButton(
             onPressed: () async {
               if (isUserInactive) {
-                try {
-                  await ref
-                      .read(participationRepositoryProvider)
-                      .returnToChallenge(
-                        challengeId: widget.challenge.id,
-                      );
-
-                  if (mounted) {
-                    setState(() {
-                      _isUserInactive = false; // Немедленно обновляем UI
-                    });
-                    await ref
-                        .read(challengesNotifierProvider.notifier)
-                        .refreshChallenges();
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    if (e is InsufficientCoinsException ||
-                        (e is DioException && e.response?.statusCode == 418)) {
-                      // Получаем сообщение об ошибке из ответа сервера
-                      String errorMessage =
-                          'У вас недостаточно монет для возврата в челлендж.';
-                      if (e is DioException && e.response?.data != null) {
-                        errorMessage =
-                            e.response?.data['message'] ?? errorMessage;
-                      }
-
-                      showDialog(
-                        context: context,
-                        builder: (context) => InsufficientCoinsDialog(
-                          message: errorMessage,
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                              Text('Ошибка при возвращении в челлендж: $e'),
-                        ),
-                      );
-                    }
-                  }
-                }
-              } else {
-                showDialog(
+                // Используем новый диалог возвращения в челлендж
+                final result = await showDialog<bool>(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: AppColors.blackMin,
-                    title: const Text(
-                      'Выход из челленджа',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: const Text(
-                      'Вы точно хотите покинуть челлендж?',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Нет',
-                          style: TextStyle(
-                            color: AppColors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context); // Закрываем диалог
-                          try {
-                            await ref
-                                .read(participationRepositoryProvider)
-                                .leaveChallenge(
-                                  challengeId: widget.challenge.id,
-                                );
-
-                            if (mounted) {
-                              setState(() {
-                                _isUserInactive = true;
-                              });
-                              await ref
-                                  .read(challengesNotifierProvider.notifier)
-                                  .refreshChallenges();
-                              ref
-                                  .read(challengesNotifierProvider.notifier)
-                                  .setView(ChallengesView.mine);
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              String errorMessage =
-                                  'Не удалось покинуть челлендж';
-                              if (e is DioException &&
-                                  e.response?.data != null) {
-                                errorMessage =
-                                    e.response?.data['message'] ?? errorMessage;
-                              }
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppColors.blackMin,
-                                  title: const Text(
-                                    'Ошибка',
-                                    style: TextStyle(
-                                      color: AppColors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  content: Text(
-                                    errorMessage,
-                                    style: const TextStyle(
-                                      color: AppColors.white,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text(
-                                        'OK',
-                                        style: TextStyle(
-                                          color: AppColors.orange,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        child: const Text(
-                          'Да',
-                          style: TextStyle(
-                            color: AppColors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                  builder: (context) => ReturnChallengeDialog(
+                    challengeId: widget.challenge.id,
                   ),
                 );
+
+                // Если пользователь подтвердил возвращение и операция прошла успешно
+                if (result == true && mounted) {
+                  setState(() {
+                    _isUserInactive = false; // Обновляем UI
+                  });
+                }
+              } else {
+                // Используем диалог выхода из челленджа
+                final result = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => ExitChallengeDialog(
+                    challengeId: widget.challenge.id,
+                  ),
+                );
+
+                // Если пользователь вышел из челленджа, обновляем UI
+                if (result == true && mounted) {
+                  setState(() {
+                    _isUserInactive = true;
+                  });
+                }
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  isUserInactive ? AppColors.orange : AppColors.black,
+              backgroundColor: AppColors.black,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text(
-              isUserInactive ? 'Вернуться в челлендж' : 'Выйти из челленджа',
-              style: const TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isUserInactive
+                      ? 'Вернуться в челлендж за 1'
+                      : 'Выйти из челленджа',
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                isUserInactive
+                    ? Row(
+                        children: [
+                          const SizedBox(width: 5),
+                          SvgPicture.asset(
+                            AppIcons.coin,
+                            colorFilter: AppColors.orange.toColorFilter,
+                          ),
+                        ],
+                      )
+                    : const SizedBox()
+              ],
             ),
           ),
         );

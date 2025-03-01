@@ -22,7 +22,6 @@ class ChatItemWidget extends StatelessWidget {
   }
 
   Widget _buildChatImage() {
-    print('asdfdafadf ${chat.photo}');
     return SvgPicture.asset(
       'assets/icons/${chat.photo ?? 'alien'}.svg',
       width: 50,
