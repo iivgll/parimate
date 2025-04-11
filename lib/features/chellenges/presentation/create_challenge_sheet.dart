@@ -1003,6 +1003,15 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         regularityType = 'TIMES_PER_WEEK';
         timesPerWeek = selectedDaysPerWeek;
         break;
+      case 'Свой период':
+        regularityType = 'CONCRETE_DAYS';
+        confirmationDays = [];
+        for (int i = 0; i < selectedDays.length; i++) {
+          if (selectedDays[i]) {
+            confirmationDays.add(i + 1);
+          }
+        }
+        break;
       default:
         regularityType = 'TIMES_PER_DAY';
         timesPerDay = 1;
