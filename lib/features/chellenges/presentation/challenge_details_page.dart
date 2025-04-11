@@ -632,15 +632,6 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.arrow_circle_right_outlined,
-                color: AppColors.white,
-                size: 32,
-              ),
-            ),
           ],
         ),
         Container(
