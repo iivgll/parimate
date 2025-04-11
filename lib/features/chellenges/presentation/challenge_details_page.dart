@@ -47,12 +47,58 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
 
   Widget _buildStatusIcon() {
     if (widget.challenge.isArchived) {
-      return Icon(
-        Icons.verified,
-        color: AppColors.green,
-        size: 30,
+      // Загружаем данные челленджа и проверяем, активен ли пользователь
+      return FutureBuilder<ChallengeStatistics>(
+        future: ref
+            .read(challengesNotifierProvider.notifier)
+            .getChallengeStatistics(widget.challenge.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(
+              color: AppColors.orange,
+              strokeWidth: 2,
+            );
+          }
+
+          if (snapshot.hasData) {
+            final statistics = snapshot.data!;
+            final String userName = TelegramService.instance.firstName;
+
+            // Проверяем, находится ли пользователь в списке и активен ли он
+            final userEntry = statistics.participants.firstWhere(
+              (p) => p.name == userName,
+              orElse: () =>
+                  const UserStatistics(name: "", active: true, approved: 0),
+            );
+
+            // Если пользователь неактивен (проиграл) - показываем красный крестик
+            if (!userEntry.active) {
+              return const Icon(
+                Icons.cancel,
+                color: Colors.red,
+                size: 30,
+              );
+            }
+
+            // Если активен (выиграл) - показываем зеленую галочку
+            return Icon(
+              Icons.verified,
+              color: AppColors.green,
+              size: 30,
+            );
+          }
+
+          // По умолчанию показываем зеленую галочку для архивированных челленджей
+          return Icon(
+            Icons.verified,
+            color: AppColors.green,
+            size: 30,
+          );
+        },
       );
     }
+
+    // Для активных (не архивированных) челленджей показываем значок часов
     return const Icon(
       Icons.schedule,
       color: AppColors.grey,
