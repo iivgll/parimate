@@ -193,10 +193,12 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
 
   Widget _buildChallengeHeader(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.white),
           onPressed: () => Navigator.pop(context),
+          padding: const EdgeInsets.only(top: 0),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -204,8 +206,9 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
+                  Expanded(
                     child: Text(
                       widget.challenge.name,
                       style: TextStyle(
@@ -214,8 +217,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: null,
+                      overflow: TextOverflow.visible,
                     ),
                   ),
                   const SizedBox(width: 10),
