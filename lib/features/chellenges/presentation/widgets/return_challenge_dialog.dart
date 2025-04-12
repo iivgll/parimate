@@ -7,9 +7,10 @@ import 'package:parimate/common/utils/extensions.dart';
 import 'package:parimate/common/utils/icons.dart';
 import 'package:parimate/common/widgets/insufficient_coins_dialog.dart';
 import 'package:parimate/features/chellenges/logic/challenges_notifier.dart';
-import 'package:dio/dio.dart';
+import 'package:parimate/repositories/participation_repository.dart';
+import 'package:go_router/go_router.dart';
 
-class ReturnChallengeDialog extends ConsumerWidget {
+class ReturnChallengeDialog extends ConsumerStatefulWidget {
   final int challengeId;
 
   const ReturnChallengeDialog({
@@ -18,7 +19,15 @@ class ReturnChallengeDialog extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ReturnChallengeDialog> createState() =>
+      _ReturnChallengeDialogState();
+}
+
+class _ReturnChallengeDialogState extends ConsumerState<ReturnChallengeDialog> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: AppColors.blackMin,
       title: Row(
@@ -53,7 +62,7 @@ class ReturnChallengeDialog extends ConsumerWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: _isLoading ? null : () => Navigator.pop(context, false),
           child: const Text(
             'Нет',
             style: TextStyle(
@@ -63,56 +72,115 @@ class ReturnChallengeDialog extends ConsumerWidget {
           ),
         ),
         TextButton(
-          onPressed: () async {
-            // Сначала закрываем диалог
-            Navigator.pop(context, true);
-
-            try {
-              await ref.read(participationRepositoryProvider).returnToChallenge(
-                    challengeId: challengeId,
-                  );
-
-              if (context.mounted) {
-                // Обновляем список челленджей
-                await ref
-                    .read(challengesNotifierProvider.notifier)
-                    .refreshChallenges();
-              }
-            } catch (e) {
-              if (context.mounted) {
-                if (e is DioException && e.response?.statusCode == 418) {
-                  // Получаем сообщение об ошибке из ответа сервера
-                  String errorMessage =
-                      'У вас недостаточно монет для возврата в челлендж.';
-                  if (e.response?.data != null) {
-                    errorMessage = e.response?.data['message'] ?? errorMessage;
-                  }
-
-                  showDialog(
-                    context: context,
-                    builder: (context) => InsufficientCoinsDialog(
-                      message: errorMessage,
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Ошибка при возвращении в челлендж: $e'),
-                    ),
-                  );
-                }
-              }
-            }
-          },
-          child: const Text(
-            'Да',
-            style: TextStyle(
-              color: AppColors.orange,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          onPressed: _isLoading ? null : _handleReturnChallenge,
+          child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.orange),
+                  ),
+                )
+              : const Text(
+                  'Да',
+                  style: TextStyle(
+                    color: AppColors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
         ),
       ],
     );
+  }
+
+  Future<void> _handleReturnChallenge() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await ref.read(participationRepositoryProvider).returnToChallenge(
+            challengeId: widget.challengeId,
+          );
+
+      final challengesNotifier = ref.read(challengesNotifierProvider.notifier);
+      await challengesNotifier.refreshChallenges();
+
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        if (e is ChallengeReturnException) {
+          if (e.message.startsWith("Вернуться в челлендж можно")) {
+            showDialog(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                backgroundColor: AppColors.blackMin,
+                title: const Text(
+                  'Ошибка',
+                  style: TextStyle(
+                      color: AppColors.white, fontWeight: FontWeight.bold),
+                ),
+                content: Text(
+                  e.message,
+                  style: const TextStyle(color: AppColors.white),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                      if (mounted) {
+                        Navigator.pop(context, false);
+                      }
+                    },
+                    child: const Text(
+                      'ОК',
+                      style: TextStyle(
+                          color: AppColors.orange, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            // Показываем диалог о нехватке монет (или другой ошибке 418)
+            // и ждем результат (true, если нажали "Пополнить")
+            final bool? shouldGoToCoins = await showDialog<bool>(
+              context: context,
+              builder: (dialogContext) => InsufficientCoinsDialog(
+                message: e.message,
+              ),
+            );
+
+            // Если нажали "Пополнить баланс" (результат true)
+            if (shouldGoToCoins == true) {
+              // Закрываем основной диалог ReturnChallengeDialog
+              if (mounted) {
+                Navigator.pop(
+                    context, false); // Закрываем ReturnChallengeDialog
+                // Затем переходим на страницу монет
+                context.go('/coins');
+              }
+            }
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Ошибка при возвращении в челлендж: $e'),
+            ),
+          );
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 }

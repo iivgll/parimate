@@ -22,7 +22,7 @@ class Participation with _$Participation {
     required bool archived,
     @JsonKey(name: 'reject_reason') String? rejectReason,
     required bool accepted,
-    @JsonKey(name: 'user_tg_id') required String userTgId,
+    @JsonKey(name: 'user_tg_id') required int userTgId,
     @JsonKey(name: 'challenge_id') required int challengeId,
   }) = _Participation;
 
