@@ -80,14 +80,6 @@ class _ChallengeContainerState extends State<ChallengeContainer> {
                               : TextOverflow.ellipsis,
                         ),
                       ),
-                      if (widget.challenge.name.length > 20)
-                        Icon(
-                          _isNameExpanded
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: AppColors.white,
-                          size: 20,
-                        ),
                     ],
                   ),
                 ),

@@ -400,7 +400,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            if (!widget.challenge.isArchived) ...[
+            if (!widget.challenge.isArchived &&
+                widget.challenge.status == 'IN_PROGRESS') ...[
               const SizedBox(width: 8),
               IconButton(
                 onPressed: () {
@@ -527,7 +528,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                       ),
                     ),
                   ),
-                ] else if (widget.challenge.status == 'REGISTERED') ...[
+                ] else if (widget.challenge.status == 'REGISTERED' ||
+                    widget.challenge.status == 'PENDING') ...[
                   const SizedBox(height: 16),
                   Container(
                     width: double.infinity,
