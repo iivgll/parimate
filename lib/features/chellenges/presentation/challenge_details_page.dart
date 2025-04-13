@@ -946,6 +946,27 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   ),
                 ),
               ),
+              // Add joining cost info here
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Стоимость вступления: 1',
+                    style: TextStyle(
+                      color: AppColors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  SvgPicture.asset(
+                    AppIcons.coin,
+                    colorFilter: AppColors.orange.toColorFilter,
+                    width: 16,
+                    height: 16,
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -1199,8 +1220,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       _launchURL(widget.challenge.chat!.link);
-
-    } ,
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.orange,
                       padding: const EdgeInsets.symmetric(vertical: 12),

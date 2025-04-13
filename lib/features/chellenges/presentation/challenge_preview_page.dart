@@ -119,6 +119,29 @@ class ChallengePreviewPage extends ConsumerWidget {
                 ),
               ),
             ),
+            if (!isCreating)
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Стоимость вступления: 1',
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    SvgPicture.asset(
+                      AppIcons.coin,
+                      colorFilter: AppColors.orange.toColorFilter,
+                      width: 16,
+                      height: 16,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
