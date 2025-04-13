@@ -48,12 +48,11 @@ class ParticipationRepository {
       return ParticipationSchema.fromJson(
           {'participation': response.data, 'confirmation_url': null});
     } on DioException catch (e) {
-      if (e.response?.statusCode == 418 &&
-          e.response?.data['message']
-                  ?.toString()
-                  .contains('недостаточно монеток') ==
-              true) {
-        throw InsufficientCoinsException(e.response?.data['message']);
+      if (e.response?.statusCode == 418) {
+        // Извлекаем сообщение об ошибке из ответа сервера
+        String errorMessage =
+            e.response?.data?['message'] ?? 'Не удалось вернуться в челлендж.';
+        throw ChallengeReturnException(errorMessage);
       }
       throw _handleDioError(e);
     }
@@ -115,4 +114,13 @@ class InsufficientCoinsException implements Exception {
 
   @override
   String toString() => message ?? 'Недостаточно монет';
+}
+
+/// Исключение, возникающее при ошибке возврата в челлендж (обычно код 418).
+class ChallengeReturnException implements Exception {
+  final String message;
+  ChallengeReturnException(this.message);
+
+  @override
+  String toString() => message;
 }

@@ -102,6 +102,12 @@ class SettingsNotifier extends _$SettingsNotifier {
   String getReminderTime(int reminderNumber) {
     final totalMinutes = state.reminderTimes[reminderNumber];
     if (totalMinutes == null) return 'Выбрать';
-    return '$totalMinutes мин';
+
+    if (totalMinutes < 60) {
+      return '$totalMinutes мин';
+    } else {
+      final hours = totalMinutes ~/ 60;
+      return '$hours ч';
+    }
   }
 }

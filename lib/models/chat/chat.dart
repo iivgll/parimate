@@ -9,6 +9,7 @@ class Chat with _$Chat {
     @JsonKey(name: 'id') required String id,
     @JsonKey(name: 'link') required String link,
     @JsonKey(name: 'icon') String? photo,
+    @JsonKey(name: 'challenge_name') String? challengeName,
   }) = _Chat;
 
   factory Chat.fromJson(Map<String, dynamic> json) => _$ChatFromJson(json);

@@ -237,12 +237,13 @@ class ChallengePreviewPage extends ConsumerWidget {
       if (context.mounted) {
         // Проверяем наличие сообщения об ошибке в тексте исключения
         final errorText = e.toString();
-        if (errorText.contains(
-            'На балансе недостаточно монеток для создания челленджа')) {
+        if (errorText.contains('недостаточно монет') ||
+            errorText.contains('недостаточно монеток')) {
           showDialog(
             context: context,
             builder: (context) => InsufficientCoinsDialog(
-              message: errorText,
+              message:
+                  'У вас недостаточно монет для создания челленджа.\n\nПополните баланс, чтобы продолжить.',
             ),
           );
         } else {
@@ -281,6 +282,16 @@ class ChallengePreviewPage extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
+        final errorText = e.toString();
+        if (errorText.contains('недостаточно монет') ||
+            errorText.contains('недостаточно монеток')) {
+          showDialog(
+            context: context,
+            builder: (context) => const InsufficientCoinsDialog(),
+          );
+          return;
+        }
+
         if (e is DioException && e.response?.statusCode == 418) {
           final responseData = e.response?.data;
           if (responseData is Map<String, dynamic> &&
@@ -290,49 +301,7 @@ class ChallengePreviewPage extends ConsumerWidget {
                   .contains('недостаточно монеток')) {
             showDialog(
               context: context,
-              builder: (context) => AlertDialog(
-                backgroundColor: AppColors.blackMin,
-                title: const Text(
-                  'Недостаточно монет',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                content: const Text(
-                  'У вас недостаточно монет для участия в челлендже.\n\nПополните баланс, чтобы продолжить.',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Закрыть',
-                      style: TextStyle(
-                        color: AppColors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      context.go('/coins');
-                    },
-                    child: const Text(
-                      'Пополнить баланс',
-                      style: TextStyle(
-                        color: AppColors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              builder: (context) => const InsufficientCoinsDialog(),
             );
             return;
           }

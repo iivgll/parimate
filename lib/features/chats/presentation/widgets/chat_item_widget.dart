@@ -55,7 +55,7 @@ class ChatItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chat.id,
+                    chat.challengeName ?? chat.link,
                     style: const TextStyle(
                       color: AppColors.white,
                       fontSize: 16,

@@ -35,7 +35,7 @@ class InsufficientCoinsDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, false);
             if (onClose != null) {
               onClose!();
             }
@@ -50,8 +50,7 @@ class InsufficientCoinsDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
-            context.go('/coins');
+            Navigator.pop(context, true);
           },
           child: const Text(
             'Пополнить баланс',

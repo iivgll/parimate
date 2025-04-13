@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../common/utils/colors.dart';
 import '../../../../models/challenge_model.dart';
 
-class ChallengeContainer extends StatelessWidget {
+class ChallengeContainer extends StatefulWidget {
   final ChallengeModel challenge;
   final VoidCallback onArchive;
   final bool isArchived;
@@ -18,6 +18,13 @@ class ChallengeContainer extends StatelessWidget {
     this.isArchived = false,
   });
 
+  @override
+  State<ChallengeContainer> createState() => _ChallengeContainerState();
+}
+
+class _ChallengeContainerState extends State<ChallengeContainer> {
+  bool _isNameExpanded = false;
+
   String _formatDateRange(ChallengeModel challenge) {
     final DateFormat formatter = DateFormat('dd.MM.yy');
     final startDate = formatter.format(DateTime.parse(challenge.startDate));
@@ -25,7 +32,7 @@ class ChallengeContainer extends StatelessWidget {
     final type = challenge.participationType == 'PERSONAL'
         ? 'персональный'
         : 'групповой';
-    final status = isArchived
+    final status = widget.isArchived
         ? (challenge.status == 'WIN' ? ' (выигран)' : ' (проигран)')
         : '';
 
@@ -38,7 +45,7 @@ class ChallengeContainer extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: isArchived
+        color: widget.isArchived
             ? AppColors.black.withValues(alpha: 0.5)
             : AppColors.blackMin,
         borderRadius: BorderRadius.circular(8.0),
@@ -51,17 +58,34 @@ class ChallengeContainer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  challenge.name,
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isNameExpanded = !_isNameExpanded;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.challenge.name,
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: _isNameExpanded ? null : 1,
+                          overflow: _isNameExpanded
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _formatDateRange(challenge),
+                  _formatDateRange(widget.challenge),
                   style: const TextStyle(
                     color: AppColors.white,
                     fontSize: 14,
@@ -77,7 +101,7 @@ class ChallengeContainer extends StatelessWidget {
               size: 35,
             ),
             onPressed: () {
-              context.push('/challenge-details', extra: challenge);
+              context.push('/challenge-details', extra: widget.challenge);
             },
           ),
         ],
@@ -94,14 +118,14 @@ class ChallengeContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(
-        child: challenge.icon.isEmpty
+        child: widget.challenge.icon.isEmpty
             ? const Icon(
                 Icons.extension,
                 color: AppColors.white,
                 size: 32,
               )
             : SvgPicture.asset(
-                'assets/icons/${challenge.icon}.svg',
+                'assets/icons/${widget.challenge.icon}.svg',
                 width: 32,
                 height: 32,
                 colorFilter:

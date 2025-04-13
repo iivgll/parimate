@@ -62,10 +62,31 @@ class SettingsPage extends ConsumerWidget {
                   final selectedMinutes =
                       settings.reminderTimes[reminderNumber];
 
+                  // Создаем список опций для выбора времени
+                  final List<Map<String, dynamic>> timeOptions = [];
+
+                  // Минуты (от 5 до 60)
+                  for (int i = 1; i <= 12; i++) {
+                    final minutes = i * 5;
+                    timeOptions.add({
+                      'value': minutes,
+                      'display': '$minutes мин',
+                    });
+                  }
+
+                  // Часы (от 1 до 24)
+                  for (int i = 1; i <= 24; i++) {
+                    final minutes = i * 60;
+                    timeOptions.add({
+                      'value': minutes,
+                      'display': '$i ч',
+                    });
+                  }
+
                   return ListView.builder(
-                    itemCount: 12,
+                    itemCount: timeOptions.length,
                     itemBuilder: (context, index) {
-                      final minutes = (index + 1) * 5;
+                      final option = timeOptions[index];
                       return Container(
                         decoration: const BoxDecoration(
                           border: Border(
@@ -77,13 +98,13 @@ class SettingsPage extends ConsumerWidget {
                         ),
                         child: ListTile(
                           title: Text(
-                            '$minutes мин',
+                            option['display'],
                             style: const TextStyle(
                               color: AppColors.white,
                               fontSize: 16,
                             ),
                           ),
-                          trailing: selectedMinutes == minutes
+                          trailing: selectedMinutes == option['value']
                               ? const Icon(
                                   Icons.check,
                                   color: AppColors.orange,
@@ -93,7 +114,8 @@ class SettingsPage extends ConsumerWidget {
                           onTap: () {
                             ref
                                 .read(settingsNotifierProvider.notifier)
-                                .setReminderTime(reminderNumber, minutes);
+                                .setReminderTime(
+                                    reminderNumber, option['value']);
                             Navigator.pop(context);
                           },
                         ),

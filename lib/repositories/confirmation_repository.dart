@@ -26,6 +26,11 @@ class ConfirmationRepository {
 
       return response.statusCode == 200;
     } on DioException catch (e) {
+      if (e.response?.statusCode == 418) {
+        final message = e.response?.data?['message'] ??
+            'Не удалось отправить подтверждение.';
+        throw ConfirmationException(message);
+      }
       throw _handleDioError(e);
     }
   }
@@ -78,4 +83,13 @@ class ConfirmationRepository {
     }
     return Exception(error.message ?? 'Произошла ошибка');
   }
+}
+
+/// Исключение, возникающее при ошибке отправки подтверждения (обычно код 418).
+class ConfirmationException implements Exception {
+  final String message;
+  ConfirmationException(this.message);
+
+  @override
+  String toString() => message;
 }

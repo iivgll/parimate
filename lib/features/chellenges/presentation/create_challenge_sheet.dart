@@ -536,8 +536,18 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
       final durationInDays =
           dateRange.end.difference(dateRange.start).inDays + 1;
 
-      // Проверяем, кратна ли длительность 7 дням
-      if (durationInDays % 7 != 0) {
+      // Проверяем, нужна ли проверка на кратность неделе
+      bool needsWeeklyCheck = false;
+
+      // Проверяем только для TIMES_PER_WEEK и CONCRETE_DAYS
+      if (selectedRegularity == 'Каждую неделю' ||
+          selectedRegularity == '2 раз(а) в неделю' ||
+          selectedRegularity == 'Свой период') {
+        needsWeeklyCheck = true;
+      }
+
+      // Проверяем кратность неделе только если это необходимо
+      if (needsWeeklyCheck && durationInDays % 7 != 0) {
         if (mounted) {
           showDialog(
             context: context,
@@ -574,7 +584,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
           );
         }
       } else {
-        // Если длительность кратна 7, устанавливаем выбранные даты
+        // Если длительность кратна 7 или проверка не требуется, устанавливаем выбранные даты
         setState(() {
           startDate = dateRange.start;
           endDate = dateRange.end;
@@ -999,6 +1009,15 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
         regularityType = 'TIMES_PER_WEEK';
         timesPerWeek = selectedDaysPerWeek;
         break;
+      case 'Свой период':
+        regularityType = 'CONCRETE_DAYS';
+        confirmationDays = [];
+        for (int i = 0; i < selectedDays.length; i++) {
+          if (selectedDays[i]) {
+            confirmationDays.add(i + 1);
+          }
+        }
+        break;
       default:
         regularityType = 'TIMES_PER_DAY';
         timesPerDay = 1;
@@ -1038,7 +1057,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     };
   }
 
-  void _createChallenge() {
+  void _createChallenge(BuildContext context) {
     if (_validateForm()) {
       final challengeData = _buildChallengeData();
       context.push('/challenge-preview', extra: {
@@ -1115,7 +1134,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     }
 
     // Определяем текст для кнопки создания челленджа
-    String createButtonText = 'Создать челлендж';
+    String createButtonText = 'Создать челлендж (+1 монета)';
     if (selectedCurrency == 'COINS') {
       createButtonText += ' $selectedBet';
     } else {
@@ -1232,28 +1251,24 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                             onTap: _showConfirmationTypePicker,
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextField(
-                              controller: descriptionController,
-                              style: const TextStyle(color: AppColors.white),
-                              decoration: InputDecoration(
-                                hintText: selectedConfirmationType ==
-                                        'Отправлять фото'
-                                    ? 'Что должно быть на фото'
-                                    : selectedConfirmationType ==
-                                            'Отправлять видео'
-                                        ? 'Что должно быть на видео'
-                                        : selectedConfirmationType ==
-                                                'Отправлять текст'
-                                            ? 'Что нужно написать'
-                                            : '',
-                                hintStyle: TextStyle(
-                                    color:
-                                        AppColors.grey.withValues(alpha: 0.5)),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                              ),
+                          TextField(
+                            controller: descriptionController,
+                            style: const TextStyle(color: AppColors.white),
+                            decoration: InputDecoration(
+                              hintText:
+                                  selectedConfirmationType == 'Отправлять фото'
+                                      ? 'Что должно быть на фото'
+                                      : selectedConfirmationType ==
+                                              'Отправлять видео'
+                                          ? 'Что должно быть на видео'
+                                          : selectedConfirmationType ==
+                                                  'Отправлять текст'
+                                              ? 'Что нужно написать'
+                                              : '',
+                              hintStyle: TextStyle(
+                                  color: AppColors.grey.withValues(alpha: 0.5)),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ],
@@ -1269,28 +1284,24 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                             onTap: _showConfirmationTypePicker,
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextField(
-                              controller: descriptionController,
-                              style: const TextStyle(color: AppColors.white),
-                              decoration: InputDecoration(
-                                hintText: selectedConfirmationType ==
-                                        'Отправлять фото'
-                                    ? 'Что должно быть на фото'
-                                    : selectedConfirmationType ==
-                                            'Отправлять видео'
-                                        ? 'Что должно быть на видео'
-                                        : selectedConfirmationType ==
-                                                'Отправлять текст'
-                                            ? 'Что нужно написать'
-                                            : '',
-                                hintStyle: TextStyle(
-                                    color:
-                                        AppColors.grey.withValues(alpha: 0.5)),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                              ),
+                          TextField(
+                            controller: descriptionController,
+                            style: const TextStyle(color: AppColors.white),
+                            decoration: InputDecoration(
+                              hintText:
+                                  selectedConfirmationType == 'Отправлять фото'
+                                      ? 'Что должно быть на фото'
+                                      : selectedConfirmationType ==
+                                              'Отправлять видео'
+                                          ? 'Что должно быть на видео'
+                                          : selectedConfirmationType ==
+                                                  'Отправлять текст'
+                                              ? 'Что нужно написать'
+                                              : '',
+                              hintStyle: TextStyle(
+                                  color: AppColors.grey.withValues(alpha: 0.5)),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ],
@@ -1326,35 +1337,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     ]),
                   ],
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _createChallenge,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          createButtonText,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        SvgPicture.asset(
-                          AppIcons.coin,
-                          colorFilter: AppColors.orange.toColorFilter,
-                          width: 24,
-                          height: 24,
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildCreateButton(context),
                 ],
               ),
             ),
@@ -1438,7 +1421,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     String? customTitle,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.blackMin,
         borderRadius: BorderRadius.circular(8),
@@ -1581,6 +1563,81 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
           },
           activeColor: AppColors.orange,
         ),
+      ],
+    );
+  }
+
+  Widget _buildCreateButton(BuildContext context) {
+    // Определяем текст кнопки в зависимости от выбранной валюты
+    String createButtonText;
+    bool showCoinIcon = true;
+
+    if (selectedCurrency == 'COINS') {
+      // Для монет показываем общую сумму (ставка + комиссия)
+      int totalCoins = selectedBet + 1; // Ставка + 1 монета комиссии
+      createButtonText = 'Создать челлендж $totalCoins';
+    } else {
+      // Для рублей показываем только комиссию в монетах
+      createButtonText = 'Создать челлендж 1';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            _createChallenge(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.black,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                createButtonText,
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 8),
+              SvgPicture.asset(
+                AppIcons.coin,
+                colorFilter: AppColors.orange.toColorFilter,
+                width: 24,
+                height: 24,
+              ),
+            ],
+          ),
+        ),
+
+        // Показываем пояснение о комиссии
+        const SizedBox(height: 8),
+        if (selectedCurrency == 'COINS')
+          Text(
+            'При создании челленджа с монетами взимается комиссия 1 монета. Указанная вами ставка ($selectedBet монет) идёт в призовой фонд челленджа.',
+            style: const TextStyle(
+              color: AppColors.grey,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          )
+        else
+          Text(
+            'При создании челленджа взимается комиссия 1 монета.',
+            style: const TextStyle(
+              color: AppColors.grey,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          ),
       ],
     );
   }

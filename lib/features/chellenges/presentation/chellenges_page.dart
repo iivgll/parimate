@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/chellenges/logic/selected_category_provider.dart';
 import 'package:parimate/features/chellenges/presentation/widgets/challenge_container_widget.dart';
 import 'package:parimate/features/chellenges/state/challenges_state.dart';
+import 'package:parimate/models/challenge_model.dart';
 
 import '../../../app/metadata_notifier.dart';
 import '../../../app/repository_providers.dart';
@@ -97,7 +98,7 @@ class ChallengesPage extends ConsumerWidget {
           onPressed: () {
             challengesNotifier.setView(ChallengesView.newChallenges);
           },
-          text: 'Новый',
+          text: 'Новые',
           backgroundColor:
               challengesState.value?.view == ChallengesView.newChallenges
                   ? AppColors.blackMin

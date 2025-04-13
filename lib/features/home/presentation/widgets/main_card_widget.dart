@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/common/utils/font_family.dart';
 import 'package:parimate/features/home/logic/user_statistics_notifier.dart';
+import 'package:parimate/services/telegram_service.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,7 +23,7 @@ class _MainCardWidgetState extends ConsumerState<MainCardWidget> {
     Future(() async {
       await ref
           .read(userStatisticsNotifierProvider.notifier)
-          .loadUserStatistics('44');
+          .loadUserStatistics(TelegramService.instance.id);
       await ref.read(challengesNotifierProvider.notifier).refreshChallenges();
     });
   }

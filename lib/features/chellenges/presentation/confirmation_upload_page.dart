@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../app/code_word_notifier.dart';
 import 'dart:io';
+import 'package:parimate/repositories/confirmation_repository.dart';
 
 class ConfirmationUploadPage extends ConsumerStatefulWidget {
   final ChallengeModel challenge;
@@ -604,33 +605,71 @@ class _ConfirmationUploadPageState
         }
       }
 
-      final success =
-          await ref.read(confirmationRepositoryProvider).postConfirmation(
-                challengeId: widget.challenge.id,
-                data: ConfirmationData(
-                  type: widget.challenge.confirmationType,
-                  value: value,
-                ),
-                share: _shareInChat,
-              );
+      try {
+        final success =
+            await ref.read(confirmationRepositoryProvider).postConfirmation(
+                  challengeId: widget.challenge.id,
+                  data: ConfirmationData(
+                    type: widget.challenge.confirmationType,
+                    value: value,
+                  ),
+                  share: _shareInChat,
+                );
 
-      if (mounted) {
-        if (success) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Подтверждение успешно отправлено')),
+        if (mounted) {
+          if (success) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Подтверждение успешно отправлено')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Не удалось отправить подтверждение')),
+            );
+          }
+        }
+      } on ConfirmationException catch (e) {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: AppColors.blackMin,
+              title: const Text(
+                'Ошибка отправки',
+                style: TextStyle(
+                    color: AppColors.white, fontWeight: FontWeight.bold),
+              ),
+              content: Text(
+                e.message,
+                style: const TextStyle(color: AppColors.white),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                        color: AppColors.orange, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           );
-        } else {
+        }
+      } catch (e) {
+        AppLogger.error('Ошибка при отправке подтверждения: $e');
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ошибка при отправке подтверждения')),
+            SnackBar(content: Text('Ошибка при отправке подтверждения: $e')),
           );
         }
       }
     } catch (e) {
-      AppLogger.error('Ошибка при отправке: $e');
+      AppLogger.error('Ошибка при загрузке файла или отправке: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка при отправке: $e')),
+          SnackBar(content: Text('Ошибка при загрузке файла: $e')),
         );
       }
     } finally {
