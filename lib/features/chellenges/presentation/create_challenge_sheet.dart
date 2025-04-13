@@ -1134,11 +1134,8 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     }
 
     // Определяем текст для кнопки создания челленджа
-    String createButtonText = 'Создать челлендж (+1 монета)';
     if (selectedCurrency == 'COINS') {
-      createButtonText += ' $selectedBet';
     } else {
-      createButtonText += ' 1';
     }
 
     return Container(

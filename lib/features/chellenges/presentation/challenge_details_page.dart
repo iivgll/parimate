@@ -423,7 +423,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           ),
           const SizedBox(height: 12),
           _buildRuleRow(
-              'Категория:', widget.challenge.category ?? 'Не указана'),
+              'Категория:', widget.challenge.category),
           const SizedBox(height: 8),
           _buildRuleRow(
             'Тип подтверждения:',
@@ -438,7 +438,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           _buildRuleRow('Периодичность:', _formatRegularity(widget.challenge)),
           const SizedBox(height: 8),
           _buildRuleRow('Загружать до:',
-              '${widget.challenge.confirmUntil ?? '23:59'} по МСК'),
+              '${widget.challenge.confirmUntil} по МСК'),
         ],
       ),
     );
@@ -547,11 +547,11 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
             }
 
             final statistics = snapshot.data!;
-            final totalExpected = statistics.weeklyStats.fold(
+            statistics.weeklyStats.fold(
               0,
               (sum, curr) => sum + curr.expected,
             );
-            final totalApproved = statistics.weeklyStats.fold(
+            statistics.weeklyStats.fold(
               0,
               (sum, curr) => sum + curr.approved,
             );
@@ -1202,38 +1202,28 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                 ),
               ),
               SizedBox(height: 16),
-              if (widget.challenge.chat?.link != null)
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _launchURL(widget.challenge.chat!.link);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.orange,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Перейти в чат',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _launchURL(widget.challenge.chat.link);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.orange,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                )
-              else
-                const Text(
-                  'Ссылка на чат недоступна.',
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
+                  child: const Text(
+                    'Перейти в чат',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+              ),
             ],
           ),
         ),
@@ -1247,11 +1237,10 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
     if (correctedUrl.startsWith('t.me/') &&
         !correctedUrl.startsWith('https://') &&
         !correctedUrl.startsWith('http://')) {
-      correctedUrl = 'https://' + correctedUrl;
+      correctedUrl = 'https://$correctedUrl';
     }
 
     final Uri url = Uri.parse(correctedUrl);
-    print(url);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       // Optionally show an error message if the URL can't be launched
       if (mounted) {
