@@ -1328,6 +1328,19 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     _buildInputSection([
                       _buildSlider('Количество участников', 36),
                       _buildSwitch('Доступ по ссылке', isPublic),
+                      if (selectedType == ChallengeType.group)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            isPublic
+                                ? 'Челлендж станет закрытым для других участников. Присоединиться можно будет только по вашей ссылке.'
+                                : 'Челлендж будет доступен всем пользователям в разделе \'Новые\'.',
+                            style: TextStyle(
+                              color: AppColors.grey,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
                     ]),
                   ],
                   const SizedBox(height: 24),

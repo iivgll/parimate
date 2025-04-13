@@ -32,11 +32,8 @@ class _ChallengeContainerState extends State<ChallengeContainer> {
     final type = challenge.participationType == 'PERSONAL'
         ? 'персональный'
         : 'групповой';
-    final status = widget.isArchived
-        ? (challenge.status == 'WIN' ? ' (выигран)' : ' (проигран)')
-        : '';
 
-    return '$startDate - $endDate ($type)$status';
+    return '$startDate - $endDate ($type)';
   }
 
   @override
@@ -84,12 +81,28 @@ class _ChallengeContainerState extends State<ChallengeContainer> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  _formatDateRange(widget.challenge),
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontSize: 14,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      _formatDateRange(widget.challenge),
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (widget.isArchived) ...[
+                      const SizedBox(width: 8),
+                      Icon(
+                        widget.challenge.status == 'WIN'
+                            ? Icons.verified
+                            : Icons.cancel,
+                        color: widget.challenge.status == 'WIN'
+                            ? AppColors.green
+                            : Colors.red,
+                        size: 16,
+                      ),
+                    ]
+                  ],
                 ),
               ],
             ),
