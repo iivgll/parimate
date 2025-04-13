@@ -119,6 +119,29 @@ class ChallengePreviewPage extends ConsumerWidget {
                 ),
               ),
             ),
+            if (!isCreating)
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Стоимость вступления: 1',
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    SvgPicture.asset(
+                      AppIcons.coin,
+                      colorFilter: AppColors.orange.toColorFilter,
+                      width: 16,
+                      height: 16,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -239,13 +262,18 @@ class ChallengePreviewPage extends ConsumerWidget {
         final errorText = e.toString();
         if (errorText.contains('недостаточно монет') ||
             errorText.contains('недостаточно монеток')) {
-          showDialog(
+          // Show dialog and wait for result
+          final bool? shouldGoToCoins = await showDialog<bool>(
             context: context,
             builder: (context) => InsufficientCoinsDialog(
               message:
                   'У вас недостаточно монет для создания челленджа.\n\nПополните баланс, чтобы продолжить.',
             ),
           );
+          // Navigate if user chose to top up
+          if (shouldGoToCoins == true && context.mounted) {
+            GoRouter.of(context).go('/coins');
+          }
         } else {
           _showErrorDialog(context, 'Произошла ошибка при создании челленджа');
         }
@@ -285,10 +313,15 @@ class ChallengePreviewPage extends ConsumerWidget {
         final errorText = e.toString();
         if (errorText.contains('недостаточно монет') ||
             errorText.contains('недостаточно монеток')) {
-          showDialog(
+          // Show dialog and wait for result
+          final bool? shouldGoToCoins = await showDialog<bool>(
             context: context,
             builder: (context) => const InsufficientCoinsDialog(),
           );
+          // Navigate if user chose to top up
+          if (shouldGoToCoins == true && context.mounted) {
+            GoRouter.of(context).go('/coins');
+          }
           return;
         }
 
@@ -299,10 +332,15 @@ class ChallengePreviewPage extends ConsumerWidget {
               responseData['message']
                   .toString()
                   .contains('недостаточно монеток')) {
-            showDialog(
+            // Show dialog and wait for result
+            final bool? shouldGoToCoins = await showDialog<bool>(
               context: context,
               builder: (context) => const InsufficientCoinsDialog(),
             );
+            // Navigate if user chose to top up
+            if (shouldGoToCoins == true && context.mounted) {
+              GoRouter.of(context).go('/coins');
+            }
             return;
           }
         }

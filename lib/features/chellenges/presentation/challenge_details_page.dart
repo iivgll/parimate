@@ -18,9 +18,11 @@ import '../../../features/chellenges/presentation/confirmation_upload_page.dart'
 import 'package:dio/dio.dart';
 import '../../../common/widgets/main_appbar_widget.dart';
 import '../../../common/widgets/insufficient_coins_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../services/telegram_service.dart';
 import '../../../features/chellenges/presentation/widgets/exit_challenge_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 final userActiveStateProvider = StateProvider.autoDispose<bool>((ref) => true);
 
@@ -43,6 +45,54 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
         formatter.format(DateTime.parse(widget.challenge.startDate));
     final endDate = formatter.format(DateTime.parse(widget.challenge.endDate));
     return '$startDate - $endDate';
+  }
+
+  // Helper function to format regularity
+  String _formatRegularity(ChallengeModel challenge) {
+    switch (challenge.regularityType) {
+      case 'ONCE':
+        return 'Единоразово';
+      case 'TIMES_PER_DAY':
+        return 'Каждый день';
+      case 'TIMES_PER_WEEK':
+        final times = challenge.timesPerWeek;
+        if (times == null || times <= 0) return 'Каждую неделю'; // Default
+        return times == 1 ? 'Каждую неделю' : '$times раз(а) в неделю';
+      case 'CONCRETE_DAYS':
+        if (challenge.confirmationDays == null ||
+            challenge.confirmationDays!.isEmpty) {
+          return 'Не указаны дни';
+        }
+        final days = challenge.confirmationDays!
+            .map((day) => _getDayName(day))
+            .join(', ');
+        return 'В $days';
+      default:
+        return 'Каждый день';
+    }
+  }
+
+  String _getDayName(int day) {
+    // Assuming 1=Monday, 7=Sunday
+    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    if (day < 1 || day > 7) return '';
+    return days[day - 1];
+  }
+
+  // Helper function to format confirmation type friendly name
+  String _formatConfirmationTypeFriendly(String confirmationType) {
+    switch (confirmationType) {
+      case 'PHOTO':
+        return 'Фото';
+      case 'VIDEO':
+        return 'Видео';
+      case 'TEXT':
+        return 'Текст';
+      case 'GEO':
+        return 'Геолокация';
+      default:
+        return confirmationType; // Fallback
+    }
   }
 
   Widget _buildStatusIcon() {
@@ -98,12 +148,30 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
       );
     }
 
-    // Для активных (не архивированных) челленджей показываем значок часов
-    return const Icon(
-      Icons.schedule,
-      color: AppColors.grey,
-      size: 30,
-    );
+    // --- Updated logic for active challenges ---
+    switch (widget.challenge.status) {
+      case 'IN_PROGRESS':
+        return Icon(
+          Icons.verified, // Green checkmark for in-progress
+          color: AppColors.green,
+          size: 30,
+        );
+      case 'REGISTERED':
+      case 'PENDING':
+        return const Icon(
+          Icons.hourglass_empty, // Hourglass for not started yet
+          color: AppColors.grey,
+          size: 30,
+        );
+      default:
+        // Fallback for any other active status (if any)
+        return const Icon(
+          Icons.schedule,
+          color: AppColors.grey,
+          size: 30,
+        );
+    }
+    // ------------------------------------------
   }
 
   Future<(ChallengeStatistics?, UserChallengeStatisticsSchema?)> _loadData(
@@ -180,6 +248,11 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   _buildParticipantsBlockContent(statistics)
                 else
                   _buildParticipantsPlaceholder(),
+                const SizedBox(height: 32),
+                if (isUserParticipant &&
+                    isUserInStatistics &&
+                    !widget.challenge.isArchived)
+                  _buildChatInfoBlock(),
                 const SizedBox(height: 32),
                 if (isUserParticipant && isUserInStatistics)
                   _buildExitButton(context),
@@ -348,16 +421,52 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(height: 12),
+          _buildRuleRow(
+              'Категория:', widget.challenge.category ?? 'Не указана'),
           const SizedBox(height: 8),
-          Text(
+          _buildRuleRow(
+            'Тип подтверждения:',
+            _formatConfirmationTypeFriendly(widget.challenge.confirmationType),
+          ),
+          const SizedBox(height: 8),
+          _buildRuleRow(
+            'Описание:',
             widget.challenge.confirmationDescription,
+          ),
+          const SizedBox(height: 8),
+          _buildRuleRow('Периодичность:', _formatRegularity(widget.challenge)),
+          const SizedBox(height: 8),
+          _buildRuleRow('Загружать до:',
+              '${widget.challenge.confirmUntil ?? '23:59'} по МСК'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRuleRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            value,
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 14,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -458,11 +567,13 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      /*
                       _buildProgressRow(
                         'Всего',
                         totalApproved,
                         totalExpected,
                       ),
+                      */
                       if (statistics.weeklyStats.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         ...statistics.weeklyStats.map(
@@ -778,12 +889,19 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                           final errorMessage = e.response?.data['message'] ??
                               'На балансе недостаточно монеток для регистрации на челлендж';
 
-                          showDialog(
+                          // Show the dialog and wait for the result
+                          final bool? shouldGoToCoins = await showDialog<bool>(
                             context: context,
                             builder: (context) => InsufficientCoinsDialog(
                               message: errorMessage,
                             ),
                           );
+
+                          // If the user pressed "Пополнить баланс"
+                          if (shouldGoToCoins == true && context.mounted) {
+                            GoRouter.of(context)
+                                .go('/coins'); // Use GoRouter.of(context)
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -815,6 +933,27 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                     ),
                   ),
                 ),
+              ),
+              // Add joining cost info here
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Стоимость вступления: 1',
+                    style: TextStyle(
+                      color: AppColors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  SvgPicture.asset(
+                    AppIcons.coin,
+                    colorFilter: AppColors.orange.toColorFilter,
+                    width: 16,
+                    height: 16,
+                  ),
+                ],
               ),
             ],
           ),
@@ -1020,5 +1159,107 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildChatInfoBlock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'ЧАТ ЧЕЛЛЕНДЖА',
+          style: TextStyle(
+            fontFamily: AppFontFamily.uncage,
+            color: AppColors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.blackMin,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Общение и объявления:',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Присоединяйтесь к чату челленджа для общения и получения важной информации.',
+                style: const TextStyle(
+                  color: AppColors.white,
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(height: 16),
+              if (widget.challenge.chat?.link != null)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _launchURL(widget.challenge.chat!.link);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.orange,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Перейти в чат',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                const Text(
+                  'Ссылка на чат недоступна.',
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _launchURL(String urlString) async {
+    String correctedUrl = urlString;
+    // Add https:// if the link starts with t.me/ and doesn't have a scheme
+    if (correctedUrl.startsWith('t.me/') &&
+        !correctedUrl.startsWith('https://') &&
+        !correctedUrl.startsWith('http://')) {
+      correctedUrl = 'https://' + correctedUrl;
+    }
+
+    final Uri url = Uri.parse(correctedUrl);
+    print(url);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      // Optionally show an error message if the URL can't be launched
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не удалось открыть ссылку: $urlString')),
+        );
+      }
+      AppLogger.error('Could not launch $urlString');
+    }
   }
 }

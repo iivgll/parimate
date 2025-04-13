@@ -191,8 +191,30 @@ class SettingsPage extends ConsumerWidget {
                       ),
                     ],
                   ),
+                  // Add explanatory text when reminders are enabled
                   if (settings.isEnabled) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12), // Add some space
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.0), // Optional padding
+                      child: Row(
+                        children: [
+                          Icon(Icons.info_outline,
+                              color: AppColors.grey, size: 16),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'За это время до окончания срока загрузки отчета пришлем вам напоминание',
+                              style: TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16), // Space before reminder items
                     _buildReminderItem(context, ref, 1, '1-е напоминание'),
                     _buildReminderItem(context, ref, 2, '2-е напоминание'),
                     _buildReminderItem(context, ref, 3, '3-е напоминание'),

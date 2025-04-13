@@ -81,7 +81,7 @@ class ChallengesPage extends ConsumerWidget {
           },
           text: 'Мои',
           backgroundColor: challengesState.value?.view == ChallengesView.mine
-              ? AppColors.blackMin
+              ? AppColors.orange
               : AppColors.black,
           textColor: AppColors.white,
           horizontalPadding: 24.0,
@@ -100,7 +100,7 @@ class ChallengesPage extends ConsumerWidget {
           text: 'Новые',
           backgroundColor:
               challengesState.value?.view == ChallengesView.newChallenges
-                  ? AppColors.blackMin
+                  ? AppColors.orange
                   : AppColors.black,
           textColor: AppColors.white,
           horizontalPadding: 24.0,
