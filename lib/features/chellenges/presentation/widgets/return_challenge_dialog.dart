@@ -163,7 +163,7 @@ class _ReturnChallengeDialogState extends ConsumerState<ReturnChallengeDialog> {
                 Navigator.pop(
                     context, false); // Закрываем ReturnChallengeDialog
                 // Затем переходим на страницу монет
-                context.go('/coins');
+                GoRouter.of(context).go('/coins');
               }
             }
           }

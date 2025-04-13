@@ -22,6 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../services/telegram_service.dart';
 import '../../../features/chellenges/presentation/widgets/exit_challenge_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 final userActiveStateProvider = StateProvider.autoDispose<bool>((ref) => true);
 
@@ -908,12 +909,19 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                           final errorMessage = e.response?.data['message'] ??
                               'На балансе недостаточно монеток для регистрации на челлендж';
 
-                          showDialog(
+                          // Show the dialog and wait for the result
+                          final bool? shouldGoToCoins = await showDialog<bool>(
                             context: context,
                             builder: (context) => InsufficientCoinsDialog(
                               message: errorMessage,
                             ),
                           );
+
+                          // If the user pressed "Пополнить баланс"
+                          if (shouldGoToCoins == true && context.mounted) {
+                            GoRouter.of(context)
+                                .go('/coins'); // Use GoRouter.of(context)
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
