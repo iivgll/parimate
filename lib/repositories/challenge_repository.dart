@@ -138,7 +138,7 @@ class ChallengeRepository {
 
   Future<List<ChallengeModel>> getMyChallenges() async {
     try {
-      final response = await _dio.get('/challenge/my',
+      final response = await _dio.get('/api/v2/challenge/my',
           queryParameters: {'user_tg_id': TelegramService.instance.id});
 
       // Отладка: проверяем каждый элемент
