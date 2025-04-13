@@ -1570,7 +1570,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
   Widget _buildCreateButton(BuildContext context) {
     // Определяем текст кнопки в зависимости от выбранной валюты
     String createButtonText;
-    bool showCoinIcon = true;
 
     if (selectedCurrency == 'COINS') {
       // Для монет показываем общую сумму (ставка + комиссия)

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/initializer/presentation/app_initializer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'features/debug/debug_tg.dart';
 import 'services/telegram_service.dart';
 
 import 'app/repository_providers.dart';
