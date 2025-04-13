@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parimate/features/initializer/presentation/app_initializer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'features/debug/debug_tg.dart';
 import 'services/telegram_service.dart';
 
 import 'app/repository_providers.dart';
@@ -42,7 +43,7 @@ void main() async {
   TelegramService.instance.ready();
 
   TelegramService.instance.getLaunchInfo();
-  talker.log("Version prod v.1");
+  talker.log("Сборка от 12 апреля 2025 года, V 1.1");
   runApp(
     ProviderScope(
       overrides: [
