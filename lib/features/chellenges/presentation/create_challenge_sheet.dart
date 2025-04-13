@@ -1312,6 +1312,16 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
                     _buildSelectField(
                         'До', confirmationTime?.format(context) ?? '00:00',
                         onTap: _showTimePicker),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        'Время загрузки\nподтверждений по МСК',
+                        style: TextStyle(
+                          color: AppColors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
                   ]),
                   const SizedBox(height: 16),
                   _buildInputSection([

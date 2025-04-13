@@ -437,8 +437,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           const SizedBox(height: 8),
           _buildRuleRow('Периодичность:', _formatRegularity(widget.challenge)),
           const SizedBox(height: 8),
-          _buildRuleRow(
-              'До:', '${widget.challenge.confirmUntil ?? '23:59'} по МСК'),
+          _buildRuleRow('Загружать до:',
+              '${widget.challenge.confirmUntil ?? '23:59'} по МСК'),
         ],
       ),
     );
@@ -589,11 +589,13 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      /*
                       _buildProgressRow(
                         'Всего',
                         totalApproved,
                         totalExpected,
                       ),
+                      */
                       if (statistics.weeklyStats.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         ...statistics.weeklyStats.map(
