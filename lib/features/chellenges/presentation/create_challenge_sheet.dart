@@ -1135,8 +1135,7 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
 
     // Определяем текст для кнопки создания челленджа
     if (selectedCurrency == 'COINS') {
-    } else {
-    }
+    } else {}
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
@@ -1173,24 +1172,23 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: ChallengeType.values.map((type) {
+                final bool isActive = selectedType == type;
                 return Expanded(
                   child: GestureDetector(
                     onTap: () => setState(() => selectedType = type),
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      curve: Curves.easeInOut,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: selectedType == type
-                            ? AppColors.blackMin
-                            : AppColors.black,
+                        color: isActive ? AppColors.orange : AppColors.blackMin,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         type.title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: selectedType == type
-                              ? AppColors.white
-                              : AppColors.grey,
+                          color: isActive ? AppColors.white : AppColors.grey,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
