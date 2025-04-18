@@ -251,6 +251,10 @@ class ChallengePreviewPage extends ConsumerWidget {
           .joinChallenge(createdChallenge.id, context);
 
       if (context.mounted) {
+        // Закрываем все модальные окна (bottom sheet, preview и т.д.)
+        Navigator.of(context, rootNavigator: true)
+            .popUntil((route) => route.isFirst);
+        // Переходим на страницу челленджей
         context.go('/challenges');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Челлендж успешно создан')),

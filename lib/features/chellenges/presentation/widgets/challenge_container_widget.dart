@@ -33,7 +33,7 @@ class _ChallengeContainerState extends State<ChallengeContainer> {
         ? 'персональный'
         : 'групповой';
 
-    return '$startDate - $endDate ($type)';
+    return '$startDate - $endDate\n($type)';
   }
 
   @override
@@ -82,6 +82,7 @@ class _ChallengeContainerState extends State<ChallengeContainer> {
                 ),
                 const SizedBox(height: 4),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       _formatDateRange(widget.challenge),
