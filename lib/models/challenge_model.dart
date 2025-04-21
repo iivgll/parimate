@@ -32,6 +32,7 @@ class ChallengeModel with _$ChallengeModel {
     required Chat chat,
     required String link,
     @JsonKey(name: 'admin_chat') Chat? adminChat,
+    @JsonKey(name: 'payment_link') String? paymentLink,
   }) = _ChallengeModel;
 
   factory ChallengeModel.fromJson(Map<String, dynamic> json) =>

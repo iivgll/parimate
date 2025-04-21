@@ -504,13 +504,19 @@ class _ConfirmationUploadPageState
       if (file != null) {
         final fileSize = await file.length();
         final maxSize = widget.challenge.confirmationType == 'PHOTO'
-            ? 10 * 1024 * 1024
-            : 100 * 1024 * 1024;
+            ? 100 * 1024 * 1024
+            : 800 * 1024 * 1024;
 
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Файл слишком большой')),
+              SnackBar(
+                content: Text(
+                  widget.challenge.confirmationType == 'PHOTO'
+                      ? 'Фото слишком большое (максимум 100 МБ)'
+                      : 'Видео слишком большое (максимум 800 МБ)',
+                ),
+              ),
             );
           }
           return;

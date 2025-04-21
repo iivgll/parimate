@@ -47,6 +47,7 @@ class Challenge with _$Challenge {
       fromJson: _chatFromJsonNullable,
     )
     Chat? adminChat,
+    @JsonKey(name: 'payment_link') String? paymentLink,
   }) = _Challenge;
 
   factory Challenge.fromJson(Map<String, dynamic> json) =>

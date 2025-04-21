@@ -8,11 +8,9 @@ docker save parimate-web > parimate-web.tar
 
 # Копируем на сервер
 # прод 185.128.105.90
-scp parimate-web.tar root@185.128.105.90:/root/
-#scp parimate-web.tar root@185.112.102.11:/root/
+scp parimate-web.tar root@185.112.102.11:/root/
 # Выполняем команды на сервере
-#81B109lUtJP9
-ssh root@185.128.105.90 '
+ssh root@185.112.102.11 '
     echo "Останавливаем старые контейнеры..."
 
     # Останавливаем конкретный контейнер parimate-web
