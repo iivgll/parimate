@@ -41,7 +41,6 @@ class _CreateChallengeSheetState extends ConsumerState<CreateChallengeSheet> {
     'Отправлять фото',
     'Отправлять видео',
     'Отправлять текст',
-    'Отправлять геолокацию',
   ];
 
   final List<String> regularityOptions = [

@@ -26,6 +26,8 @@ mixin _$Chat {
   String get link => throw _privateConstructorUsedError;
   @JsonKey(name: 'icon')
   String? get photo => throw _privateConstructorUsedError;
+  @JsonKey(name: 'challenge_name')
+  String? get challengeName => throw _privateConstructorUsedError;
 
   /// Serializes this Chat to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,7 +46,8 @@ abstract class $ChatCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'link') String link,
-      @JsonKey(name: 'icon') String? photo});
+      @JsonKey(name: 'icon') String? photo,
+      @JsonKey(name: 'challenge_name') String? challengeName});
 }
 
 /// @nodoc
@@ -65,6 +68,7 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
     Object? id = null,
     Object? link = null,
     Object? photo = freezed,
+    Object? challengeName = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -78,6 +82,10 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
       photo: freezed == photo
           ? _value.photo
           : photo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      challengeName: freezed == challengeName
+          ? _value.challengeName
+          : challengeName // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -93,7 +101,8 @@ abstract class _$$ChatImplCopyWith<$Res> implements $ChatCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'link') String link,
-      @JsonKey(name: 'icon') String? photo});
+      @JsonKey(name: 'icon') String? photo,
+      @JsonKey(name: 'challenge_name') String? challengeName});
 }
 
 /// @nodoc
@@ -111,6 +120,7 @@ class __$$ChatImplCopyWithImpl<$Res>
     Object? id = null,
     Object? link = null,
     Object? photo = freezed,
+    Object? challengeName = freezed,
   }) {
     return _then(_$ChatImpl(
       id: null == id
@@ -125,6 +135,10 @@ class __$$ChatImplCopyWithImpl<$Res>
           ? _value.photo
           : photo // ignore: cast_nullable_to_non_nullable
               as String?,
+      challengeName: freezed == challengeName
+          ? _value.challengeName
+          : challengeName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -135,7 +149,8 @@ class _$ChatImpl implements _Chat {
   const _$ChatImpl(
       {@JsonKey(name: 'id') required this.id,
       @JsonKey(name: 'link') required this.link,
-      @JsonKey(name: 'icon') this.photo});
+      @JsonKey(name: 'icon') this.photo,
+      @JsonKey(name: 'challenge_name') this.challengeName});
 
   factory _$ChatImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatImplFromJson(json);
@@ -149,10 +164,13 @@ class _$ChatImpl implements _Chat {
   @override
   @JsonKey(name: 'icon')
   final String? photo;
+  @override
+  @JsonKey(name: 'challenge_name')
+  final String? challengeName;
 
   @override
   String toString() {
-    return 'Chat(id: $id, link: $link, photo: $photo)';
+    return 'Chat(id: $id, link: $link, photo: $photo, challengeName: $challengeName)';
   }
 
   @override
@@ -162,12 +180,14 @@ class _$ChatImpl implements _Chat {
             other is _$ChatImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.link, link) || other.link == link) &&
-            (identical(other.photo, photo) || other.photo == photo));
+            (identical(other.photo, photo) || other.photo == photo) &&
+            (identical(other.challengeName, challengeName) ||
+                other.challengeName == challengeName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, link, photo);
+  int get hashCode => Object.hash(runtimeType, id, link, photo, challengeName);
 
   /// Create a copy of Chat
   /// with the given fields replaced by the non-null parameter values.
@@ -187,9 +207,11 @@ class _$ChatImpl implements _Chat {
 
 abstract class _Chat implements Chat {
   const factory _Chat(
-      {@JsonKey(name: 'id') required final String id,
-      @JsonKey(name: 'link') required final String link,
-      @JsonKey(name: 'icon') final String? photo}) = _$ChatImpl;
+          {@JsonKey(name: 'id') required final String id,
+          @JsonKey(name: 'link') required final String link,
+          @JsonKey(name: 'icon') final String? photo,
+          @JsonKey(name: 'challenge_name') final String? challengeName}) =
+      _$ChatImpl;
 
   factory _Chat.fromJson(Map<String, dynamic> json) = _$ChatImpl.fromJson;
 
@@ -202,6 +224,9 @@ abstract class _Chat implements Chat {
   @override
   @JsonKey(name: 'icon')
   String? get photo;
+  @override
+  @JsonKey(name: 'challenge_name')
+  String? get challengeName;
 
   /// Create a copy of Chat
   /// with the given fields replaced by the non-null parameter values.

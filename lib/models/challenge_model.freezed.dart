@@ -56,6 +56,8 @@ mixin _$ChallengeModel {
   String get link => throw _privateConstructorUsedError;
   @JsonKey(name: 'admin_chat')
   Chat? get adminChat => throw _privateConstructorUsedError;
+  @JsonKey(name: 'payment_link')
+  String? get paymentLink => throw _privateConstructorUsedError;
 
   /// Serializes this ChallengeModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -96,7 +98,8 @@ abstract class $ChallengeModelCopyWith<$Res> {
       @JsonKey(name: 'created_at') String createdAt,
       Chat chat,
       String link,
-      @JsonKey(name: 'admin_chat') Chat? adminChat});
+      @JsonKey(name: 'admin_chat') Chat? adminChat,
+      @JsonKey(name: 'payment_link') String? paymentLink});
 
   $AuthorCopyWith<$Res> get author;
   $ChatCopyWith<$Res> get chat;
@@ -141,6 +144,7 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
     Object? chat = null,
     Object? link = null,
     Object? adminChat = freezed,
+    Object? paymentLink = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -235,6 +239,10 @@ class _$ChallengeModelCopyWithImpl<$Res, $Val extends ChallengeModel>
           ? _value.adminChat
           : adminChat // ignore: cast_nullable_to_non_nullable
               as Chat?,
+      paymentLink: freezed == paymentLink
+          ? _value.paymentLink
+          : paymentLink // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -304,7 +312,8 @@ abstract class _$$ChallengeModelImplCopyWith<$Res>
       @JsonKey(name: 'created_at') String createdAt,
       Chat chat,
       String link,
-      @JsonKey(name: 'admin_chat') Chat? adminChat});
+      @JsonKey(name: 'admin_chat') Chat? adminChat,
+      @JsonKey(name: 'payment_link') String? paymentLink});
 
   @override
   $AuthorCopyWith<$Res> get author;
@@ -350,6 +359,7 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
     Object? chat = null,
     Object? link = null,
     Object? adminChat = freezed,
+    Object? paymentLink = freezed,
   }) {
     return _then(_$ChallengeModelImpl(
       id: null == id
@@ -444,6 +454,10 @@ class __$$ChallengeModelImplCopyWithImpl<$Res>
           ? _value.adminChat
           : adminChat // ignore: cast_nullable_to_non_nullable
               as Chat?,
+      paymentLink: freezed == paymentLink
+          ? _value.paymentLink
+          : paymentLink // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -475,7 +489,8 @@ class _$ChallengeModelImpl extends _ChallengeModel {
       @JsonKey(name: 'created_at') required this.createdAt,
       required this.chat,
       required this.link,
-      @JsonKey(name: 'admin_chat') this.adminChat})
+      @JsonKey(name: 'admin_chat') this.adminChat,
+      @JsonKey(name: 'payment_link') this.paymentLink})
       : _confirmationDays = confirmationDays,
         super._();
 
@@ -550,10 +565,13 @@ class _$ChallengeModelImpl extends _ChallengeModel {
   @override
   @JsonKey(name: 'admin_chat')
   final Chat? adminChat;
+  @override
+  @JsonKey(name: 'payment_link')
+  final String? paymentLink;
 
   @override
   String toString() {
-    return 'ChallengeModel(id: $id, name: $name, participationType: $participationType, icon: $icon, category: $category, confirmationType: $confirmationType, startDate: $startDate, endDate: $endDate, regularityType: $regularityType, timesPerDay: $timesPerDay, timesPerWeek: $timesPerWeek, confirmationDays: $confirmationDays, author: $author, price: $price, currency: $currency, confirmationDescription: $confirmationDescription, status: $status, maxParticipants: $maxParticipants, confirmUntil: $confirmUntil, createdAt: $createdAt, chat: $chat, link: $link, adminChat: $adminChat)';
+    return 'ChallengeModel(id: $id, name: $name, participationType: $participationType, icon: $icon, category: $category, confirmationType: $confirmationType, startDate: $startDate, endDate: $endDate, regularityType: $regularityType, timesPerDay: $timesPerDay, timesPerWeek: $timesPerWeek, confirmationDays: $confirmationDays, author: $author, price: $price, currency: $currency, confirmationDescription: $confirmationDescription, status: $status, maxParticipants: $maxParticipants, confirmUntil: $confirmUntil, createdAt: $createdAt, chat: $chat, link: $link, adminChat: $adminChat, paymentLink: $paymentLink)';
   }
 
   @override
@@ -598,7 +616,9 @@ class _$ChallengeModelImpl extends _ChallengeModel {
             (identical(other.chat, chat) || other.chat == chat) &&
             (identical(other.link, link) || other.link == link) &&
             (identical(other.adminChat, adminChat) ||
-                other.adminChat == adminChat));
+                other.adminChat == adminChat) &&
+            (identical(other.paymentLink, paymentLink) ||
+                other.paymentLink == paymentLink));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -627,7 +647,8 @@ class _$ChallengeModelImpl extends _ChallengeModel {
         createdAt,
         chat,
         link,
-        adminChat
+        adminChat,
+        paymentLink
       ]);
 
   /// Create a copy of ChallengeModel
@@ -674,8 +695,9 @@ abstract class _ChallengeModel extends ChallengeModel {
       @JsonKey(name: 'created_at') required final String createdAt,
       required final Chat chat,
       required final String link,
-      @JsonKey(name: 'admin_chat')
-      final Chat? adminChat}) = _$ChallengeModelImpl;
+      @JsonKey(name: 'admin_chat') final Chat? adminChat,
+      @JsonKey(name: 'payment_link')
+      final String? paymentLink}) = _$ChallengeModelImpl;
   const _ChallengeModel._() : super._();
 
   factory _ChallengeModel.fromJson(Map<String, dynamic> json) =
@@ -740,6 +762,9 @@ abstract class _ChallengeModel extends ChallengeModel {
   @override
   @JsonKey(name: 'admin_chat')
   Chat? get adminChat;
+  @override
+  @JsonKey(name: 'payment_link')
+  String? get paymentLink;
 
   /// Create a copy of ChallengeModel
   /// with the given fields replaced by the non-null parameter values.

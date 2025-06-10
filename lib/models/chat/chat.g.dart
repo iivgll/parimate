@@ -10,6 +10,7 @@ _$ChatImpl _$$ChatImplFromJson(Map<String, dynamic> json) => _$ChatImpl(
       id: json['id'] as String,
       link: json['link'] as String,
       photo: json['icon'] as String?,
+      challengeName: json['challenge_name'] as String?,
     );
 
 Map<String, dynamic> _$$ChatImplToJson(_$ChatImpl instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$$ChatImplToJson(_$ChatImpl instance) =>
       'id': instance.id,
       'link': instance.link,
       'icon': instance.photo,
+      'challenge_name': instance.challengeName,
     };

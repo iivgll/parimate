@@ -222,7 +222,7 @@ mixin _$Participation {
   String? get rejectReason => throw _privateConstructorUsedError;
   bool get accepted => throw _privateConstructorUsedError;
   @JsonKey(name: 'user_tg_id')
-  String get userTgId => throw _privateConstructorUsedError;
+  int get userTgId => throw _privateConstructorUsedError;
   @JsonKey(name: 'challenge_id')
   int get challengeId => throw _privateConstructorUsedError;
 
@@ -248,7 +248,7 @@ abstract class $ParticipationCopyWith<$Res> {
       bool archived,
       @JsonKey(name: 'reject_reason') String? rejectReason,
       bool accepted,
-      @JsonKey(name: 'user_tg_id') String userTgId,
+      @JsonKey(name: 'user_tg_id') int userTgId,
       @JsonKey(name: 'challenge_id') int challengeId});
 }
 
@@ -299,7 +299,7 @@ class _$ParticipationCopyWithImpl<$Res, $Val extends Participation>
       userTgId: null == userTgId
           ? _value.userTgId
           : userTgId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       challengeId: null == challengeId
           ? _value.challengeId
           : challengeId // ignore: cast_nullable_to_non_nullable
@@ -322,7 +322,7 @@ abstract class _$$ParticipationImplCopyWith<$Res>
       bool archived,
       @JsonKey(name: 'reject_reason') String? rejectReason,
       bool accepted,
-      @JsonKey(name: 'user_tg_id') String userTgId,
+      @JsonKey(name: 'user_tg_id') int userTgId,
       @JsonKey(name: 'challenge_id') int challengeId});
 }
 
@@ -371,7 +371,7 @@ class __$$ParticipationImplCopyWithImpl<$Res>
       userTgId: null == userTgId
           ? _value.userTgId
           : userTgId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       challengeId: null == challengeId
           ? _value.challengeId
           : challengeId // ignore: cast_nullable_to_non_nullable
@@ -408,7 +408,7 @@ class _$ParticipationImpl implements _Participation {
   final bool accepted;
   @override
   @JsonKey(name: 'user_tg_id')
-  final String userTgId;
+  final int userTgId;
   @override
   @JsonKey(name: 'challenge_id')
   final int challengeId;
@@ -465,7 +465,7 @@ abstract class _Participation implements Participation {
           required final bool archived,
           @JsonKey(name: 'reject_reason') final String? rejectReason,
           required final bool accepted,
-          @JsonKey(name: 'user_tg_id') required final String userTgId,
+          @JsonKey(name: 'user_tg_id') required final int userTgId,
           @JsonKey(name: 'challenge_id') required final int challengeId}) =
       _$ParticipationImpl;
 
@@ -485,7 +485,7 @@ abstract class _Participation implements Participation {
   bool get accepted;
   @override
   @JsonKey(name: 'user_tg_id')
-  String get userTgId;
+  int get userTgId;
   @override
   @JsonKey(name: 'challenge_id')
   int get challengeId;

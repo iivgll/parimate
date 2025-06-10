@@ -28,7 +28,7 @@ _$ParticipationImpl _$$ParticipationImplFromJson(Map<String, dynamic> json) =>
       archived: json['archived'] as bool,
       rejectReason: json['reject_reason'] as String?,
       accepted: json['accepted'] as bool,
-      userTgId: json['user_tg_id'] as String,
+      userTgId: (json['user_tg_id'] as num).toInt(),
       challengeId: (json['challenge_id'] as num).toInt(),
     );
 

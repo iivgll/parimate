@@ -40,6 +40,7 @@ class _ConfirmationUploadPageState
 
   @override
   void dispose() {
+    _textController.dispose();
     _videoThumbnail = null;
     super.dispose();
   }
@@ -158,16 +159,6 @@ class _ConfirmationUploadPageState
               Icons.location_on,
               color: AppColors.orange,
               size: 48,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Отправить текущую геолокацию',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             const Text(
@@ -577,10 +568,19 @@ class _ConfirmationUploadPageState
         value = '55.7558,37.6173'; // Москва, Красная площадь
       } else {
         try {
-          value = await ref.read(fileRepositoryProvider).uploadFile(
-                _selectedFile!,
-                challengeId: widget.challenge.id,
-              );
+          // Используем разную логику для видео и фото
+          if (widget.challenge.confirmationType == 'VIDEO') {
+            value = await ref.read(fileRepositoryProvider).uploadVideoToS3(
+                  _selectedFile!,
+                  challengeId: widget.challenge.id,
+                );
+          } else {
+            // Для фото используем старый метод
+            value = await ref.read(fileRepositoryProvider).uploadFile(
+                  _selectedFile!,
+                  challengeId: widget.challenge.id,
+                );
+          }
         } catch (e) {
           if (mounted) {
             await showDialog(

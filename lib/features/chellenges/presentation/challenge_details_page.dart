@@ -422,8 +422,7 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
             ),
           ),
           const SizedBox(height: 12),
-          _buildRuleRow(
-              'Категория:', widget.challenge.category),
+          _buildRuleRow('Категория:', widget.challenge.category),
           const SizedBox(height: 8),
           _buildRuleRow(
             'Тип подтверждения:',
@@ -437,8 +436,8 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
           const SizedBox(height: 8),
           _buildRuleRow('Периодичность:', _formatRegularity(widget.challenge)),
           const SizedBox(height: 8),
-          _buildRuleRow('Загружать до:',
-              '${widget.challenge.confirmUntil} по МСК'),
+          _buildRuleRow(
+              'Загружать до:', '${widget.challenge.confirmUntil} по МСК'),
         ],
       ),
     );
@@ -472,7 +471,6 @@ class _ChallengeDetailsPageState extends ConsumerState<ChallengeDetailsPage> {
 
   Widget _buildConfirmationBlockContent(
       UserChallengeStatisticsSchema statistics, BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

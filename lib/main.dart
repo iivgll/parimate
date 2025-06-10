@@ -42,7 +42,7 @@ void main() async {
   TelegramService.instance.ready();
 
   TelegramService.instance.getLaunchInfo();
-  talker.log("Сборка от 13 апреля 2025 года, V 1.0.2");
+  talker.log("Сборка от 4 июня 2025 года, V 1.0.3");
   runApp(
     ProviderScope(
       overrides: [

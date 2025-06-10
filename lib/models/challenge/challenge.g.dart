@@ -34,6 +34,7 @@ _$ChallengeImpl _$$ChallengeImplFromJson(Map<String, dynamic> json) =>
       link: json['link'] as String,
       adminChat:
           _chatFromJsonNullable(json['admin_chat'] as Map<String, dynamic>?),
+      paymentLink: json['payment_link'] as String?,
     );
 
 Map<String, dynamic> _$$ChallengeImplToJson(_$ChallengeImpl instance) =>
@@ -61,4 +62,5 @@ Map<String, dynamic> _$$ChallengeImplToJson(_$ChallengeImpl instance) =>
       'chat': _chatToJson(instance.chat),
       'link': instance.link,
       'admin_chat': _chatToJsonNullable(instance.adminChat),
+      'payment_link': instance.paymentLink,
     };

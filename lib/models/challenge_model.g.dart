@@ -35,6 +35,7 @@ _$ChallengeModelImpl _$$ChallengeModelImplFromJson(Map<String, dynamic> json) =>
       adminChat: json['admin_chat'] == null
           ? null
           : Chat.fromJson(json['admin_chat'] as Map<String, dynamic>),
+      paymentLink: json['payment_link'] as String?,
     );
 
 Map<String, dynamic> _$$ChallengeModelImplToJson(
@@ -63,6 +64,7 @@ Map<String, dynamic> _$$ChallengeModelImplToJson(
       'chat': instance.chat.toJson(),
       'link': instance.link,
       'admin_chat': instance.adminChat?.toJson(),
+      'payment_link': instance.paymentLink,
     };
 
 _$AuthorImpl _$$AuthorImplFromJson(Map<String, dynamic> json) => _$AuthorImpl(
